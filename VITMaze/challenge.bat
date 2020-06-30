@@ -1,0 +1,1 @@
+java -cp "./*" de.vitbund.vitmaze.challenge.Tournament
