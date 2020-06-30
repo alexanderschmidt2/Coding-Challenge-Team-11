@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class ErsterBot {
 	/**
 	 * Hauptmethode zum Ausführen des Bots
+	 *
 	 * @author Alexander Schmidt
 	 * @param args
 	 */
