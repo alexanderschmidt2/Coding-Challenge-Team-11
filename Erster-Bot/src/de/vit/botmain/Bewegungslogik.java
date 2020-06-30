@@ -4,6 +4,7 @@ public class Bewegungslogik {
 //Also da mir nichts Kluges einfällt werden wir es Brute-Force machen, damit wir eine Basis haben
 //Die Idee ist Folgende: Wir laufen <bold> immer </bold> die selbe Reihenfolge an Bewegungen ab, 
 //die wir nach Lust und Laune festlegen. Unten, Rechts , Oben, Links.  
+//ggf. müssen wir mit Vererbungen arbeiten bei den Actions
 //Reden wir über einige Fälle: 1. Wir spawnen auf dem SB->am Anfang den Check
 //							   2. Wir laufen in eine Sackgasse->Wir merken uns alle bisherigen Knoten
 //								und laufen dann zu dem Ersten zurück, wo wir eine Entscheidung hatten(link oder Rechts oder so)
