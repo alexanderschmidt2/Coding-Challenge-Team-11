@@ -5,14 +5,6 @@ public class Initialisierung {
 			String westCellStatus, String playerId) {
 		String[] arrayStatus = {currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus, };
 		for(String status : arrayStatus) {
-			switch(status) {
-				case("WALL"):
-					break;
-				case("FLOOR"):
-					break;
-				case("FINISH"):
-					break;
 			}
-		}
 	}
 }
