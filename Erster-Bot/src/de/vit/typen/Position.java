@@ -11,6 +11,7 @@ public class Position {
 	private String southCellStatus;
 	private String westCellStatus;
 
+	
 	public Position(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
 			String southCellStatus, String westCellStatus) {
 		this.lastActionsResult = lastActionsResult;

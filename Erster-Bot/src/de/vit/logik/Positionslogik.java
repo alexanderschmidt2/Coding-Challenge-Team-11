@@ -11,6 +11,7 @@ public class Positionslogik {
 	public List<Map<Koordinaten, Position>> getHauptspeicher() {
 		return hauptspeicher;
 	}
+	protected Stack<String> mainstack;
 
 	public void setHauptspeicher(List<Map<Koordinaten, Position>> hauptspeicher) {
 		this.hauptspeicher = hauptspeicher;

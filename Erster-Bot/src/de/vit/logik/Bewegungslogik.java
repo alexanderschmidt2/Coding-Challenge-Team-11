@@ -15,13 +15,7 @@ public class Bewegungslogik {
 //							   3.???
 //							   4.Profit.
 	public static String bewegung(Position position) {//TODO: Klüger lösen, Direction als Param anhängen ggf.?
-		switch (position.getLastActionsResult()) {
-			case ("OK"): //das allererste Feld, hier gibt es eine Initialisierung oder es ist unser Sachbearbeiter?
-			case ("NOK BLOKED"): 
-			case ("NOK NOTYOURS"):
-			case ("NOK EMPTY")://irgendwas hat nicht funktioniert
-			default: //der GO-DirectionCase, TODO: Schlauer lösen
-		}
+		
 
 		return ("a");
 	};
