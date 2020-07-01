@@ -1,7 +1,7 @@
 package de.vit.botmain;
 
 import java.util.Scanner;
-
+import de.vit.logik.*;
 public class ErsterBot {
 	/**
 	 * Hauptmethode zum Ausführen des Bots
@@ -35,12 +35,19 @@ public class ErsterBot {
 			String eastCellStatus = input.nextLine();
 			String southCellStatus = input.nextLine();
 			String westCellStatus = input.nextLine();
-
+			
+			
+			
 			// Debug Information ausgeben (optional möglich)
 			System.err.println("Ergebnis Vorrunde: " + lastActionsResult);
 
 			// Rundenaktion ausgeben
-			System.out.println("go west");
+
+			if (currentCellStatus.equals("FLOOR")) {
+				System.out.println("go west");
+			} else if (currentCellStatus.equals("FINISH+ " + playerId + " 0")) {
+				System.out.println(Bewegungslogik.bewegung(Position));
+			}
 		}
 
 		// Eingabe schliessen (letzte Aktion)

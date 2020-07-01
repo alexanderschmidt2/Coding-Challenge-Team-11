@@ -1,4 +1,4 @@
-package de.vit.botmain;
+package de.vit.typen;
 
 public class Position {
 	// TODO: hier muss eine dicke Prüflogik mit gaaaaaaaaanz vielen Exceptions hin.
@@ -15,8 +15,8 @@ public class Position {
 			String southCellStatus, String westCellStatus) {
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
-		this.northCellStatus = northCellStatus; //oben
-		this.eastCellStatus = eastCellStatus; //rechts
+		this.northCellStatus = northCellStatus; //oben //Objekt Wand
+		this.eastCellStatus = eastCellStatus; //rechts //FINISCHED <playerID> 0
 		this.southCellStatus = southCellStatus; //unten
 		this.westCellStatus = westCellStatus; //links
 	}
