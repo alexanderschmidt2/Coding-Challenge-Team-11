@@ -11,15 +11,16 @@ public class Position {
 	private String southCellStatus;
 	private String westCellStatus;
 
-	
+
+
 	public Position(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
 			String southCellStatus, String westCellStatus) {
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
-		this.northCellStatus = northCellStatus; //oben //Objekt Wand
-		this.eastCellStatus = eastCellStatus; //rechts //FINISCHED <playerID> 0
-		this.southCellStatus = southCellStatus; //unten
-		this.westCellStatus = westCellStatus; //links
+		this.northCellStatus = northCellStatus; // oben //Objekt Wand
+		this.eastCellStatus = eastCellStatus; // rechts //FINISCHED <playerID> 0
+		this.southCellStatus = southCellStatus; // unten
+		this.westCellStatus = westCellStatus; // links
 	}
 
 	public String getLastActionsResult() {
