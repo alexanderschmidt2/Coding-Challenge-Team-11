@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import de.vit.initialisierung.Spieler;
 import de.vit.initialisierung.Spielfeld;
+import de.vit.logik.Speicherlogik;
 import de.vit.typen.Koordinaten;
 import de.vit.typen.Position;
 
@@ -33,7 +34,7 @@ public class ErsterBot {
 //		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 //		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players //second 3 parts
 		Spieler spieler = new Spieler(input.nextInt(), new Koordinaten(input.nextInt(), input.nextInt()), spielfeld);
-
+		Speicherlogik speicher = new Speicherlogik();
 		input.nextLine(); // Beenden der zweiten Zeile
 
 		// TURN (Wiederholung je Runde notwendig)
@@ -45,10 +46,9 @@ public class ErsterBot {
 //			String eastCellStatus = input.nextLine();
 //			String southCellStatus = input.nextLine();
 //			String westCellStatus = input.nextLine();
-			
 
 			System.out.println(spieler.aktion(new Position(input.nextLine(), input.nextLine(), input.nextLine(), input.nextLine(),
-					input.nextLine(), input.nextLine())));
+					input.nextLine(), input.nextLine()),speicher));
 
 			// Debug Information ausgeben (optional möglich)
 			// System.err.println("Ergebnis Vorrunde: " + lastActionsResult);

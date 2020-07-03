@@ -19,26 +19,24 @@ public abstract class Bewegungslogik {
 //								und laufen dann zu dem Ersten zurück, wo wir eine Entscheidung hatten(link oder Rechts oder so)
 //							   3.???
 //							   4.Profit.
-	public static String bewegung(Position position, Koordinaten koordinaten, int playerId) {
+	public static String bewegung(Position position, Koordinaten koordinaten, int playerId, Speicherlogik speicher) {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
-
 		Stack<Integer> verlauf = new Stack<>();
 		// Das heißt wir haben uns erstmal bewegt, am Anfang wird noch nix gepushed, da
 		// der lastActionResult nur OK war
 		// Wir brauchen eine Möglichkeit uns zu merken, wo wir waren, an welcher Zelle
-
 		if (position.getCurrentCellStatus().equals("FINISH " + playerId + " 0")) {
 			return "finish";
 		}
 		//FIXME: LOGIKFEHLER, sehr groß, ich weiß nicht wo
-		if (position.getLastActionsResult().equals("OK NORTH")) {
+		if (position.getLastActionsResult().equals("OK NORTH") && speicher.getIgnore() != 0) {
 			verlauf.push(0); // Norden unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK EAST")) {
+		} else if (position.getLastActionsResult().equals("OK EAST") && speicher.getIgnore() != 1 ) {
 			verlauf.push(1); // Osten unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK SOUTH")) {
+		} else if (position.getLastActionsResult().equals("OK SOUTH") && speicher.getIgnore() != 2) {
 			verlauf.push(2); // Süden unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK WEST")) {
+		} else if (position.getLastActionsResult().equals("OK WEST") && speicher.getIgnore() != 3) {
 			verlauf.push(3); // Westen unsere Letzte Aktion
 		} else if (position.getLastActionsResult().equals("OK")) {
 			verlauf.push(5);}//5 Pushen, falls wir im ersten Turn sind
@@ -55,7 +53,9 @@ public abstract class Bewegungslogik {
 			return "go west";
 		
 		} else {
-			return kompass[verlauf.pop() + 2 % 4]; // Wir sind in einer Sackgasse und wir müssen zurück
+			int temp_ignore = verlauf.pop() + 2 % 4;
+			speicher.setIgnore(temp_ignore);
+			return kompass[temp_ignore]; // Wir sind in einer Sackgasse und wir müssen zurück
 		}
 	}
 }

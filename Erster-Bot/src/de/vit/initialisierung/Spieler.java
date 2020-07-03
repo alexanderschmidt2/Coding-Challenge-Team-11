@@ -1,6 +1,7 @@
 package de.vit.initialisierung;
 
 import de.vit.logik.Bewegungslogik;
+import de.vit.logik.Speicherlogik;
 import de.vit.typen.Koordinaten;
 import de.vit.typen.Position;
 
@@ -13,6 +14,7 @@ public class Spieler extends Initialisierung {
 	private final Spielfeld spielfeld;
 	private Koordinaten koordinaten;
 	private Position position;
+	private Speicherlogik speicher;
 
 	public Koordinaten getKoordinaten() {
 		return koordinaten;
@@ -39,10 +41,9 @@ public class Spieler extends Initialisierung {
 		this.koordinaten = koordinaten;
 		this.spielfeld = spielfeld;
 	}
-
-	public String aktion(Position position) {
+	public String aktion(Position position,Speicherlogik speicher) {
 		this.position = position;
-		String bewegung = Bewegungslogik.bewegung(this.position, this.koordinaten, this.getPlayerId());
+		String bewegung = Bewegungslogik.bewegung(this.position, this.koordinaten, this.getPlayerId(), speicher);
 		return bewegung;
 	};
 	
