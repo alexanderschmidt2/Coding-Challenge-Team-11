@@ -1,8 +1,7 @@
 package de.vit.logik;
-
 import java.util.*;
 import de.vit.typen.Koordinaten;
-import de.vit.typen.Position;
+import de.vit.typen.Zelle;
 
 public abstract class Bewegungslogik {
 
@@ -19,37 +18,37 @@ public abstract class Bewegungslogik {
 //								und laufen dann zu dem Ersten zurück, wo wir eine Entscheidung hatten(link oder Rechts oder so)
 //							   3.???
 //							   4.Profit.
-	public static String bewegung(Position position, Koordinaten koordinaten, int playerId, Speicherlogik speicher) {
+	public static String bewegung(Zelle zelle, Koordinaten koordinaten, int playerId, Speicherlogik speicher) {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		Stack<Integer> verlauf = new Stack<>();
 		// Das heißt wir haben uns erstmal bewegt, am Anfang wird noch nix gepushed, da
 		// der lastActionResult nur OK war
 		// Wir brauchen eine Möglichkeit uns zu merken, wo wir waren, an welcher Zelle
-		if (position.getCurrentCellStatus().equals("FINISH " + playerId + " 0")) {
+		if (zelle.getCurrentCellStatus().equals("FINISH " + playerId + " 0")) {
 			return "finish";
 		}
 		//FIXME: LOGIKFEHLER, sehr groß, ich weiß nicht wo
-		if (position.getLastActionsResult().equals("OK NORTH") && speicher.getIgnore() != 0) {
+		if (zelle.getLastActionsResult().equals("OK NORTH") && speicher.getIgnore() != 0) {
 			verlauf.push(0); // Norden unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK EAST") && speicher.getIgnore() != 1 ) {
+		} else if (zelle.getLastActionsResult().equals("OK EAST") && speicher.getIgnore() != 1 ) {
 			verlauf.push(1); // Osten unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK SOUTH") && speicher.getIgnore() != 2) {
+		} else if (zelle.getLastActionsResult().equals("OK SOUTH") && speicher.getIgnore() != 2) {
 			verlauf.push(2); // Süden unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK WEST") && speicher.getIgnore() != 3) {
+		} else if (zelle.getLastActionsResult().equals("OK WEST") && speicher.getIgnore() != 3) {
 			verlauf.push(3); // Westen unsere Letzte Aktion
-		} else if (position.getLastActionsResult().equals("OK")) {
+		} else if (zelle.getLastActionsResult().equals("OK")) {
 			verlauf.push(5);}//5 Pushen, falls wir im ersten Turn sind
 		// Hier müssen wir prüfen, was jetzt unsere Umgebung ist, unabhängig vom Anfang,
 		// aber wissend, wo wir hergekommen sind
-		if (!position.getNorthCellStatus().equals("WALL") && verlauf.peek() != 2) { // Norden ist keine Wand und wir
+		if (!zelle.getNorthCellStatus().equals("WALL") && verlauf.peek() != 2) { // Norden ist keine Wand und wir
 																					// kommen nicht aus dem Süden, im Sinne von wir kommen da grad her
 			return "go north";
-		} else if (!position.getEastCellStatus().equals("WALL") && verlauf.peek() != 3) {
+		} else if (!zelle.getEastCellStatus().equals("WALL") && verlauf.peek() != 3) {
 			return "go east";
-		} else if (!position.getSouthCellStatus().equals("WALL") && verlauf.peek() != 0) {
+		} else if (!zelle.getSouthCellStatus().equals("WALL") && verlauf.peek() != 0) {
 			return "go south";
-		} else if (!position.getWestCellStatus().equals("WALL") && verlauf.peek() != 1) {
+		} else if (!zelle.getWestCellStatus().equals("WALL") && verlauf.peek() != 1) {
 			return "go west";
 		
 		} else {

@@ -6,7 +6,7 @@ import de.vit.initialisierung.Spieler;
 import de.vit.initialisierung.Spielfeld;
 import de.vit.logik.Speicherlogik;
 import de.vit.typen.Koordinaten;
-import de.vit.typen.Position;
+import de.vit.typen.Zelle;
 
 public class ErsterBot {
 	/**
@@ -47,7 +47,7 @@ public class ErsterBot {
 //			String southCellStatus = input.nextLine();
 //			String westCellStatus = input.nextLine();
 
-			System.out.println(spieler.aktion(new Position(input.nextLine(), input.nextLine(), input.nextLine(), input.nextLine(),
+			System.out.println(spieler.aktion(new Zelle(input.nextLine(), input.nextLine(), input.nextLine(), input.nextLine(),
 					input.nextLine(), input.nextLine()),speicher));
 
 			// Debug Information ausgeben (optional möglich)

@@ -3,7 +3,7 @@ package de.vit.initialisierung;
 import de.vit.logik.Bewegungslogik;
 import de.vit.logik.Speicherlogik;
 import de.vit.typen.Koordinaten;
-import de.vit.typen.Position;
+import de.vit.typen.Zelle;
 
 public class Spieler extends Initialisierung {
 	/*
@@ -13,7 +13,7 @@ public class Spieler extends Initialisierung {
 	private final int playerId;
 	private final Spielfeld spielfeld;
 	private Koordinaten koordinaten;
-	private Position position;
+	private Zelle zelle;
 	private Speicherlogik speicher;
 
 	public Koordinaten getKoordinaten() {
@@ -24,12 +24,12 @@ public class Spieler extends Initialisierung {
 		this.koordinaten = koordinaten;
 	}
 
-	public Position getPosition() {
-		return position;
+	public Zelle getPosition() {
+		return zelle;
 	}
 
-	public void setPosition(Position position) {
-		this.position = position;
+	public void setPosition(Zelle zelle) {
+		this.zelle = zelle;
 	}
 
 	public int getPlayerId() {
@@ -41,9 +41,9 @@ public class Spieler extends Initialisierung {
 		this.koordinaten = koordinaten;
 		this.spielfeld = spielfeld;
 	}
-	public String aktion(Position position,Speicherlogik speicher) {
-		this.position = position;
-		String bewegung = Bewegungslogik.bewegung(this.position, this.koordinaten, this.getPlayerId(), speicher);
+	public String aktion(Zelle zelle,Speicherlogik speicher) {
+		this.zelle = zelle;
+		String bewegung = Bewegungslogik.bewegung(this.zelle, this.koordinaten, this.getPlayerId(), speicher);
 		return bewegung;
 	};
 	

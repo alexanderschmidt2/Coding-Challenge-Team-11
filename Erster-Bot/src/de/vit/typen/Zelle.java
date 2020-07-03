@@ -1,19 +1,22 @@
 package de.vit.typen;
 
-public class Position {
+public class Zelle {
 	// TODO: hier muss eine dicke Prüflogik mit gaaaaaaaaanz vielen Exceptions hin.
 	// Bitte merken, die Dozenten sind böse
 	// die Position ist eine eigene Klasse
+	
+	private Koordinaten koordinaten;
+	
 	private String lastActionsResult;
 	private String currentCellStatus;
 	private String northCellStatus;
 	private String eastCellStatus;
 	private String southCellStatus;
 	private String westCellStatus;
-	private boolean isVisited;
+	private int visited = 0;
 
 
-	public Position(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
+	public Zelle(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
 			String southCellStatus, String westCellStatus) {
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
@@ -21,6 +24,10 @@ public class Position {
 		this.eastCellStatus = eastCellStatus; // rechts //FINISCHED <playerID> 0
 		this.southCellStatus = southCellStatus; // unten
 		this.westCellStatus = westCellStatus; // links
+	}
+
+	public Zelle(Koordinaten koordinaten) {
+		// TODO Automatisch generierter Konstruktorstub
 	}
 
 	public String getLastActionsResult() {
