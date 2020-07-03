@@ -31,7 +31,7 @@ public abstract class Bewegungslogik {
 		if (position.getCurrentCellStatus().equals("FINISH " + playerId + " 0")) {
 			return "finish";
 		}
-
+		//FIXME: LOGIKFEHLER, sehr groß, ich weiß nicht wo
 		if (position.getLastActionsResult().equals("OK NORTH")) {
 			verlauf.push(0); // Norden unsere Letzte Aktion
 		} else if (position.getLastActionsResult().equals("OK EAST")) {
@@ -41,21 +41,21 @@ public abstract class Bewegungslogik {
 		} else if (position.getLastActionsResult().equals("OK WEST")) {
 			verlauf.push(3); // Westen unsere Letzte Aktion
 		} else if (position.getLastActionsResult().equals("OK")) {
-			verlauf.push(5);}
+			verlauf.push(5);}//5 Pushen, falls wir im ersten Turn sind
 		// Hier müssen wir prüfen, was jetzt unsere Umgebung ist, unabhängig vom Anfang,
 		// aber wissend, wo wir hergekommen sind
-		if (!position.getNorthCellStatus().equals("WALL") && verlauf.peek() != verlauf.peek()+2 % 3) { // Norden ist keine Wand und wir
+		if (!position.getNorthCellStatus().equals("WALL") && verlauf.peek() != 2) { // Norden ist keine Wand und wir
 																					// kommen nicht aus dem Süden, im Sinne von wir kommen da grad her
 			return "go north";
-		} else if (!position.getEastCellStatus().equals("WALL") && verlauf.peek() != verlauf.peek()+2 % 3) {
-			
-		} else if (!position.getSouthCellStatus().equals("WALL") && verlauf.peek() != verlauf.peek()+2 % 3) {
+		} else if (!position.getEastCellStatus().equals("WALL") && verlauf.peek() != 3) {
+			return "go east";
+		} else if (!position.getSouthCellStatus().equals("WALL") && verlauf.peek() != 0) {
 			return "go south";
-		} else if (!position.getWestCellStatus().equals("WALL") && verlauf.peek() != verlauf.peek()+2 % 3) {
+		} else if (!position.getWestCellStatus().equals("WALL") && verlauf.peek() != 1) {
 			return "go west";
+		
 		} else {
-			return kompass[verlauf.pop() + 2 % 3]; // Wir sind in einer Sackgasse und wir müssen zurück
+			return kompass[verlauf.pop() + 2 % 4]; // Wir sind in einer Sackgasse und wir müssen zurück
 		}
-		return "position"; 
 	}
 }
