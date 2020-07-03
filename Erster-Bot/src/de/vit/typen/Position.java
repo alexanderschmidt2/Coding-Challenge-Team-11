@@ -10,7 +10,7 @@ public class Position {
 	private String eastCellStatus;
 	private String southCellStatus;
 	private String westCellStatus;
-
+	private boolean isVisited;
 
 
 	public Position(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,

@@ -6,13 +6,15 @@ import de.vit.typen.Position;
 //Wir benötige eine Positionslogik die sich merkt, wo wir sind was unsere Zellen angeht
 public class Positionslogik {
 	//in einer Liste wird eine eindeutige Koordinate einer Position zugeordnet in Form einer Map
-	private List<Map<Koordinaten, Position>> hauptspeicher;
+	private Stack<Map<Koordinaten, Position>> hauptspeicher; //wenns hier drin ist, dann ist visited true
 
 	public List<Map<Koordinaten, Position>> getHauptspeicher() {
 		return hauptspeicher;
 	}
 
-	public void setHauptspeicher(List<Map<Koordinaten, Position>> hauptspeicher) {
+	public void setHauptspeicher(Stack<Map<Koordinaten, Position>> hauptspeicher) {
 		this.hauptspeicher = hauptspeicher;
+		
+		
 	}
 }

@@ -45,6 +45,7 @@ public class ErsterBot {
 //			String eastCellStatus = input.nextLine();
 //			String southCellStatus = input.nextLine();
 //			String westCellStatus = input.nextLine();
+			
 
 			System.out.println(spieler.aktion(new Position(input.nextLine(), input.nextLine(), input.nextLine(), input.nextLine(),
 					input.nextLine(), input.nextLine())));

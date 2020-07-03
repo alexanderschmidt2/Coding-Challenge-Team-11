@@ -20,4 +20,8 @@ public class Koordinaten {
 		X = x;
 		Y = y;
 	}
+	public void laufen(int wertX, int wertY) {
+		this.X = this.X + wertX;
+		this.Y = this.Y + wertY;
+	}
 }

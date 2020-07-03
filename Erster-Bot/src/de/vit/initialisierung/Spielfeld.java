@@ -7,7 +7,8 @@ public final class Spielfeld extends Initialisierung {
 	 */
 	int sizeX;
 	int sizeY;
-	int level;
+	int level; //welche cases sind in diesem Level überhaupt möglich
+	//level 1: FINSIH_PLAYERID_O; WALL; FLOOR
 	
 	public Spielfeld(int sizeX, int sizeY, int level) {
 		super();
@@ -15,4 +16,5 @@ public final class Spielfeld extends Initialisierung {
 		this.sizeY = sizeY;
 		this.level = level;
 	}
+
 }
