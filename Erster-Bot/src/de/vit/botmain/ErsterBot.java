@@ -2,30 +2,27 @@ package de.vit.botmain;
 
 import java.util.Scanner;
 
-import de.vit.initialisierung.Spieler;
-import de.vit.initialisierung.Spielfeld;
-import de.vit.logik.Speicherlogik;
-import de.vit.typen.Koordinaten;
-import de.vit.typen.Zelle;
+import de.vit.initialisierung.*;
+import de.vit.logik.*;
+import de.vit.typen.*;
 
 public class ErsterBot {
 	/**
-	 * Hauptmethode zum Ausführen des Bots
+	 * Hauptmethode zum Ausführen des Team11Bots
 	 *
-	 * @author Alexander Schmidt
-	 * @param args
+	 * @authors Alexander Schmidt, Franz Bogmann, Laura Fenzl und Constantin Graedtke
+	 * 
 	 */
 	public static void main(String[] args) {
-		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und
-		// Rundendaten liefert
-		Scanner input = new Scanner(System.in);
+		
+		Scanner input = new Scanner(System.in); // Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und Rundendaten liefert
 
 //		// INIT - Auslesen der Initialdaten
 //		// 1. Zeile: Maze Infos
 //		int sizeX = input.nextInt(); // X-Groesse des Spielfeldes (Breite)
 //		int sizeY = input.nextInt(); // Y-Groesse des Spielfeldes (Hoehe)
 //		int level = input.nextInt(); // Level des Matches 
-		Spielfeld spielfeld = new Spielfeld(new Koordinaten(input.nextInt(), input.nextInt()), input.nextInt());
+		Spielfeld spielfeld = new Spielfeld(new Koordinaten(input.nextInt(), input.nextInt()), input.nextInt()); // Die Information über die Größe und das Level des Maze werden im Spielfeld hinterlegt
 		input.nextLine(); // Beenden der ersten Zeile
 
 		// 2. Zeile: Player Infos

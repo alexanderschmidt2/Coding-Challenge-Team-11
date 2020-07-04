@@ -10,21 +10,21 @@ public final class Spielfeld extends Initialisierung {
 	 * Die Spielfeldinformationen sind Fest und dürfen nicht länger verändert werden
 	 */
 	// FIXME initialsierung über Koordinaten
-	private final Koordinaten größe;
+	private final Koordinaten groeße;
 	private final int level;
 
 	private List<Zelle> haupt_karte = new ArrayList<>(); //Wir können das hier später in den Speicher auslagern, noch soll es aber im Spielfeld bleiben
 	// welche cases sind in diesem Level überhaupt möglich
 	// level 1: FINSIH_PLAYERID_O; WALL; FLOOR
 
-	public Spielfeld(Koordinaten größe, int level) {
+	public Spielfeld(Koordinaten groeße, int level) {
 		super();
-		this.größe = größe;
+		this.groeße = groeße;
 		this.level = level;
 	}
 
-	public Koordinaten getGröße() {
-		return größe;
+	public Koordinaten getGroeße() {
+		return groeße;
 	}
 
 	public int getLevel() {
@@ -32,8 +32,8 @@ public final class Spielfeld extends Initialisierung {
 	}
 
 	private void haupt_karte_generieren() {
-		for (int i = 0; i < this.getGröße().getX(); i++) {
-			for (int j = 0; j < this.getGröße().getY(); j++) {
+		for (int i = 0; i < this.getGroeße().getX(); i++) {
+			for (int j = 0; j < this.getGroeße().getY(); j++) {
 				this.haupt_karte.add(new Zelle(new Koordinaten(i, j)));
 			}
 		}

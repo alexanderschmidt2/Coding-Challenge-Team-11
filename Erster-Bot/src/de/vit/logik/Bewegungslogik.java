@@ -9,10 +9,8 @@ import de.vit.typen.Zelle;
 public abstract class Bewegungslogik {
 	//TODO: die Indexberechnung gehört in Positionslogik oder so, aber übersichtshalber mal hier
 	public static int zellenindex_berechnen(Koordinaten koordinaten, Spielfeld aktuelle_karte) {
-		return (aktuelle_karte.getGröße().getX()*koordinaten.getY())+koordinaten.getX()+1;
+		return (aktuelle_karte.getGroeße().getX()*koordinaten.getY())+koordinaten.getX()+1;
 	}
-	
-	
 	
 	
 	public static String bewegung(Spieler spieler, Spielfeld aktuelle_karte) {

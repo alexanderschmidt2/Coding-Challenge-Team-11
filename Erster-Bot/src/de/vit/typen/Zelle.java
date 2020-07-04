@@ -5,12 +5,28 @@ public class Zelle {
 	// Bitte merken, die Dozenten sind böse
 	// die Position ist eine eigene Klasse
 
-	private Koordinaten koordinaten;
-
-	private String lastActionsResult;
-
-	private String currentCellStatus; // WALL oder so
-	private int visited = 0; // wie oft besucht
+	private String lastActionsResult; // Das Ergebnis der letzten Aktion/Bewegung
+	private String currentCellStatus; // Der Status der Zelle selbst
+	private String northCellStatus; // Die Zelle kennt den Status der Zelle im Norden,
+	private String eastCellStatus; // im Osten,
+	private String southCellStatus; // im Süden,
+	private String westCellStatus; // und im Westen von ihr.
+	private Koordinaten koordinaten; // Einer konkreten Zelle sind eindeutig Koordinaten (x, y) zugeordnet
+	private int visited = 0; // Zähler für Anzahl der "Zellbegehungen". Jede Zelle ist von Beginn an als "nicht besucht" definiert.
+	
+	/**
+	 * Eine Zelle wird mit diesem Konstruktor initialisiert:
+	 * Welche Koordinaten eine Zelle besitzt wird im Speicher, der Klasse Speicherlogik, hinterlegt
+	 */
+	
+	public Zelle(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus, String southCellStatus, String westCellStatus) {
+		this.lastActionsResult = lastActionsResult;
+		this.currentCellStatus = currentCellStatus;
+		this.northCellStatus = northCellStatus;
+		this.eastCellStatus = eastCellStatus;
+		this.southCellStatus = southCellStatus;
+		this.westCellStatus = westCellStatus;
+	}
 
 	public Koordinaten getKoordinaten() {
 		return koordinaten;
@@ -26,21 +42,6 @@ public class Zelle {
 
 	public void setVisited(int visited) {
 		this.visited = visited;
-	}
-
-	private String northCellStatus;
-	private String eastCellStatus;
-	private String southCellStatus;
-	private String westCellStatus;
-
-	public Zelle(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
-			String southCellStatus, String westCellStatus) {
-		this.lastActionsResult = lastActionsResult;
-		this.currentCellStatus = currentCellStatus;
-		this.northCellStatus = northCellStatus; // oben //Objekt Wand
-		this.eastCellStatus = eastCellStatus; // rechts //FINISCHED <playerID> 0
-		this.southCellStatus = southCellStatus; // unten
-		this.westCellStatus = westCellStatus; // links
 	}
 
 	public String getLastActionsResult() {
