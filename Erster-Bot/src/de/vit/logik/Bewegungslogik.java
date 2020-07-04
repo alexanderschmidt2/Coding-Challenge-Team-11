@@ -19,7 +19,7 @@ public abstract class Bewegungslogik {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		Stack<Integer> verlauf = new Stack<>();
-		if (aktuelle_zelle.getCurrentCellStatus().equals("FINISH " + spieler.getPlayerId() + " 0")) {
+		if (spieler.getAktuelleZelle().getCurrentCellStatus().equals("FINISH " + spieler.getPlayerId() + " 0")) {
 			return "finish";
 		}
 		//FIXME: LOGIKFEHLER,hier muss noch implementiert werden, anhand von "visited" der Klasse Zelle, dass wir auf keinen Fall 2x zurückgehen dürfen
@@ -41,6 +41,7 @@ public abstract class Bewegungslogik {
 			//noch ein Visited für die aktielle Zelle dazurechnen
 
 		if (!spieler.getAktuelleZelle().getNorthCellStatus().equals("WALL") && verlauf.peek() != 2) {		
+			return "go north";
 		} else if (!spieler.getAktuelleZelle().getEastCellStatus().equals("WALL") && verlauf.peek() != 3) {
 			return "go east";
 		} else if (!spieler.getAktuelleZelle().getSouthCellStatus().equals("WALL") && verlauf.peek() != 0) {
