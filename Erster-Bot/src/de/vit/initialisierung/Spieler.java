@@ -13,8 +13,8 @@ public class Spieler extends Initialisierung {
 	private final int playerId;
 	private final Spielfeld spielfeld;
 	private Koordinaten koordinaten;
-	private Zelle zelle;
-	private Speicherlogik speicher;
+	private Zelle aktuelle_zelle; //TODO: aktuelle Zellenkoordinaten stimmen mit den Spielerkoordinaten überein
+
 
 	public Koordinaten getKoordinaten() {
 		return koordinaten;
@@ -24,12 +24,12 @@ public class Spieler extends Initialisierung {
 		this.koordinaten = koordinaten;
 	}
 
-	public Zelle getPosition() {
-		return zelle;
+	public Zelle getAktuelleZelle() {
+		return aktuelle_zelle;
 	}
 
-	public void setPosition(Zelle zelle) {
-		this.zelle = zelle;
+	public void setAktuelleZelle(Zelle zelle) {
+		this.aktuelle_zelle = zelle;
 	}
 
 	public int getPlayerId() {
@@ -41,9 +41,9 @@ public class Spieler extends Initialisierung {
 		this.koordinaten = koordinaten;
 		this.spielfeld = spielfeld;
 	}
-	public String aktion(Zelle zelle,Speicherlogik speicher) {
-		this.zelle = zelle;
-		String bewegung = Bewegungslogik.bewegung(this.zelle, this.koordinaten, this.getPlayerId(), speicher);
+	public String aktion(Zelle aktuelle_zelle,Spielfeld karte) {//Das, was sich aktualisiert hat bzw. auf dem aktuellen Stand bleiben muss //TODO: prüfen, ob wir wirklich 																														//Spielfeld brauchen
+		this.aktuelle_zelle = aktuelle_zelle;
+		String bewegung = Bewegungslogik.bewegung(this, karte);
 		return bewegung;
 	};
 	

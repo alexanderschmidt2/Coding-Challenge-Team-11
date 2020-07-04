@@ -25,7 +25,7 @@ public class ErsterBot {
 //		int sizeX = input.nextInt(); // X-Groesse des Spielfeldes (Breite)
 //		int sizeY = input.nextInt(); // Y-Groesse des Spielfeldes (Hoehe)
 //		int level = input.nextInt(); // Level des Matches 
-		Spielfeld spielfeld = new Spielfeld(input.nextInt(), input.nextInt(), input.nextInt());
+		Spielfeld spielfeld = new Spielfeld(new Koordinaten(input.nextInt(), input.nextInt()), input.nextInt());
 		input.nextLine(); // Beenden der ersten Zeile
 
 		// 2. Zeile: Player Infos
@@ -48,7 +48,7 @@ public class ErsterBot {
 //			String westCellStatus = input.nextLine();
 
 			System.out.println(spieler.aktion(new Zelle(input.nextLine(), input.nextLine(), input.nextLine(), input.nextLine(),
-					input.nextLine(), input.nextLine()),speicher));
+					input.nextLine(), input.nextLine()),spielfeld));
 
 			// Debug Information ausgeben (optional möglich)
 			// System.err.println("Ergebnis Vorrunde: " + lastActionsResult);

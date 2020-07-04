@@ -4,17 +4,34 @@ public class Zelle {
 	// TODO: hier muss eine dicke Prüflogik mit gaaaaaaaaanz vielen Exceptions hin.
 	// Bitte merken, die Dozenten sind böse
 	// die Position ist eine eigene Klasse
-	
+
 	private Koordinaten koordinaten;
-	
+
 	private String lastActionsResult;
-	private String currentCellStatus;
+
+	private String currentCellStatus; // WALL oder so
+	private int visited = 0; // wie oft besucht
+
+	public Koordinaten getKoordinaten() {
+		return koordinaten;
+	}
+
+	public void setKoordinaten(Koordinaten koordinaten) {
+		this.koordinaten = koordinaten;
+	}
+
+	public int getVisited() {
+		return visited;
+	}
+
+	public void setVisited(int visited) {
+		this.visited = visited;
+	}
+
 	private String northCellStatus;
 	private String eastCellStatus;
 	private String southCellStatus;
 	private String westCellStatus;
-	private int visited = 0;
-
 
 	public Zelle(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus,
 			String southCellStatus, String westCellStatus) {
@@ -24,10 +41,6 @@ public class Zelle {
 		this.eastCellStatus = eastCellStatus; // rechts //FINISCHED <playerID> 0
 		this.southCellStatus = southCellStatus; // unten
 		this.westCellStatus = westCellStatus; // links
-	}
-
-	public Zelle(Koordinaten koordinaten) {
-		// TODO Automatisch generierter Konstruktorstub
 	}
 
 	public String getLastActionsResult() {
