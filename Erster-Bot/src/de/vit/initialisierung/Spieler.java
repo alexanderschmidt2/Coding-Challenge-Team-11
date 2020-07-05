@@ -11,7 +11,7 @@ public class Spieler extends Initialisierung {
 	 * 
 	 */
 	private final int playerId;
-	private final Spielfeld spielfeld;
+	private Spielfeld aktuelle_karte;
 	private Koordinaten koordinaten;
 	private Zelle aktuelle_zelle; //TODO: aktuelle Zellenkoordinaten stimmen mit den Spielerkoordinaten überein
 
@@ -39,11 +39,12 @@ public class Spieler extends Initialisierung {
 	public Spieler(int playerId, Koordinaten koordinaten, Spielfeld spielfeld) {
 		this.playerId = playerId;
 		this.koordinaten = koordinaten;
-		this.spielfeld = spielfeld;
+		this.aktuelle_karte = spielfeld;
 	}
-	public String aktion(Zelle aktuelle_zelle,Spielfeld karte) {//Das, was sich aktualisiert hat bzw. auf dem aktuellen Stand bleiben muss //TODO: prüfen, ob wir wirklich 																														//Spielfeld brauchen
+	public String aktion(Zelle aktuelle_zelle,Spielfeld aktuelle_karte) {//Das, was sich aktualisiert hat bzw. auf dem aktuellen Stand bleiben muss //TODO: prüfen, ob wir wirklich 																														//Spielfeld brauchen
 		this.aktuelle_zelle = aktuelle_zelle;
-		String bewegung = Bewegungslogik.bewegung(this, karte);
+		this.aktuelle_karte = aktuelle_karte;
+		String bewegung = Bewegungslogik.bewegung(this, aktuelle_karte); //Achtung, da wir auch hier dem spieler die Aktuellste uns bekannte Kartenversion zuordnen würde this reichen
 		return bewegung;
 	};
 	

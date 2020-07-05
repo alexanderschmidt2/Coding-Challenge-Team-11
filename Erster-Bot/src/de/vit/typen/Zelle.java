@@ -20,12 +20,16 @@ public class Zelle {
 	 */
 	
 	public Zelle(String lastActionsResult, String currentCellStatus, String northCellStatus, String eastCellStatus, String southCellStatus, String westCellStatus) {
-		this.lastActionsResult = lastActionsResult;
+		this.lastActionsResult = lastActionsResult; //hier bleiben die koordinaten Null
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
 		this.eastCellStatus = eastCellStatus;
 		this.southCellStatus = southCellStatus;
 		this.westCellStatus = westCellStatus;
+	}
+
+	public Zelle(Koordinaten koordinaten2) {//ist für die Generierung der Karte notwendig, hier werden die anderen Sachen Null gesetzt
+
 	}
 
 	public Koordinaten getKoordinaten() {
@@ -40,8 +44,8 @@ public class Zelle {
 		return visited;
 	}
 
-	public void setVisited(int visited) {
-		this.visited = visited;
+	public void setVisited(int index_des_besuchs) {
+		this.visited = this.visited + index_des_besuchs;
 	}
 
 	public String getLastActionsResult() {
