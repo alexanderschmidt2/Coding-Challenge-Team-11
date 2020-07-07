@@ -1,10 +1,11 @@
-package de.vit.botmain;
+package de.vit.bot;
 
 import java.util.Scanner;
 import de.vit.karte.*;
 import de.vit.karte.felder.*;
+import de.vit.logik.Bewegung;
 
-public class ErsterBot {
+public class Team11Bot {
 	/**
 	 * Hauptmethode zum Ausführen des Team11Bots
 	 *
@@ -79,6 +80,7 @@ public class ErsterBot {
 			// Debug Information ausgeben (optional möglich)
 
 			// Rundenaktion ausgeben
+			//System.out.println(Bewegung.bewegung(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus));
 
 		}
 		// Eingabe schliessen (letzte Aktion)
