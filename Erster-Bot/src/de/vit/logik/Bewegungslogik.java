@@ -1,8 +1,6 @@
-package de.vit.logik;
+/*package de.vit.logik;
 import java.util.*;
 
-import de.vit.initialisierung.Spieler;
-import de.vit.initialisierung.Spielfeld;
 import de.vit.typen.Koordinaten;
 import de.vit.typen.Zelle;
 
@@ -69,4 +67,4 @@ public abstract class Bewegungslogik{
 																										 
 		}
 	}
-}
+}*/
