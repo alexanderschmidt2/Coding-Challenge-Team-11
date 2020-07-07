@@ -1,4 +1,4 @@
-package de.vit.Team11.development;
+package de.vit.logik;
 /**
  * @author Franz
  *
