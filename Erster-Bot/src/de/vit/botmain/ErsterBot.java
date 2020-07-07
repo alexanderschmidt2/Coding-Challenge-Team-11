@@ -18,6 +18,7 @@ public class ErsterBot {
 		int sizeX = input.nextInt(); // X-Groesse des Spielfeldes (Breite)
 		int sizeY = input.nextInt(); // Y-Groesse des Spielfeldes (Hoehe)
 		int level = input.nextInt(); // Level des Matches
+		
 		input.nextLine(); // Beenden der ersten Zeile
 		// 2. Zeile: Player Infos
 		int playerId = input.nextInt(); // id dieses Players / Bots
