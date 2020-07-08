@@ -5,14 +5,12 @@ package de.vit.karte.felder;
  * @author Laura
  *pro Dokument wird eine weitere Instanz angelegt mit entsprechender Nummer
  */
-public class Dokument extends Feld {
-	private int playerId;
-	private int Nr;
+public class Formular extends Feld {
+	int Nr;
 	
-	public Dokument(int playerId, int Nr)
+	public Formular()
 	{
 		super();
-		this.name = "FORM " + playerId + " " + Nr;
 	}
 
 }
