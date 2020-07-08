@@ -1,6 +1,7 @@
 package de.vit.logik;
 
 import de.vit.karte.navigierbar;
+import de.vit.karte.felder.*;
 
 /**
  * @author Franz
@@ -11,7 +12,24 @@ import de.vit.karte.navigierbar;
  *         (Aktion) zurueckgibt.
  * 
  */
+
 public abstract class Bewegung {
+
+	public static boolean istFinishMoeglich(Feld aktuellesFeld, navigierbar aktuelleKarte) {
+		if (aktuellesFeld instanceof Sachbearbeiter) {
+			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
+			if (aktuellesSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
+					&& aktuellesSachbearbeiterFeld.getFormCount() == aktuelleKarte.getAktuellerFormCount()) {
+				return true;
+			} else
+				return false;
+		} else {
+			return false;
+		}
+	};
+	public void exploration(navigierbar aktuelleKarte) {
+		aktuelleKarte.getAktuellesFeld().setEntfernung(0);
+	};
 
 	/**
 	 * Die Methode bewegung() soll die Aktion des Bots je Runde in der main Methode
@@ -22,18 +40,7 @@ public abstract class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 
-	public static String bewegung(navigierbar aktuelleKarte) {
-
-		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
-		// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
-		// Auch bei erneutem Besuchen der Zellen, sollen die Zellinformationen i.V.m.
-		// den Koordinaten aktualisiert werden, falls Aenderungen in der Map entstehen.
-
-		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Entfernung fuer
-		// Entfernungskarte hinterlegen, angefangen mit 0 fuer currentCell
-
-		// Vor der Bewegung: Prioritaetsliste fuer Abfragen, bevor die Bewegungslogik
-		// greift um eine Bewegung zu machen!
+	public static String bewegung(navigierbar spielKarte) {
 
 		// 1.) Pruefen ob FINISH <playerId> <formCount> auf currentCellStatus equals
 		// true, dann return "finish".
@@ -44,22 +51,37 @@ public abstract class Bewegung {
 		// Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount>
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
-	
-	
-			}
-			// Es ist ein NOT OK
 
-			// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
-			// north/west/south/eastCellStatus (hier logisches ODER) equals true, dann gehe
-			// dahin, damit 1.) greift.
-			// Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in
-			// "Spielinformationen" abgespeichert werden.
-			// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
-			// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
-			// <formCount> haben.
+		if (istFinishMoeglich(spielKarte.getAktuellesFeld(), spielKarte)) { // FINISH <playerId> <formCount> //Basically 5x prüfen, ob finish möglich
+			return "finish";
 
-			// 3.) Pruefen ob
+		}
+		return "c";
 
-		
-	
+	}
+
+	// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
+	// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
+	// Auch bei erneutem Besuchen der Zellen, sollen die Zellinformationen i.V.m.
+	// den Koordinaten aktualisiert werden, falls Aenderungen in der Map entstehen.
+
+	// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Entfernung fuer
+	// Entfernungskarte hinterlegen, angefangen mit 0 fuer currentCell
+
+	// Vor der Bewegung: Prioritaetsliste fuer Abfragen, bevor die Bewegungslogik
+	// greift um eine Bewegung zu machen!
+
+	// Es ist ein NOT OK
+
+	// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
+	// north/west/south/eastCellStatus (hier logisches ODER) equals true, dann gehe
+	// dahin, damit 1.) greift.
+	// Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in
+	// "Spielinformationen" abgespeichert werden.
+	// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
+	// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
+	// <formCount> haben.
+
+	// 3.) Pruefen ob
+
 }

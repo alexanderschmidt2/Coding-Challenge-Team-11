@@ -82,6 +82,22 @@ public class Karte implements navigierbar {
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld füllt
 	 */
+	public void entfernungenAktualisieren() {
+		//Wir brauchen eine Methode, die uns die Nachbarn liefern abhängig von der aktuellen Koordinate. Entweder Nebelzellen oder bereits implementierteZellen
+		boolean aenderung;
+
+		do{
+			aenderung = false;
+			for (int x = 0; x < this.getSizeX(); x++) {
+				for (int y = 0; y < this.getSizeY(); y++) {
+					if(aktuelleKarte[x][y].getEntfernung())
+				}
+			}
+		}
+		
+	}
+	
+	
 	public void feldHinzufuegen(int x, int y, String typ) {
 		switch (typ) {
 		case ("FLOOR"):

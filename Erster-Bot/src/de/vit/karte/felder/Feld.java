@@ -9,7 +9,7 @@ import de.vit.karte.*;
 public abstract class Feld {
 	//protected, da erst in der Unterklasse initialisiert
 	protected String name;
-	private Koordinate position;
+	protected String typ;
 	//wie oft bin ich bereits über dieses Feld gelaufen?
 	private int besuche = 0;
 	private int entfernung = 500000000;
@@ -21,7 +21,22 @@ public abstract class Feld {
 	public String getName() {
 		return name;
 	}
+	public String getTyp() {
+		return typ;
+	};
 
+	public int getBesuche() {
+		return besuche;
+	}
+	public void setBesuche(int besuche) {
+		this.besuche = besuche;
+	}
+	public int getEntfernung() {
+		return entfernung;
+	}
+	public void setEntfernung(int entfernung) {
+		this.entfernung = entfernung;
+	}
 	/**
 	 * die Koordinate wird mithilfe des Setters gesetzt, da beim Sachbearbeiter die Koordinate zunächst nicht bekannt ist
 	 */
