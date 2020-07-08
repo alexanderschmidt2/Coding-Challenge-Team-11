@@ -11,13 +11,31 @@ import de.vit.botmain.*;
 public class Karte {
 	private int sizeX;
 	private int sizeY;
-	//das eigentliche Spielfeld mit allen Feldern
-	private Feld[] map;
+	/**
+	 * das eigentliche Spielfeld mit allen Feldern
+	 * die erste Array-Ebene bezeichnet die x-Achse
+	 * die zweite Array-Ebene bezeichnet die y-Achse
+	 */
+	private Feld[] [] karte;
 	//die momentane Position, wird regelmäßig aktualisiert
-	private Koordinate aktuellePosition;
+	private int [] aktuellePosition = new int [2];
 	
-	public Feld[] getMap() {
-		return map;
+	
+	//Getter und Setter
+	public int[] getAktuellePosition() {
+		return aktuellePosition;
+	}
+
+	public void setAktuellePosition(int x, int y) {
+		this.aktuellePosition[0] = x;
+		this.aktuellePosition[1] = y;
+		
+	}
+
+	//TODO grafische ausgabe der Karte als String
+	//mit art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen sehen möchte
+	public String getMap(String art) {
+		return "bla";
 	}
 	
 	/**
@@ -31,8 +49,9 @@ public class Karte {
 	{
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
-		this.map = new Feld[sizeX*sizeY];
-		this.aktuellePosition = new Koordinate(startX, startY);
+		this.karte = new Feld[sizeX] [sizeY];
+		this.aktuellePosition[0] = startX;
+		this.aktuellePosition[1] = startY;
 	}
 
 	/**
@@ -41,11 +60,7 @@ public class Karte {
 	public void feldHinzufügen() {
 		//TODO: Karte mit neuen Instanzen füllen
 	}
-
-	public Koordinate getAktuellePosition() {
-		return aktuellePosition;
-	}
-
+	
 	/**
 	 * Methode, die die aktuelle Position aufgrund der LastActionResult bestimmt
 	 * @param bewegung ist je nach Level der geslicte Ausgabestring der LastActionResult
@@ -55,20 +70,20 @@ public class Karte {
 		switch (lastActionsResult)
 		{
 		case "OK NORTH":
-			aktuellePosition.setKoordinate(aktuellePosition.getX(), ((aktuellePosition.getY() - 1) + sizeY) % sizeY);
+			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + sizeY) % sizeY);
 			break;
 		case "OK EAST":
-			aktuellePosition.setKoordinate(((aktuellePosition.getX() + 1) + sizeX) % sizeX, aktuellePosition.getY());
+			this.setAktuellePosition(((aktuellePosition[0] + 1) + sizeX) % sizeX, aktuellePosition[1]);
 			break;
 		case "OK SOUTH":
-			aktuellePosition.setKoordinate(aktuellePosition.getX(), ((aktuellePosition.getY() + 1) + sizeY) % sizeY);
+			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + sizeY) % sizeY);
 			break;
 		case "OK WEST":
-			aktuellePosition.setKoordinate(((aktuellePosition.getX() - 1) + sizeX) % sizeX, aktuellePosition.getY());
+			this.setAktuellePosition(((aktuellePosition[0] - 1) + sizeX) % sizeX, aktuellePosition[1]);
 			break;
 		}
 	}
-
+	
 
 
 }

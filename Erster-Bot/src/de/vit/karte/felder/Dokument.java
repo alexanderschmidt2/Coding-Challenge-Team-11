@@ -6,7 +6,8 @@ package de.vit.karte.felder;
  *pro Dokument wird eine weitere Instanz angelegt mit entsprechender Nummer
  */
 public class Dokument extends Feld {
-	int Nr;
+	private int playerId;
+	private int Nr;
 	
 	public Dokument(int playerId, int Nr)
 	{

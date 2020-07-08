@@ -1,8 +1,8 @@
 package de.vit.karte.felder;
 
-public class Floor extends Feld {
+public class Boden extends Feld {
 
-	public Floor()
+	public Boden()
 	{
 		super();
 		this.name = "FLOOR";

@@ -48,7 +48,7 @@ public class ErsterBot {
 		Sachbearbeiter ziel = new Sachbearbeiter(playerId);
 
 		// TURN (Wiederholung je Runde notwendig)
-		while (true) {
+		while (input.hasNext()) {
 			// Rundeninformationen auslesen
 			/*String lastActionsResult = input.nextLine();
 			String currentCellStatus = input.nextLine();
@@ -69,10 +69,7 @@ public class ErsterBot {
 			//und was die letzte Aktion ergeben hat
 			
 			//1. eigene Position aktualisieren (überflüssig bei erstem Zug), den "Besucht-Zähler" in Feld hochsetzen
-			karte1.aktualisierePosition1(lastActionsResult);
-			System.out.println(karte1.getAktuellePosition().getX());
-			System.out.println(karte1.getAktuellePosition().getY());
-			break;
+
 			
 			//2. die neuen entdeckten Felder der Karte hinzufügen, dabei prüfen, ob "entdecktes" Feld nicht schon existiert
 
