@@ -8,13 +8,31 @@ import de.vit.karte.felder.*;
  *         Koordinaten beinhaltet
  */
 public class Karte {
-	private final Koordinate groesse;
+	private final int sizeX;
+	private final int sizeY;
 	private Feld[][] aktuelleKarte;
 	// das eigentliche Spielfeld mit allen Feldern
 	private final int level;
 	private final int playerId;
 	// tempor‰r
-	private Koordinate start;
+	private final int startX;
+	private final int startY;
+	public int getSizeX() {
+		return sizeX;
+	}
+
+	public int getSizeY() {
+		return sizeY;
+	}
+
+	public int getStartX() {
+		return startX;
+	}
+
+	public int getStartY() {
+		return startY;
+	}
+
 	// die momentane Position, wird regelm‰ﬂig aktualisiert
 	private Koordinate aktuellePosition;
 
@@ -27,17 +45,19 @@ public class Karte {
 	 * @param startX Startposition des Bots auf der x-Achse
 	 * @param startY Startposition des Bots auf der y-Achse
 	 */
-	public Karte(Koordinate groesse, int level, int playerId, Koordinate start) {
-		this.groesse = groesse;
+	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
 		this.level = level;
 		this.playerId = playerId;
-		this.start = start;
+		this.startX = startX;
+		this.startY = startY;
 		// this.aktuellePosition = new Koordinate(startX, startY);
 	}
 
 	public void karteGenerieren() {
-		for (int i = 0; i < this.getGroesse().getX(); i++) {
-			for (int j = 0; i < this.getGroesse().getY(); j++) {
+		for (int i = 0; i < this.getSizeX(); i++) {
+			for (int j = 0; i < this.getSizeY(); j++) {
 				this.aktuelleKarte[i][j] = new Nebel();
 			}
 		}
@@ -49,18 +69,6 @@ public class Karte {
 
 	public void setAktuelleKarte(Feld[][] aktuelleKarte) {
 		this.aktuelleKarte = aktuelleKarte;
-	}
-
-	public Koordinate getStart() {
-		return start;
-	}
-
-	public void setStart(Koordinate start) {
-		this.start = start;
-	}
-
-	public Koordinate getGroesse() {
-		return groesse;
 	}
 
 	public int getLevel() {
