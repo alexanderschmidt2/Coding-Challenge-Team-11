@@ -1,5 +1,6 @@
 package de.vit.logik;
 
+
 import de.vit.karte.navigierbar;
 
 /**
@@ -12,7 +13,7 @@ import de.vit.karte.navigierbar;
  * 
  */
 public abstract class Bewegung {
-	static navigierbar aktuelle_karte;
+	
 
 	/**
 	 * Die Methode bewegung() soll die Aktion des Bots je Runde in der main Methode
@@ -24,7 +25,7 @@ public abstract class Bewegung {
 	 */
 
 	public static String bewegung(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus) {
+			String eastCellStatus, String southCellStatus, String westCellStatus, navigierbar aktuelleKarte) {
 
 		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
 		// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
@@ -47,10 +48,10 @@ public abstract class Bewegung {
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
 		String temp = "go north";
-		switch (aktuelle_karte.getLevel()) {
+		switch (aktuelleKarte.getLevel()) {
 		case (1):
 			temp = "go west";
-			System.err.println("Unser Level ist "+aktuelle_karte.getLevel());
+			System.err.println("Unser Level ist "+aktuelleKarte.getLevel());
 		}
 		return temp;
 		// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf

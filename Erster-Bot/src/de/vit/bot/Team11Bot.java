@@ -42,11 +42,10 @@ public class Team11Bot {
 				String southCellStatus = input.nextLine();
 				String westCellStatus = input.nextLine();
 				
-				Bewegung.bewegung(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
+				System.out.println(Bewegung.bewegung(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus, karte));
 				
 				
 				// Rundenaktion ausgeben
-				System.out.println("go west");
 			}
 			
 			// Eingabe schliessen (letzte Aktion)

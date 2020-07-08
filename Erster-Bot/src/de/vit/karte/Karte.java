@@ -88,6 +88,7 @@ public class Karte implements navigierbar{
 	 */
 	public void feldHinzufuegen() {
 		// TODO: Karte mit neuen Instanzen füllen
+		
 	}
 
 	public Koordinate getAktuellePosition() {
