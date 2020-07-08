@@ -4,4 +4,5 @@ public interface navigierbar {
 	public int getLevel();
 	public int getStartX();
 	public int getStartY();
+	public void feldHinzufuegen();
 }
