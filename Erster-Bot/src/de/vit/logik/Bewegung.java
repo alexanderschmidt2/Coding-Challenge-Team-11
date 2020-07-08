@@ -1,6 +1,5 @@
 package de.vit.logik;
 
-
 import de.vit.karte.navigierbar;
 
 /**
@@ -13,7 +12,6 @@ import de.vit.karte.navigierbar;
  * 
  */
 public abstract class Bewegung {
-	
 
 	/**
 	 * Die Methode bewegung() soll die Aktion des Bots je Runde in der main Methode
@@ -24,8 +22,7 @@ public abstract class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 
-	public static String bewegung(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus, navigierbar aktuelleKarte) {
+	public static String bewegung(navigierbar aktuelleKarte) {
 
 		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
 		// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
@@ -47,46 +44,22 @@ public abstract class Bewegung {
 		// Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount>
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
-		String temp = "go north";
-		switch (aktuelleKarte.getLevel()) {
-		case (1):
-			if(Trefferlogik.beeinhaltet(lastActionsResult, "OK")) {
-				if(Trefferlogik.beeinhaltet(lastActionsResult, "NORTH")) {
-					aktuelleKarte.feldHinzufuegen();
-				}
-				else if(Trefferlogik.beeinhaltet(lastActionsResult, "EAST")) {
-					aktuelleKarte.feldHinzufuegen();
-				}
-				else if(Trefferlogik.beeinhaltet(lastActionsResult, "SOUTH")) {
-					aktuelleKarte.feldHinzufuegen();
-				}
-				else if(Trefferlogik.beeinhaltet(lastActionsResult, "WEST")) {
-					aktuelleKarte.feldHinzufuegen();
-				}
-				else {
-					//TODO: Koordinaten holen, erste Zelle setzen gem. der geholten Koordinaten
-					//TODO: Koordinaten berechnen für die jeweiligen Nachbarn
-					//TODO: Entfernung anpassen, meine Zelle 0, Rest Nachbar+1
-					
-				};
-				
+	
+	
 			}
-			else if(Trefferlogik.beeinhaltet(lastActionsResult, "NOK")) {
-				temp = "go north";
-			}
-		}
-		return temp;
-		// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
-		// north/west/south/eastCellStatus (hier logisches ODER) equals true, dann gehe
-		// dahin, damit 1.) greift.
-		// Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in
-		// "Spielinformationen" abgespeichert werden.
-		// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
-		// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
-		// <formCount> haben.
+			// Es ist ein NOT OK
 
-		// 3.) Pruefen ob
+			// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
+			// north/west/south/eastCellStatus (hier logisches ODER) equals true, dann gehe
+			// dahin, damit 1.) greift.
+			// Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in
+			// "Spielinformationen" abgespeichert werden.
+			// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
+			// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
+			// <formCount> haben.
 
-	}
+			// 3.) Pruefen ob
 
+		
+	
 }

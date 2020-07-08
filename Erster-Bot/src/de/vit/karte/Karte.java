@@ -7,16 +7,16 @@ import de.vit.karte.felder.*;
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
  *         Koordinaten beinhaltet
  */
-public class Karte implements navigierbar{
+//karte muss sich selbst aktualisieren
+public class Karte implements navigierbar {
 	private final int sizeX;
 	private final int sizeY;
 	private Feld[][] aktuelleKarte;
 	// das eigentliche Spielfeld mit allen Feldern
 	private final int level;
 	private final int playerId;
-	// temporär
-	private final int startX;
-	private final int startY;
+	private int[] aktuellePosition;
+
 	public int getSizeX() {
 		return sizeX;
 	}
@@ -24,45 +24,6 @@ public class Karte implements navigierbar{
 	public int getSizeY() {
 		return sizeY;
 	}
-
-	public int getStartX() {
-		return startX;
-	}
-
-	public int getStartY() {
-		return startY;
-	}
-
-	// die momentane Position, wird regelmäßig aktualisiert
-	private Koordinate aktuellePosition;
-
-	/**
-	 * erstellt Spielfeld entsprechend der übergebenen Größe des Spielfelds und
-	 * Startposition des Bots
-	 * 
-	 * @param sizeX  Größe des Spielfelds in der horizontalen
-	 * @param sizeY  Größe des Spielfelds in der vertikalen
-	 * @param startX Startposition des Bots auf der x-Achse
-	 * @param startY Startposition des Bots auf der y-Achse
-	 */
-	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		this.level = level;
-		this.playerId = playerId;
-		this.startX = startX;
-		this.startY = startY;
-		// this.aktuellePosition = new Koordinate(startX, startY);
-	}
-
-	public void karteGenerieren() {
-		for (int i = 0; i < this.getSizeX(); i++) {
-			for (int j = 0; i < this.getSizeY(); j++) {
-				this.aktuelleKarte[i][j] = new Nebel();
-			}
-		}
-	};
-
 	public Feld[][] getAktuelleKarte() {
 		return aktuelleKarte;
 	}
@@ -79,19 +40,57 @@ public class Karte implements navigierbar{
 		return playerId;
 	}
 
-	public void setAktuellePosition(Koordinate aktuellePosition) {
-		this.aktuellePosition = aktuellePosition;
+	public void setAktuellePosition(int x, int y) {
+		this.aktuellePosition[0] = x;
+		this.aktuellePosition[1] = y;
+		
 	}
+
+
+	// die momentane Position, wird regelmäßig aktualisiert
+	
+
+	/**
+	 * erstellt Spielfeld entsprechend der übergebenen Größe des Spielfelds und
+	 * Startposition des Bots
+	 * 
+	 * @param sizeX  Größe des Spielfelds in der horizontalen
+	 * @param sizeY  Größe des Spielfelds in der vertikalen
+	 * @param startX Startposition des Bots auf der x-Achse
+	 * @param startY Startposition des Bots auf der y-Achse
+	 */
+	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.level = level;
+		this.playerId = playerId;
+		this.setAktuellePosition(startX, startY);
+		karteGenerieren();
+		
+	}
+
+	public void karteGenerieren() {
+		for (int i = 0; i < this.getSizeX(); i++) {
+			for (int j = 0; i < this.getSizeY(); j++) {
+				this.aktuelleKarte[i][j] = new Nebel();
+			}
+		}
+		
+	};
+
 
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld füllt
 	 */
-	public void feldHinzufuegen() {
-		// TODO: Karte mit neuen Instanzen füllen
-		
+	public void feldHinzufuegen(int x, int y, String typ) {
+		switch (typ) {
+		case ("FLOOR"):
+			aktuelleKarte[x][y] = new Boden();
+		}
+
 	}
 
-	public Koordinate getAktuellePosition() {
+	public int[] getAktuellePosition() {
 		return aktuellePosition;
 	}
 
@@ -101,23 +100,25 @@ public class Karte implements navigierbar{
 	 * @param bewegung ist je nach Level der geslicte Ausgabestring der
 	 *                 LastActionResult
 	 */
-//	public void aktualisierePosition1(String lastActionsResult) {
-//		
-//		switch (lastActionsResult)
-//		{
-//		case "OK NORTH":
-//			aktuellePosition.setKoordinate(aktuellePosition.getX(), ((aktuellePosition.getY() - 1) + sizeY) % sizeY);
-//			break;
-//		case "OK EAST":
-//			aktuellePosition.setKoordinate(((aktuellePosition.getX() + 1) + sizeX) % sizeX, aktuellePosition.getY());
-//			break;
-//		case "OK SOUTH":
-//			aktuellePosition.setKoordinate(aktuellePosition.getX(), ((aktuellePosition.getY() + 1) + sizeY) % sizeY);
-//			break;
-//		case "OK WEST":
-//			aktuellePosition.setKoordinate(((aktuellePosition.getX() - 1) + sizeX) % sizeX, aktuellePosition.getY());
-//			break;
-//		}
-//	}
+	public void aktualisierePosition(String lastActionsResult) {
+		switch (lastActionsResult) {
+		case "OK NORTH":
+
+			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + sizeY) % sizeY);
+			break;
+		case "OK EAST":
+
+			this.setAktuellePosition(((aktuellePosition[0] + 1) + sizeX) % sizeX, aktuellePosition[1]);
+			break;
+		case "OK SOUTH":
+
+			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + sizeY) % sizeY);
+			break;
+		case "OK WEST":
+
+			this.setAktuellePosition(((aktuellePosition[0] - 1) + sizeX) % sizeX, aktuellePosition[1]);
+			break;
+		}
+	}
 
 }

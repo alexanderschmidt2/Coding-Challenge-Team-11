@@ -41,8 +41,8 @@ public class Team11Bot {
 				String eastCellStatus = input.nextLine();
 				String southCellStatus = input.nextLine();
 				String westCellStatus = input.nextLine();
-				
-				System.out.println(Bewegung.bewegung(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus, karte));
+				//TODO: //Karte muss sich selbst aktualisieren, hier aufrufen
+				System.out.println(Bewegung.bewegung(karte));
 				
 				
 				// Rundenaktion ausgeben
