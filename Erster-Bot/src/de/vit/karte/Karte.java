@@ -7,7 +7,7 @@ import de.vit.karte.felder.*;
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
  *         Koordinaten beinhaltet
  */
-public class Karte {
+public class Karte implements navigierbar{
 	private final int sizeX;
 	private final int sizeY;
 	private Feld[][] aktuelleKarte;

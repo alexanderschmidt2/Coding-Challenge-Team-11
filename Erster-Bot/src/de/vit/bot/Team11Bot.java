@@ -42,6 +42,7 @@ public class Team11Bot {
 				String southCellStatus = input.nextLine();
 				String westCellStatus = input.nextLine();
 				
+				Bewegung.bewegung(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
 				
 				
 				// Rundenaktion ausgeben
