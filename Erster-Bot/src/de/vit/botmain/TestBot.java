@@ -4,7 +4,7 @@ import java.util.Scanner;
 import de.vit.karte.*;
 import de.vit.karte.felder.*;
 
-public class ErsterBot {
+public class TestBot {
 	/**
 	 * Hauptmethode zum Ausführen des Team11Bots
 	 *
@@ -42,10 +42,7 @@ public class ErsterBot {
 		//Labyrinth ist initialisiert, wir stehen auf dem Spielfeld. Wie finden wir uns zurecht?
 		
 		//1. Instanziieren der Karte mit den übergebenen Werten inklusive vermerken der eigenen Position
-		Karte karte1 = new Karte(sizeX, sizeY, startX, startY);
-		
-		//2. Anlegen eines Sachbearbeiters (weil es ja einen geben muss) mit leeren Koordinaten, da noch unbekannt
-		Sachbearbeiter ziel = new Sachbearbeiter(playerId);
+		Karte karte1 = new Karte(sizeX, sizeY, 1, startX, startY);
 
 		// TURN (Wiederholung je Runde notwendig)
 		while (input.hasNext()) {

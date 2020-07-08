@@ -1,16 +1,17 @@
 package de.vit.karte;
 
 import de.vit.karte.felder.*;
-import de.vit.botmain.*;
+import de.vit.logik.*;
 
 /**
  * 
  * @author Laura
  *Klasse, die das Spielfeld und die aktuelle Position in Form von Koordinaten beinhaltet
  */
-public class Karte {
+public class Karte implements navigierbar{
 	private int sizeX;
 	private int sizeY;
+	private final int level;
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern
 	 * die erste Array-Ebene bezeichnet die x-Achse
@@ -22,18 +23,28 @@ public class Karte {
 	
 	
 	//Getter und Setter
+	public int[] getSize() {
+		int [] size = new int[] {sizeX, sizeY};
+		return size;
+	}
+
+	
 	public int[] getAktuellePosition() {
 		return aktuellePosition;
 	}
 
 	public void setAktuellePosition(int x, int y) {
 		this.aktuellePosition[0] = x;
-		this.aktuellePosition[1] = y;
-		
+		this.aktuellePosition[1] = y;	
+	}
+	
+	public int getLevel()
+	{
+		return level;
 	}
 
 	//TODO grafische ausgabe der Karte als String
-	//mit art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen sehen möchte
+	//mit Art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen sehen möchte
 	public String getMap(String art) {
 		return "bla";
 	}
@@ -45,11 +56,12 @@ public class Karte {
 	 * @param startX Startposition des Bots auf der x-Achse
 	 * @param startY Startposition des Bots auf der y-Achse
 	 */
-	public Karte(int sizeX, int sizeY, int startX, int startY)
+	public Karte(int sizeX, int sizeY, int level, int startX, int startY)
 	{
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.karte = new Feld[sizeX] [sizeY];
+		this.level = level;
 		this.aktuellePosition[0] = startX;
 		this.aktuellePosition[1] = startY;
 	}
@@ -57,15 +69,17 @@ public class Karte {
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld füllt
 	 */
-	public void feldHinzufügen() {
+	public void feldHinzufuegen(int x, int y, String typ) {
 		//TODO: Karte mit neuen Instanzen füllen
+		//geht schwerlich, da man keinen neuen SB anlegen kann, da die levelId noch nicht existiert
+		//SB anlegen geht nur in MainMethode
 	}
 	
 	/**
 	 * Methode, die die aktuelle Position aufgrund der LastActionResult bestimmt
 	 * @param bewegung ist je nach Level der geslicte Ausgabestring der LastActionResult
 	 */
-	public void aktualisierePosition1(String lastActionsResult) {
+	public void aktualisierePosition(String lastActionsResult) {
 		
 		switch (lastActionsResult)
 		{
@@ -84,6 +98,9 @@ public class Karte {
 		}
 	}
 	
-
+	public void aktualisiereKarte(Rundeninformationen rundeninformation)
+	{
+		//TODO: maximal 3 unbekannte neue Felder durch neue Informationen ersetzen
+	}
 
 }
