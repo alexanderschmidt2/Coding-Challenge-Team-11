@@ -15,7 +15,7 @@ public class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 	
-	public static String bewegung(String lastActionsResult,
+	public static void bewegung(String lastActionsResult,
 			               String currentCellStatus,
 						   String northCellStatus,
 						   String eastCellStatus,
@@ -34,8 +34,8 @@ public class Bewegung {
 		//	   Hier kann auch, wenn der Bot auf seinem! SB/Finish steht der <formCount> in "Spielinformationen" abgespeichert werden.
 		//     Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount> haben.
 		
-	
-		if () {
+		
+		if (!lastActionsResult.contains("NOK")) {
 		
 		}
 	
@@ -43,16 +43,11 @@ public class Bewegung {
 		//	   Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in "Spielinformationen" abgespeichert werden.
 		//	   Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount> haben.
 		
-		else if () {
-		
-		}
+	
 	
 		// 3.) Pruefen ob 
 		
-		else if () {
-			
-		}
-	
+		
 	
 	
 	

@@ -4,7 +4,7 @@ public interface navigierbar {
 	public void setzeNeuesKartenfeld();
 	public int getEntfernung();
 	public int setEntfernung();
-	public Koordinaten getStart();
-	public int setKartenfeld(Koordinaten koordinaten);
-	public int getKartenfeld(Koordinaten koordinaten);
+	public Koordinate getStart();
+	public int setKartenfeld(Koordinate koordinaten);
+	public int getKartenfeld(Koordinate koordinaten);
 }

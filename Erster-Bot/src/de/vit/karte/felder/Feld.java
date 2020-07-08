@@ -1,7 +1,6 @@
 package de.vit.karte.felder;
 
 import de.vit.karte.*;
-import de.vit.botmain.*;
 /**
  * 
  * @author Laura
@@ -13,6 +12,7 @@ public abstract class Feld {
 	private Koordinate position;
 	//wie oft bin ich bereits über dieses Feld gelaufen?
 	private int besuche = 0;
+	private int entfernung = 500000000;
 
 	/**
 	 * kein Setter, da Name nicht geändert werden soll
@@ -28,14 +28,6 @@ public abstract class Feld {
 	public Feld()
 	{
 		this.position = new Koordinate();
-	}
-	
-	//probe-Main, wird noch gelöscht...
-	public static void main (String[] args)
-	{
-		Feld[] test = new Feld[2];
-		test[0] = new Floor();
-		System.out.println(test[0].getName());
 	}
 
 }
