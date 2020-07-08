@@ -50,8 +50,30 @@ public abstract class Bewegung {
 		String temp = "go north";
 		switch (aktuelleKarte.getLevel()) {
 		case (1):
-			temp = "go west";
-			System.err.println("Unser Level ist "+aktuelleKarte.getLevel());
+			if(Trefferlogik.beeinhaltet(lastActionsResult, "OK")) {
+				if(Trefferlogik.beeinhaltet(lastActionsResult, "NORTH")) {
+					aktuelleKarte.feldHinzufuegen();
+				}
+				else if(Trefferlogik.beeinhaltet(lastActionsResult, "EAST")) {
+					aktuelleKarte.feldHinzufuegen();
+				}
+				else if(Trefferlogik.beeinhaltet(lastActionsResult, "SOUTH")) {
+					aktuelleKarte.feldHinzufuegen();
+				}
+				else if(Trefferlogik.beeinhaltet(lastActionsResult, "WEST")) {
+					aktuelleKarte.feldHinzufuegen();
+				}
+				else {
+					//TODO: Koordinaten holen, erste Zelle setzen gem. der geholten Koordinaten
+					//TODO: Koordinaten berechnen für die jeweiligen Nachbarn
+					//TODO: Entfernung anpassen, meine Zelle 0, Rest Nachbar+1
+					
+				};
+				
+			}
+			else if(Trefferlogik.beeinhaltet(lastActionsResult, "NOK")) {
+				temp = "go north";
+			}
 		}
 		return temp;
 		// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
