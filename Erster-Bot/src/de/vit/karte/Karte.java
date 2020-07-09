@@ -27,8 +27,12 @@ public class Karte implements navigierbar{
 		int [] size = new int[] {sizeX, sizeY};
 		return size;
 	}
-
 	
+	public Feld getFeld(int x, int y)
+	{
+		return this.karte [x] [y];
+	}
+
 	public int[] getAktuellePosition() {
 		return aktuellePosition;
 	}
