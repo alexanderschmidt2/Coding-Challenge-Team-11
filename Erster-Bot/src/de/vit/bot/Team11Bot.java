@@ -10,12 +10,12 @@ public class Team11Bot {
 	/**
 	 * Hauptmethode zum Ausführen des Team11Bots
 	 *
-	 * @authors Alexander Schmidt, Franz Bogmann, Laura Fenzl und Constantin
-	 *          Graedtke
+	 * @authors Alexander Schmidt, Franz Bogmann, Laura Fenzl und Constantin Graedtke
 	 * 
 	 */
 
 	public static void main(String[] args) {
+		
 		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und
 		// Rundendaten liefert
 		Scanner input = new Scanner(System.in);
@@ -36,6 +36,7 @@ public class Team11Bot {
 
 		// TURN (Wiederholung je Runde notwendig)
 		while (input.hasNext()) {
+			
 			// Rundeninformationen auslesen
 			String lastActionsResult = input.nextLine();
 			String currentCellStatus = input.nextLine();
@@ -43,12 +44,15 @@ public class Team11Bot {
 			String eastCellStatus = input.nextLine();
 			String southCellStatus = input.nextLine();
 			String westCellStatus = input.nextLine();
+			
 			// TODO: //Karte muss sich selbst aktualisieren, hier aufrufen
-			karte.aktualisiereKarte(new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus,
-					eastCellStatus, southCellStatus, westCellStatus));
-			System.out.println(Bewegung.bewegung(karte));
+			karte.aktualisiereKarte(new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus));
+			
+			//Die Entfernungen der Felder relativ zur Position des Bots werden je Runde aktualisiert:
+			karte.entfernungenAktualisieren();
 
 			// Rundenaktion ausgeben
+			System.out.println(Bewegung.bewegung(karte));
 		}
 
 		// Eingabe schliessen (letzte Aktion)

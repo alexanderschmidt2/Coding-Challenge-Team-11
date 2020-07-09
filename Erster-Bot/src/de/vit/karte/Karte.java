@@ -1,5 +1,9 @@
 package de.vit.karte;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import de.vit.karte.felder.*;
 import de.vit.logik.*;
 
@@ -18,7 +22,7 @@ public class Karte implements navigierbar{
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
 	 */
 	private Feld[][] karte;
-	// die momentane Position, wird regelmäßig aktualisiert
+	// die momentane Position, wird regelmaessig aktualisiert
 	private int[] aktuellePosition = new int[2];
 
 	// Getter und Setter
@@ -32,7 +36,7 @@ public class Karte implements navigierbar{
 	}
 
 	public void setFeld(int x, int y, String feldtyp) {
-		// TODO Feld anlegen; 2 Methoden (überladen) für SB, FORM und Boden, Wand
+		// TODO Feld anlegen; 2 Methoden (Ueberladen) fuer SB, FORM und Boden, Wand
 	}
 
 	public int[] getAktuellePosition() {
@@ -60,11 +64,11 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * erstellt Spielfeld entsprechend der übergebenen Größe des Spielfelds und
+	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der Uebergebenen Groesse des Spielfelds und
 	 * Startposition des Bots
 	 * 
-	 * @param sizeX  Größe des Spielfelds in der horizontalen
-	 * @param sizeY  Größe des Spielfelds in der vertikalen
+	 * @param sizeX  Groesse des Spielfelds in der horizontalen
+	 * @param sizeY  Groesse des Spielfelds in der vertikalen
 	 * @param startX Startposition des Bots auf der x-Achse
 	 * @param startY Startposition des Bots auf der y-Achse
 	 */
@@ -85,22 +89,50 @@ public class Karte implements navigierbar{
 
 
 	/**
-	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld f�llt
+	 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen um die Entfernungen der bereits bekannten Felder/Zellen
+	 * in der Karte anzupassen. So entsteht eine Entfernungskarte, welche unserem Bot die Entscheidungsf�higkeit gibt
+	 * den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu gehen.
+	 * 
 	 */
 	public void entfernungenAktualisieren() {
-		// Wir brauchen eine Methode, die uns die Nachbarn liefern abh�ngig von der
-		// aktuellen Koordinate. Entweder Nebelzellen oder bereits implementierteZellen
-		boolean aenderung;
+		
+		//Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf Entfernung = 0 gesetzt.
+		this.getFeld(this.aktuellePosition[0],this.aktuellePosition[1]).setEntfernung(0);
 
+		boolean aenderung; 
+		
 		do {
 			aenderung = false;
-			for (int x = 0; x < this.getSize()[0]; x++) {
-				for (int y = 0; y < this.getSize()[1]; y++) {
-					if (karte[x][y].getEntfernung() != 0) {
+			for (int x = 0; x < sizeX; x++) {
+				for (int y = 0; y < sizeY; y++) {
+					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
+					if (!karte[x][y].getName().equals("FOG") || karte[x][y].getName().equals("WALL")) { 
+						// Hier werden alle Entfernungen abgecheckt:
+						int entfernungImNorden = this.getNachbarn(x,y)[0].getEntfernung();
+						int entfernungImOsten = this.getNachbarn(x,y)[1].getEntfernung();
+						int entfernungImSueden = this.getNachbarn(x,y)[2].getEntfernung();
+						int entfernungImWester = this.getNachbarn(x,y)[3].getEntfernung();
+						//Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
+						List<Integer> list = new ArrayList<>();
+						
+						list.add(entfernungImNorden); 
+				        list.add(entfernungImOsten); 
+				        list.add(entfernungImSueden); 
+				        list.add(entfernungImWester);
+				        
+				        int minEntfernungEinesNachbarn = Collections.min(list);
+						
+						int entfernungBeiMir = karte[x][y].getEntfernung();
+						
+						if (minEntfernungEinesNachbarn + 1 < entfernungBeiMir) {
+							entfernungBeiMir = minEntfernungEinesNachbarn + 1;
+							aenderung = true;
+						}
 					}
+					
 				}
 			}
-		} while (true);
+		} while (aenderung == true);
 
 	}
 

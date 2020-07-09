@@ -5,7 +5,7 @@ public class Nebel extends Feld {
 	public Nebel()
 	{
 		super();
-		this.name = "NEBEL";
+		this.name = "FOG";
 	}
 
 }

@@ -14,6 +14,14 @@ import de.vit.karte.felder.*;
  */
 
 public abstract class Bewegung {
+	
+	/**
+	 * Die Methode istFinishMoeglich prueft, ob ein "finish" moeglich ist, sprich ob es bei einem Sachbearbeiter Feld/FINISH Feld um unseren Sachbearbeiter (unsere playerId) handelt
+	 * und ob alle noetigen Formulare aufgesammelt wurde, sodass man faktisch fertig ist.
+	 * @param aktuellesFeld Es muss das aktuelle Feld (currentCell) uebergeben werden, auf welchem sich der Bot befindet
+	 * @param aktuelleKarte Es muss die aktuelle Karte uebergeben werden
+	 * @return boolean
+	 */
 
 	public static boolean istFinishMoeglich(Feld aktuellesFeld, navigierbar aktuelleKarte) {
 		if (aktuellesFeld instanceof Sachbearbeiter) {
@@ -26,9 +34,10 @@ public abstract class Bewegung {
 		} else {
 			return false;
 		}
-	};
+	}
 	public void exploration(navigierbar aktuelleKarte) {
-	};
+		
+	}
 
 	/**
 	 * Die Methode bewegung() soll die Aktion des Bots je Runde in der main Methode
