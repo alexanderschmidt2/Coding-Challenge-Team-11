@@ -40,9 +40,5 @@ public abstract class Feld {
 	/**
 	 * die Koordinate wird mithilfe des Setters gesetzt, da beim Sachbearbeiter die Koordinate zunächst nicht bekannt ist
 	 */
-	public Feld()
-	{
-		this.position = new Koordinate();
-	}
 
 }

@@ -24,6 +24,7 @@ public class Karte implements navigierbar {
 	public int getSizeY() {
 		return sizeY;
 	}
+
 	public Feld[][] getAktuelleKarte() {
 		return aktuelleKarte;
 	}
@@ -43,12 +44,10 @@ public class Karte implements navigierbar {
 	public void setAktuellePosition(int x, int y) {
 		this.aktuellePosition[0] = x;
 		this.aktuellePosition[1] = y;
-		
+
 	}
 
-
 	// die momentane Position, wird regelmäßig aktualisiert
-	
 
 	/**
 	 * erstellt Spielfeld entsprechend der übergebenen Größe des Spielfelds und
@@ -66,7 +65,7 @@ public class Karte implements navigierbar {
 		this.playerId = playerId;
 		this.setAktuellePosition(startX, startY);
 		karteGenerieren();
-		
+
 	}
 
 	public void karteGenerieren() {
@@ -75,9 +74,8 @@ public class Karte implements navigierbar {
 				this.aktuelleKarte[i][j] = new Nebel();
 			}
 		}
-		
-	};
 
+	};
 
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld füllt
@@ -96,8 +94,7 @@ public class Karte implements navigierbar {
 		}
 		
 	}
-	
-	
+
 	public void feldHinzufuegen(int x, int y, String typ) {
 		switch (typ) {
 		case ("FLOOR"):
