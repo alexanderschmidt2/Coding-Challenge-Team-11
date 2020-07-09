@@ -88,10 +88,10 @@ public class Karte implements navigierbar {
 			aenderung = false;
 			for (int x = 0; x < this.getSizeX(); x++) {
 				for (int y = 0; y < this.getSizeY(); y++) {
-					if(aktuelleKarte[x][y].getEntfernung())
+					if(aktuelleKarte[x][y].getEntfernung() != 0) {}
 				}
 			}
-		}
+		}while(true);
 		
 	}
 
