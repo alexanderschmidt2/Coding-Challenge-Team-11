@@ -19,7 +19,7 @@ public abstract class Bewegung {
 		if (aktuellesFeld instanceof Sachbearbeiter) {
 			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
 			if (aktuellesSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
-					&& aktuellesSachbearbeiterFeld.getFormCount() == aktuelleKarte.getAktuellerFormCount()) {
+					&& aktuellesSachbearbeiterFeld.getFormCount() == aktuelleKarte.getFormCount()) {
 				return true;
 			} else
 				return false;
@@ -28,7 +28,6 @@ public abstract class Bewegung {
 		}
 	};
 	public void exploration(navigierbar aktuelleKarte) {
-		aktuelleKarte.getAktuellesFeld().setEntfernung(0);
 	};
 
 	/**
@@ -52,7 +51,7 @@ public abstract class Bewegung {
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
 
-		if (istFinishMoeglich(spielKarte.getAktuellesFeld(), spielKarte)) { // FINISH <playerId> <formCount> //Basically 5x prüfen, ob finish möglich
+		if (istFinishMoeglich(spielKarte.getFeld(0,0), spielKarte)) { // FINISH <playerId> <formCount> //Basically 5x prüfen, ob finish möglich
 			return "finish";
 
 		}

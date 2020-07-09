@@ -7,23 +7,12 @@ public interface navigierbar {
 	public int getLevel();
 
 	public int getPlayerId();
+	
 
-	public int[] getAktuellePosition();
+	public int getFormCount();
 
-	public Feld getAktuellesFeld();
+	public Feld getFeld(int i, int j);
 
-	public int getFormularAnzahl();
-
-	public Feld[] getNachbarn(); // wir benötigen für unseren Algo eine Methode, die uns benachbarte Felder
-									// liefert. Entweder haben wir die bereits oder es ist Nebel
-
-	public void feldHinzufuegen(int x, int y, String typ);
-
-	public void aktualisierePosition(String lastActionsResult);
-
-	public void aktualisiereKarte(Rundeninformationen rundeninformation);
-
-	public int getAktuellerFormCount();
 	// Ihr müsst gleichzeitig 5 Zellen setzen. Überprüfen, ob die Zellen Neben sind
 	// oder nicht.
 	// Wenn ihr ein neues Objekt anlegt, dann müsst ihr das, was ihr an CellStatus
