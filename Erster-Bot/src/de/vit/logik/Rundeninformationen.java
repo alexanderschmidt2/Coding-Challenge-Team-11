@@ -37,8 +37,13 @@ public class Rundeninformationen {
 		return westCellStatus;
 	}
 	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
+<<<<<<< HEAD
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		super();
+=======
+			String eastCellStatus, String southCellStatus, String westCellStatus)
+	{
+>>>>>>> Laura+Constantin
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
