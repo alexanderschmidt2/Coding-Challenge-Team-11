@@ -1,10 +1,7 @@
 package de.vit.logik;
 
 import de.vit.karte.navigierbar;
-<<<<<<< HEAD
 import de.vit.karte.felder.*;
-=======
->>>>>>> Laura+Constantin
 
 /**
  * @author Franz
@@ -15,7 +12,6 @@ import de.vit.karte.felder.*;
  *         (Aktion) zurueckgibt.
  * 
  */
-<<<<<<< HEAD
 
 public abstract class Bewegung {
 
@@ -35,10 +31,6 @@ public abstract class Bewegung {
 		aktuelleKarte.getAktuellesFeld().setEntfernung(0);
 	};
 
-=======
-public abstract class Bewegung {
-
->>>>>>> Laura+Constantin
 	/**
 	 * Die Methode bewegung() soll die Aktion des Bots je Runde in der main Methode
 	 * ausfuehren. Dabei wird die Methode mit allen dynamischen Parametern, sprich
@@ -48,22 +40,7 @@ public abstract class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 
-<<<<<<< HEAD
 	public static String bewegung(navigierbar spielKarte) {
-=======
-	public static String bewegung(navigierbar aktuelleKarte) {
-
-		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
-		// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
-		// Auch bei erneutem Besuchen der Zellen, sollen die Zellinformationen i.V.m.
-		// den Koordinaten aktualisiert werden, falls Aenderungen in der Map entstehen.
-
-		// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Entfernung fuer
-		// Entfernungskarte hinterlegen, angefangen mit 0 fuer currentCell
-
-		// Vor der Bewegung: Prioritaetsliste fuer Abfragen, bevor die Bewegungslogik
-		// greift um eine Bewegung zu machen!
->>>>>>> Laura+Constantin
 
 		// 1.) Pruefen ob FINISH <playerId> <formCount> auf currentCellStatus equals
 		// true, dann return "finish".
@@ -74,7 +51,6 @@ public abstract class Bewegung {
 		// Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount>
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
-<<<<<<< HEAD
 
 		if (istFinishMoeglich(spielKarte.getAktuellesFeld(), spielKarte)) { // FINISH <playerId> <formCount> //Basically 5x prüfen, ob finish möglich
 			return "finish";
@@ -108,24 +84,4 @@ public abstract class Bewegung {
 
 	// 3.) Pruefen ob
 
-=======
-		
-		return "test";
-	}
-			// Es ist ein NOT OK
-
-			// 2.) Pruefen ob FINISH <playerId> <anzahlNotwendigerFormulare> auf
-			// north/west/south/eastCellStatus (hier logisches ODER) equals true, dann gehe
-			// dahin, damit 1.) greift.
-			// Hier kann auch, wenn der Bot seinen! SB/Finish sieht der <formCount> in
-			// "Spielinformationen" abgespeichert werden.
-			// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
-			// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
-			// <formCount> haben.
-
-			// 3.) Pruefen ob
-
-		
-	
->>>>>>> Laura+Constantin
 }

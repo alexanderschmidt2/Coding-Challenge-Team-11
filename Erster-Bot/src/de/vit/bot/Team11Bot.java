@@ -4,10 +4,6 @@ import java.util.Scanner;
 import de.vit.karte.*;
 import de.vit.karte.felder.*;
 import de.vit.logik.Bewegung;
-<<<<<<< HEAD
-=======
-import de.vit.logik.*;
->>>>>>> Laura+Constantin
 
 public class Team11Bot {
 	/**
@@ -34,11 +30,7 @@ public class Team11Bot {
 			int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 			int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
 			input.nextLine(); // Beenden der zweiten Zeile
-<<<<<<< HEAD
 			Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
-=======
-			Karte karte = new Karte(sizeX, sizeY, 1, startX, startY);
->>>>>>> Laura+Constantin
 			
 			// TURN (Wiederholung je Runde notwendig)
 			while(input.hasNext()) {
@@ -49,12 +41,6 @@ public class Team11Bot {
 				String eastCellStatus = input.nextLine();
 				String southCellStatus = input.nextLine();
 				String westCellStatus = input.nextLine();
-<<<<<<< HEAD
-=======
-				//Rundeninformation muss hier initialisiert werden, da 
-				Rundeninformationen rundeninformation = new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus,
-						southCellStatus, westCellStatus);
->>>>>>> Laura+Constantin
 				//TODO: //Karte muss sich selbst aktualisieren, hier aufrufen
 				System.out.println(Bewegung.bewegung(karte));
 				
