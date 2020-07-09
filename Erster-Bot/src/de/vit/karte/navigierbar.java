@@ -17,6 +17,8 @@ public interface navigierbar {
 	public Feld[] getNachbarn(); // wir benötigen für unseren Algo eine Methode, die uns benachbarte Felder
 									// liefert. Entweder haben wir die bereits oder es ist Nebel
 
+	public void feldHinzufuegen(int x, int y, String typ);
+
 	public void aktualisierePosition(String lastActionsResult);
 
 	public void aktualisiereKarte(Rundeninformationen rundeninformation);
