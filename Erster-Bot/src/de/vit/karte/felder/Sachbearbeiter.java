@@ -2,7 +2,7 @@ package de.vit.karte.felder;
 
 public class Sachbearbeiter extends Feld {
 	private final int playerId;
-	private final int formCount;
+	private int formCount;
 	
 	//Getter und Setter
 	public int getPlayerId() {
@@ -13,6 +13,10 @@ public class Sachbearbeiter extends Feld {
 		return formCount;
 	}
 	
+	public void setFormCount(int formCount) {
+		this.formCount = formCount;
+	}
+
 	public Sachbearbeiter(int playerId, int formCount)
 	{
 		super();
