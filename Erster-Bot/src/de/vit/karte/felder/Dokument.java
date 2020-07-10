@@ -18,12 +18,19 @@ public class Dokument extends Feld {
 		return nr;
 	}
 
-	public Dokument(int playerId, int nr)
+	public Dokument(String info)
 	{
 		super();
-		this.name = "FORM " + playerId + " " + nr;
-		this.playerId = playerId;
-		this.nr = nr;
+		//info slicen, um an spielerId zu kommen und in int casten
+		String spielerId = info.substring(5, 6);
+		int spielerId2 = Integer.valueOf(spielerId);
+		//info slicen, um an nr zu kommen und in int casten
+		String nr = info.substring(7, 8);
+		int formNr = Integer.valueOf(nr);
+
+		this.name = "FORM " + spielerId + " " + nr;
+		this.playerId = spielerId2;
+		this.nr = formNr;
 	}
 
 }

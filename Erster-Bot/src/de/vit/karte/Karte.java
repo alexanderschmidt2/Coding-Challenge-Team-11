@@ -17,6 +17,7 @@ public class Karte implements navigierbar{
 	private int sizeY;
 	private final int level;
 	private final int playerId;
+	private int formCount;
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -30,13 +31,39 @@ public class Karte implements navigierbar{
 		int[] size = new int[] { sizeX, sizeY };
 		return size;
 	}
-
+	
+	/**
+	 * diese Methode sucht ein Feld mittels bekannter Koordinaten
+	 * @param x Koordinate
+	 * @param y Koordinate
+	 * @return das gesuchte Feld
+	 */
 	public Feld getFeld(int x, int y) {
 		return this.karte[x][y];
 	}
-
-	public void setFeld(int x, int y, String feldtyp) {
-		// TODO Feld anlegen; 2 Methoden (Ueberladen) fuer SB, FORM und Boden, Wand
+	
+	/**
+	 * diese Methode sucht die Koordinaten ein Feld mittels
+	 * bekanntem Namen und evtl. Ids (aus dem Feldstatus)
+	 * @param feldtyp
+	 * @return
+	 */
+	public int[] getFeld(String feldtyp) {
+		int [] koordinaten = new int[2];
+		int koordinateX = -1;
+		int koordinateY = -1;
+		for (int j= 0; j<sizeY; j++) {
+			for (int i= 0; i<sizeX; i++) {	
+				if (feldtyp.contains(this.karte[i][j].getName())) {
+					koordinateX=i;
+					koordinateY=j;
+					break;
+				}
+			}
+		}
+		koordinaten[0] = koordinateX;
+		koordinaten[1] = koordinateY;
+		return koordinaten;
 	}
 
 	public int[] getAktuellePosition() {
@@ -55,10 +82,28 @@ public class Karte implements navigierbar{
 	public int getPlayerId() {
 		return playerId;
 	}
+	
+	public int getFormCount()
+	{
+		return formCount;
+	}
+	
+	/**
+	 * wird nur verwendet, wenn wir ein Formular entdecken und die FormularNr groe�er ist als der bisher gespeicherte formCount
+	 * sobald Sachbearbeiter gefunden wurde, wird maximaler Wert gesetzt und Methode wird nicht mehr benoetigt
+	 * @param formCount
+	 */
+	public void setFormCount(int formCount)
+	{
+		if (this.formCount < formCount)
+		{
+			this.formCount = formCount;
+		}
+	}
 
 	// TODO grafische ausgabe der Karte als String
 	// mit Art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen
-	// sehen möchte
+	// sehen moechte
 	public String getMap(String art) {
 		return "bla";
 	}
@@ -137,10 +182,26 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld füllt
+	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
-	public void feldHinzufuegen(int x, int y, String typ) {
-		// TODO: Karte mit neuen Instanzen füllen
+	public void feldHinzufuegen(int x, int y, String info) {
+		if (info.contains("FLOOR"))
+				{
+					this.karte[x][y] = new Boden();
+				}
+		else if (info.contains("WALL"))
+		{
+			this.karte[x][y] = new Wand();
+		}
+		else if (info.contains("FINISH"))
+		{
+			this.karte[x][y] = new Sachbearbeiter(info);
+		}
+		else //es muss ein Formular sein
+		{
+			this.karte[x][y] = new Dokument(info);
+		}
+		// TODO: Karte mit neuen Instanzen fuellen
 		// geht schwerlich, da man keinen neuen SB anlegen kann, da die levelId noch
 		// nicht existiert
 		// SB anlegen geht nur in MainMethode
@@ -149,8 +210,7 @@ public class Karte implements navigierbar{
 	/**
 	 * Methode, die die aktuelle Position aufgrund der LastActionResult bestimmt
 	 * 
-	 * @param bewegung ist je nach Level der geslicte Ausgabestring der
-	 *                 LastActionResult
+	 * @param lastActionsResult ist der Ausgabestring der LastActionResult
 	 */
 	public void aktualisierePosition(String lastActionsResult) {
 
@@ -170,275 +230,144 @@ public class Karte implements navigierbar{
 		}
 	}
 
+	/**
+	 * Methode, die den Feldstatus im Norden �berpr�ft und aktualisert, wenn das Feld unbekannt (Nebel) ist,
+	 * wenn bereits ein Feld existiert, wird zun�chst ueberprueft, ob es mit dem angezeigten uebereinstimmt,
+	 * wenn nicht (falls ein Dokument gekickt wurde), aktualisiert es das Feld
+	 * @param rundeninformation
+	 */
 	public void aktualisereNorden(Rundeninformationen rundeninformation) {
 		// man nehme sich die x und y Koordinate der aktuellen Position...
-		// ...übergebe diese der Methode getNorden(), um die x und y Koordinate des
-		// nördlichen Felds zu erhalten
-		// Die x-Koordinate wird mit getNorden()[0] ermittelt und getFeld() übergeben;
+		// ...Uebergebe diese der Methode getNorden(), um die x und y Koordinate des
+		// noerdlichen Felds zu erhalten
+		// Die x-Koordinate wird mit getNorden()[0] ermittelt und getFeld() Uebergeben;
 		// y-Koordinate mit getNorden()[1]
 		int nordX = this.getNorden(this.aktuellePosition[0], this.aktuellePosition[1])[0];
 		int nordY = this.getNorden(this.aktuellePosition[0], this.aktuellePosition[1])[1];
-		// getFeld() gibt das Objekt zurück. mit getName() erhalten wir den Namen des
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = new String(getFeld(nordX, nordY).getName());
+		String name = getFeld(nordX, nordY).getName();
 		// name wird zum Vergleich mit NEBEL herangezogen
-		// ergo: Wenn nördlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
-		// ist, gehen wir in die if-Verzweigung
-		if (name.equals("NEBEL")) {
-			// hier prüfen wir, ob das nördlich gelegege Feld eine Wand ist
-			if (rundeninformation.getNorthCellStatus().equals("FLOOR")) {
-				this.karte[nordX][nordY] = new Boden();
+		// ergo: Wenn noerdlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
+		// ist oder das bereits angelegte Feld dem aktuellen entspricht, gehen wir in die if-Verzweigung
+		String info = rundeninformation.getNorthCellStatus();
+		if (name.equals("NEBEL") || !info.contains(name)) {
+			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
+			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (info.contains("FORM"))
+			{
+				//altes Formular finden
+				int [] form = this.getFeld(info.substring(0,8));
+				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
+				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
 			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Boden ist
-			else if (rundeninformation.getNorthCellStatus().equals("WALL")) {
-				this.karte[nordX][nordY] = new Wand();
-			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Dokument ist ist
-			else if (rundeninformation.getNorthCellStatus().contains("FORM")) {
-				// Dokument-String in dok speichern
-				String dok = rundeninformation.getNorthCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = dok.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// dok slicen, um an nr zu kommen und in int casten
-				String nr = dok.substring(9, 10);
-				int formNr = Integer.valueOf(nr);
-				// neues Dokument anlegen und dem richtigen Feld der Karte zuweisen
-				Dokument dokument = new Dokument(spielerId2, formNr);
-				this.karte[nordX][nordY] = dokument;
-			}
-
-			// das nördlich gelegege Feld muss also ein Sachbearbeiter sein
-			else {
-				// Sachbearbeiter-String in sb speichern
-				String sb = rundeninformation.getNorthCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = sb.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// sb slicen, um an formCount zu kommen und in int casten
-				String formCount = sb.substring(9, 10);
-				int formCount2 = Integer.valueOf(formCount);
-				// neuen Sachbearbeiter anlegen und dem richtigen Feld der Karte zuweisen
-				Sachbearbeiter typi = new Sachbearbeiter(spielerId2, formCount2);
-				this.karte[nordX][nordY] = typi;
-				// die maximal einsammelbaren Dokumente aktualisieren
-				typi.setFormCount(formCount2);
-			}
-
-		}
-		// jetzt prüfen wir, ob das bereits angelegte Feld dem entspricht, was wir
-		// grade sehen
-		else {
-			// TODO check, ob Feld gleich ist, wenn nein, aktualisieren
+			this.feldHinzufuegen(nordX, nordY, info);
 		}
 	}
 
 	public void aktualisereOsten(Rundeninformationen rundeninformation) {
 		// man nehme sich die x und y Koordinate der aktuellen Position...
-		// ...übergebe diese der Methode getNorden(), um die x und y Koordinate des
-		// nördlichen Felds zu erhalten
-		// Die x-Koordinate wird mit getNorden()[0] ermittelt und getFeld() übergeben;
-		// y-Koordinate mit getNorden()[1]
+		// ...uebergebe diese der Methode getOsten(), um die x und y Koordinate des
+		// oestlichen Felds zu erhalten
+		// Die x-Koordinate wird mit getOsten()[0] ermittelt und getFeld() uebergeben;
+		// y-Koordinate mit getOsten()[1]
 		int ostX = this.getOsten(this.aktuellePosition[0], this.aktuellePosition[1])[0];
 		int ostY = this.getOsten(this.aktuellePosition[0], this.aktuellePosition[1])[1];
-		// getFeld() gibt das Objekt zurück. mit getName() erhalten wir den Namen des
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
 		String name = new String(getFeld(ostX, ostY).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
-		// ergo: Wenn nördlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
+		// ergo: Wenn oestlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		if (name.equals("NEBEL")) {
-			// hier prüfen wir, ob das nördlich gelegege Feld eine Wand ist
-			if (rundeninformation.getEastCellStatus().equals("FLOOR")) {
-				this.karte[ostX][ostY] = new Boden();
+		String info = rundeninformation.getEastCellStatus();
+		if (name.equals("NEBEL") || !info.contains(name)) {
+			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
+			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (info.contains("FORM"))
+			{
+				//altes Formular finden
+				int [] form = this.getFeld(info.substring(0,8));
+				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
+				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
 			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Boden ist
-			else if (rundeninformation.getEastCellStatus().equals("WALL")) {
-				this.karte[ostX][ostY] = new Wand();
-			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Dokument ist ist
-			else if (rundeninformation.getEastCellStatus().contains("FORM")) {
-				// Dokument-String in dok speichern
-				String dok = rundeninformation.getEastCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = dok.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// dok slicen, um an nr zu kommen und in int casten
-				String nr = dok.substring(9, 10);
-				int formNr = Integer.valueOf(nr);
-				// neues Dokument anlegen und dem richtigen Feld der Karte zuweisen
-				Dokument dokument = new Dokument(spielerId2, formNr);
-				this.karte[ostX][ostY] = dokument;
-			}
-
-			// das nördlich gelegege Feld muss also ein Sachbearbeiter sein
-			else {
-				// Sachbearbeiter-String in sb speichern
-				String sb = rundeninformation.getEastCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = sb.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// sb slicen, um an formCount zu kommen und in int casten
-				String formCount = sb.substring(9, 10);
-				int formCount2 = Integer.valueOf(formCount);
-				// neuen Sachbearbeiter anlegen und dem richtigen Feld der Karte zuweisen
-				Sachbearbeiter typi = new Sachbearbeiter(spielerId2, formCount2);
-				this.karte[ostX][ostY] = typi;
-				// die maximal einsammelbaren Dokumente aktualisieren
-				typi.setFormCount(formCount2);
-			}
-
-		}
-		// jetzt prüfen wir, ob das bereits angelegte Feld dem entspricht, was wir
-		// grade sehen
-		else {
-			// TODO check, ob Feld gleich ist, wenn nein, aktualisieren
+			this.feldHinzufuegen(ostX, ostY, info);
 		}
 	}
 
 	public void aktualisereSueden(Rundeninformationen rundeninformation) {
 		// man nehme sich die x und y Koordinate der aktuellen Position...
-		// ...übergebe diese der Methode getNorden(), um die x und y Koordinate des
-		// nördlichen Felds zu erhalten
-		// Die x-Koordinate wird mit getNorden()[0] ermittelt und getFeld() übergeben;
-		// y-Koordinate mit getNorden()[1]
+		// ...uebergebe diese der Methode getSueden(), um die x und y Koordinate des
+		// suedlichen Felds zu erhalten
+		// Die x-Koordinate wird mit getSueden()[0] ermittelt und getFeld() uebergeben;
+		// y-Koordinate mit getSueden()[1]
 		int suedX = this.getSueden(this.aktuellePosition[0], this.aktuellePosition[1])[0];
 		int suedY = this.getSueden(this.aktuellePosition[0], this.aktuellePosition[1])[1];
-		// getFeld() gibt das Objekt zurück. mit getName() erhalten wir den Namen des
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
 		String name = new String(getFeld(suedX, suedY).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
-		// ergo: Wenn nördlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
+		// ergo: Wenn suedlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		if (name.equals("NEBEL")) {
-			// hier prüfen wir, ob das nördlich gelegege Feld eine Wand ist
-			if (rundeninformation.getSouthCellStatus().equals("FLOOR")) {
-				this.karte[suedX][suedY] = new Boden();
+		String info = rundeninformation.getSouthCellStatus();
+		if (name.equals("NEBEL") || !info.contains(name)) {
+			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
+			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (info.contains("FORM"))
+			{
+				//altes Formular finden
+				int [] form = this.getFeld(info.substring(0,8));
+				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
+				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
 			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Boden ist
-			else if (rundeninformation.getSouthCellStatus().equals("WALL")) {
-				this.karte[suedX][suedY] = new Wand();
-			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Dokument ist ist
-			else if (rundeninformation.getSouthCellStatus().contains("FORM")) {
-				// Dokument-String in dok speichern
-				String dok = rundeninformation.getSouthCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = dok.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// dok slicen, um an nr zu kommen und in int casten
-				String nr = dok.substring(9, 10);
-				int formNr = Integer.valueOf(nr);
-				// neues Dokument anlegen und dem richtigen Feld der Karte zuweisen
-				Dokument dokument = new Dokument(spielerId2, formNr);
-				this.karte[suedX][suedY] = dokument;
-			}
-
-			// das nördlich gelegege Feld muss also ein Sachbearbeiter sein
-			else {
-				// Sachbearbeiter-String in sb speichern
-				String sb = rundeninformation.getSouthCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = sb.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// sb slicen, um an formCount zu kommen und in int casten
-				String formCount = sb.substring(9, 10);
-				int formCount2 = Integer.valueOf(formCount);
-				// neuen Sachbearbeiter anlegen und dem richtigen Feld der Karte zuweisen
-				Sachbearbeiter typi = new Sachbearbeiter(spielerId2, formCount2);
-				this.karte[suedX][suedY] = typi;
-				// die maximal einsammelbaren Dokumente aktualisieren
-				typi.setFormCount(formCount2);
-			}
-
-		}
-		// jetzt prüfen wir, ob das bereits angelegte Feld dem entspricht, was wir
-		// grade sehen
-		else {
-			// TODO check, ob Feld gleich ist, wenn nein, aktualisieren
+			this.feldHinzufuegen(suedX, suedY, info);
 		}
 	}
 
 	public void aktualisereWesten(Rundeninformationen rundeninformation) {
 		// man nehme sich die x und y Koordinate der aktuellen Position...
-		// ...übergebe diese der Methode getNorden(), um die x und y Koordinate des
-		// nördlichen Felds zu erhalten
-		// Die x-Koordinate wird mit getNorden()[0] ermittelt und getFeld() übergeben;
-		// y-Koordinate mit getNorden()[1]
+		// ...uebergebe diese der Methode getWesten(), um die x und y Koordinate des
+		// westlichen Felds zu erhalten
+		// Die x-Koordinate wird mit getWesten()[0] ermittelt und getFeld() uebergeben;
+		// y-Koordinate mit getWesten()[1]
 		int westX = this.getWesten(this.aktuellePosition[0], this.aktuellePosition[1])[0];
 		int westY = this.getWesten(this.aktuellePosition[0], this.aktuellePosition[1])[1];
-		// getFeld() gibt das Objekt zurück. mit getName() erhalten wir den Namen des
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
 		String name = new String(getFeld(westX, westY).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
-		// ergo: Wenn nördlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
+		// ergo: Wenn westlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		if (name.equals("NEBEL")) {
-			// hier prüfen wir, ob das nördlich gelegege Feld eine Wand ist
-			if (rundeninformation.getWestCellStatus().equals("FLOOR")) {
-				this.karte[westX][westY] = new Boden();
+		String info = rundeninformation.getWestCellStatus();
+		if (name.equals("NEBEL") || !info.contains(name)) {
+			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
+			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (info.contains("FORM"))
+			{
+				//altes Formular finden
+				int [] form = this.getFeld(info.substring(0,8));
+				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
+				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
 			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Boden ist
-			else if (rundeninformation.getWestCellStatus().equals("WALL")) {
-				this.karte[westX][westY] = new Wand();
-			}
-
-			// hier prüfen wir, ob das nördlich gelegege Feld ein Dokument ist ist
-			else if (rundeninformation.getWestCellStatus().contains("FORM")) {
-				// Dokument-String in dok speichern
-				String dok = rundeninformation.getWestCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = dok.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// dok slicen, um an nr zu kommen und in int casten
-				String nr = dok.substring(9, 10);
-				int formNr = Integer.valueOf(nr);
-				// neues Dokument anlegen und dem richtigen Feld der Karte zuweisen
-				Dokument dokument = new Dokument(spielerId2, formNr);
-				this.karte[westX][westY] = dokument;
-			}
-
-			// das nördlich gelegege Feld muss also ein Sachbearbeiter sein
-			else {
-				// Sachbearbeiter-String in sb speichern
-				String sb = rundeninformation.getWestCellStatus();
-				// sb slicen, um an spielerId zu kommen und in int casten
-				String spielerId = sb.substring(7, 8);
-				int spielerId2 = Integer.valueOf(spielerId);
-				// sb slicen, um an formCount zu kommen und in int casten
-				String formCount = sb.substring(9, 10);
-				int formCount2 = Integer.valueOf(formCount);
-				// neuen Sachbearbeiter anlegen und dem richtigen Feld der Karte zuweisen
-				Sachbearbeiter typi = new Sachbearbeiter(spielerId2, formCount2);
-				this.karte[westX][westY] = typi;
-				// die maximal einsammelbaren Dokumente aktualisieren
-				typi.setFormCount(formCount2);
-			}
-
+			this.feldHinzufuegen(westX, westY, info);
 		}
-		// jetzt prüfen wir, ob das bereits angelegte Feld dem entspricht, was wir
-		// grade sehen
-		else {
-			// TODO check, ob Feld gleich ist, wenn nein, aktualisieren
-		}
-	}
-
-	public void aktualisiereKarte(Rundeninformationen rundeninformation) {
-		// TODO: maximal 3 unbekannte neue Felder durch neue Informationen ersetzen
 	}
 
 	/**
-	 * Methode, die abhängig vom aktuellen Standpunkt die Koordinaten des im Norden
-	 * angrenzenden Objekts zurückgibt
+	 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der Karte vermerkt
+	 * @param rundeninformation hierueber k�nnen die einzelnen Feldstatus abgerufen werden
+	 */
+	public void aktualisiereKarte(Rundeninformationen rundeninformation) {
+		this.aktualisereNorden(rundeninformation);
+		this.aktualisereOsten(rundeninformation);
+		this.aktualisereSueden(rundeninformation);
+		this.aktualisereWesten(rundeninformation);
+	}
+
+	/**
+	 * Methode, die abhaengig vom aktuellen Standpunkt die Koordinaten des im Norden
+	 * angrenzenden Objekts zurueckgibt
 	 * 
-	 * @return Koordinaten des Objekts nördlich vom aktuellen Standpunkt, welches
+	 * @return Koordinaten des Objekts noerdlich vom aktuellen Standpunkt, welches
 	 *         eine Spezialisierung des Typs Feld ist
 	 */
 	public int[] getNorden(int x, int y) {
@@ -461,7 +390,7 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * s. Norden, nur mit Süden...
+	 * s. Norden, nur mit Sueden...
 	 * 
 	 * @return
 	 */
@@ -485,10 +414,10 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Methode, die ein Array von vier Feldern zurückgibt, welche den Feldern
+	 * Methode, die ein Array von vier Feldern zurueckgibt, welche den Feldern
 	 * entsprechen, die an die aktuelle Position angrenzen die Reihenfolge der
-	 * Objekte: Nord, Ost, Süd, West die Methode ruft die Methoden getNorden(),
-	 * getOsten(), getSüden(), getWesten() auf
+	 * Objekte: Nord, Ost, Sued, West die Methode ruft die Methoden getNorden(),
+	 * getOsten(), getSueden(), getWesten() auf
 	 * 
 	 * @param karte
 	 * @return
