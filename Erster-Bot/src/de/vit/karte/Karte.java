@@ -45,8 +45,9 @@ public class Karte implements navigierbar{
 	/**
 	 * diese Methode sucht die Koordinaten ein Feld mittels
 	 * bekanntem Namen und evtl. Ids (aus dem Feldstatus)
-	 * @param feldtyp
-	 * @return
+	 * @param feldtyp soll den kompletten String, den die getCellStatus-Methoden ausgeben, entegegennehmen
+	 * Ausnahme: wenn Dokument gekickt wurde, dann übergeben wir eine geslicten String, ohne andere Bots (ohne !)
+	 * @return Achtung! Gibt -1|-1 zurück, wenn Feld nicht gefunden wurde!! TODO Exception
 	 */
 	public int[] getFeld(String feldtyp) {
 		int [] koordinaten = new int[2];
@@ -104,8 +105,61 @@ public class Karte implements navigierbar{
 	// TODO grafische ausgabe der Karte als String
 	// mit Art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen
 	// sehen moechte
-	public String getMap(String art) {
-		return "bla";
+	public String getKarte() {
+		String karte = "";
+		int i = 0;
+		for (int y=0; y<sizeY; y++) {
+			//hier wird die x-Achsenbeschriftung generiert
+			while (i < sizeX)
+			{
+				if (i==0)
+					karte = karte.concat(" |" + i + " ");	
+				else if (i<10)
+				{
+					karte = karte.concat(" |" + i + " ");
+				}
+				else
+				{
+					karte = karte.concat("|" + i + " ");
+				}
+				i++;
+			}
+			karte = karte.concat("\n");
+			karte = karte.concat("" + y + "|");
+			
+			//hier werden die Werte eingetragen...
+			for (int x=0; x<sizeX; x++) {
+				if (this.karte[x] [y].getName().equals("FLOOR"))
+					karte = karte.concat("   ");
+				else if (this.karte[x] [y].getName().equals("WALL"))
+					karte = karte.concat(" X ");
+				else if (this.karte[x] [y].getName().contains("FINISH"))
+					karte = karte.concat(" S ");
+				else if (this.karte[x] [y].getName().contains("FORM"))
+					karte = karte.concat(" F ");
+				else
+					karte = karte.concat(" ~ ");
+				if (x!=sizeX-1)
+					karte = karte.concat("|");
+			}
+			karte = karte.concat("\n");
+			
+			//hier werden die Zwischenzeilen zur Struktur generiert
+			for (int x=0; x<=sizeX; x++) {
+				if (y!=sizeY-1)
+				{
+					if (x==0)
+						karte = karte.concat("-+");
+					else if (x==sizeX) {
+						karte = karte.concat("---");
+					}
+					else {
+						karte = karte.concat("---+");
+					}
+				}	
+			}
+		}
+		return karte;
 	}
 
 	/**
@@ -254,7 +308,7 @@ public class Karte implements navigierbar{
 		if (name.equals("NEBEL") || !info.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM"))
+			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
@@ -283,7 +337,7 @@ public class Karte implements navigierbar{
 		if (name.equals("NEBEL") || !info.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM"))
+			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
@@ -312,7 +366,7 @@ public class Karte implements navigierbar{
 		if (name.equals("NEBEL") || !info.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM"))
+			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
@@ -341,7 +395,7 @@ public class Karte implements navigierbar{
 		if (name.equals("NEBEL") || !info.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM"))
+			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
