@@ -35,6 +35,20 @@ public abstract class Bewegung {
 			return false;
 		}
 	}
+//	
+//	public static boolean istFinishMoeglichNachbarfeld(Feld aktuellesFeld, navigierbar aktuelleKarte) {
+//		if (aktuellesFeld instanceof Sachbearbeiter) {
+//			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
+//			if (aktuellesSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
+//					&& aktuellesSachbearbeiterFeld.getFormCount() == aktuelleKarte.getFormCount()) {
+//				return true;
+//			} else
+//				return false;
+//		} else {
+//			return false;
+//		}
+//	}
+	
 	public void exploration(navigierbar aktuelleKarte) {
 		
 	}
@@ -48,7 +62,7 @@ public abstract class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 
-	public static String bewegung(navigierbar spielKarte) {
+	public static String bewegung(navigierbar aktuelleKarte) {
 
 		// 1.) Pruefen ob FINISH <playerId> <formCount> auf currentCellStatus equals
 		// true, dann return "finish".
@@ -66,7 +80,18 @@ public abstract class Bewegung {
 		}
 		return "c";
 
+		
+		
 	}
+	
+	// dynamic list = arrayList
+	// concav Füllung
+	// (enum) Variable mit Zuständen mit Werten für unterschiedliche Modi
+	
+	// Array mit Feldern: SB, WALL, FLOOR
+	// ArrayList: Dokumente werden mit NR angefügt
+	
+	// Erstmal den Raum erkunden...danach die Prioliste!
 
 	// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere
 	// Befuellung der Karte mit Zellinformationen den Koordinaten zugeordnet.
