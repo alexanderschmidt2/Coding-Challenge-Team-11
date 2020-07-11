@@ -193,7 +193,7 @@ public class Karte implements navigierbar{
 	 * den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu gehen.
 	 * 
 	 */
-	public void entfernungenAktualisieren() {
+	public void aktualisiereEntfernung() {
 		
 		//Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf Entfernung = 0 gesetzt.
 		this.getFeld(this.aktuellePosition[0],this.aktuellePosition[1]).setEntfernung(0);
@@ -205,26 +205,26 @@ public class Karte implements navigierbar{
 			for (int x = 0; x < sizeX; x++) {
 				for (int y = 0; y < sizeY; y++) {
 					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
-					if (!karte[x][y].getName().equals("FOG") || karte[x][y].getName().equals("WALL")) { 
+					if (!(karte[x][y] instanceof Nebel) || !(karte[x][y] instanceof Wand)) { //Weder ein Nebel, noch eine Wand
 						// Hier werden alle Entfernungen abgecheckt:
-						int entfernungImNorden = this.getNachbarn(x,y)[0].getEntfernung();
+						int entfernungImNorden = this.getNachbarn(x,y)[0].getEntfernung(); 
 						int entfernungImOsten = this.getNachbarn(x,y)[1].getEntfernung();
 						int entfernungImSueden = this.getNachbarn(x,y)[2].getEntfernung();
 						int entfernungImWester = this.getNachbarn(x,y)[3].getEntfernung();
 						//Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
-						List<Integer> list = new ArrayList<>();
+						List<Integer> listeVonEntfernungen = new ArrayList<>();
 						
-						list.add(entfernungImNorden); 
-				        list.add(entfernungImOsten); 
-				        list.add(entfernungImSueden); 
-				        list.add(entfernungImWester);
+						listeVonEntfernungen.add(entfernungImNorden); 
+				        listeVonEntfernungen.add(entfernungImOsten); 
+				        listeVonEntfernungen.add(entfernungImSueden); 
+				        listeVonEntfernungen.add(entfernungImWester);
 				        
-				        int minEntfernungEinesNachbarn = Collections.min(list);
+				        int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
 						
-						int entfernungBeiMir = karte[x][y].getEntfernung();
 						
-						if (minEntfernungEinesNachbarn + 1 < entfernungBeiMir) {
-							entfernungBeiMir = minEntfernungEinesNachbarn + 1;
+						
+						if (kleinsteEntfernungEinesNachbarn + 1 < karte[x][y].getEntfernung()) {
+							karte[x][y].setEntfernung(kleinsteEntfernungEinesNachbarn + 1); 
 							aenderung = true;
 						}
 					}
@@ -238,7 +238,7 @@ public class Karte implements navigierbar{
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
-	public void feldHinzufuegen(int x, int y, String info) {
+	public void setFeld(int x, int y, String info) {
 		if (info.contains("FLOOR"))
 				{
 					this.karte[x][y] = new Boden();
@@ -313,9 +313,9 @@ public class Karte implements navigierbar{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
+				this.setFeld(form[0], form[1], "FLOOR");				
 			}
-			this.feldHinzufuegen(nordX, nordY, info);
+			this.setFeld(nordX, nordY, info);
 		}
 	}
 
@@ -342,9 +342,9 @@ public class Karte implements navigierbar{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
+				this.setFeld(form[0], form[1], "FLOOR");				
 			}
-			this.feldHinzufuegen(ostX, ostY, info);
+			this.setFeld(ostX, ostY, info);
 		}
 	}
 
@@ -371,9 +371,9 @@ public class Karte implements navigierbar{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
+				this.setFeld(form[0], form[1], "FLOOR");				
 			}
-			this.feldHinzufuegen(suedX, suedY, info);
+			this.setFeld(suedX, suedY, info);
 		}
 	}
 
@@ -400,9 +400,9 @@ public class Karte implements navigierbar{
 				//altes Formular finden
 				int [] form = this.getFeld(info.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.feldHinzufuegen(form[0], form[1], "FLOOR");				
+				this.setFeld(form[0], form[1], "FLOOR");				
 			}
-			this.feldHinzufuegen(westX, westY, info);
+			this.setFeld(westX, westY, info);
 		}
 	}
 
@@ -418,7 +418,7 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Methode, die abhaengig vom aktuellen Standpunkt die Koordinaten des im Norden
+	 * Methode, die abhaengig vom übergebenen Standpunkt die Koordinaten des im Norden
 	 * angrenzenden Objekts zurueckgibt
 	 * 
 	 * @return Koordinaten des Objekts noerdlich vom aktuellen Standpunkt, welches

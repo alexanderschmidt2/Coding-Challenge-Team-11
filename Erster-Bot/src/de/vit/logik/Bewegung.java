@@ -1,6 +1,10 @@
 package de.vit.logik;
 
-import de.vit.karte.navigierbar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import de.vit.karte.Karte;
 import de.vit.karte.felder.*;
 
 /**
@@ -14,16 +18,20 @@ import de.vit.karte.felder.*;
  */
 
 public abstract class Bewegung {
-	
+
 	/**
-	 * Die Methode istFinishMoeglich prueft, ob ein "finish" moeglich ist, sprich ob es bei einem Sachbearbeiter Feld/FINISH Feld um unseren Sachbearbeiter (unsere playerId) handelt
-	 * und ob alle noetigen Formulare aufgesammelt wurde, sodass man faktisch fertig ist.
-	 * @param aktuellesFeld Es muss das aktuelle Feld (currentCell) uebergeben werden, auf welchem sich der Bot befindet
+	 * Die Methode istFinishMoeglich prueft, ob ein "finish" moeglich ist, sprich ob
+	 * es bei einem Sachbearbeiter Feld/FINISH Feld um unseren Sachbearbeiter
+	 * (unsere playerId) handelt und ob alle noetigen Formulare aufgesammelt wurde,
+	 * sodass man faktisch fertig ist.
+	 * 
+	 * @param aktuellesFeld Es muss das aktuelle Feld (currentCell) uebergeben
+	 *                      werden, auf welchem sich der Bot befindet
 	 * @param aktuelleKarte Es muss die aktuelle Karte uebergeben werden
 	 * @return boolean
 	 */
 
-	public static boolean istFinishMoeglich(Feld aktuellesFeld, navigierbar aktuelleKarte) {
+	public static boolean istFinishMoeglich(Feld aktuellesFeld, Karte aktuelleKarte) {
 		if (aktuellesFeld instanceof Sachbearbeiter) {
 			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
 			if (aktuellesSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
@@ -35,6 +43,7 @@ public abstract class Bewegung {
 			return false;
 		}
 	}
+
 //	
 //	public static boolean istFinishMoeglichNachbarfeld(Feld aktuellesFeld, navigierbar aktuelleKarte) {
 //		if (aktuellesFeld instanceof Sachbearbeiter) {
@@ -48,9 +57,56 @@ public abstract class Bewegung {
 //			return false;
 //		}
 //	}
-	
-	public void exploration(navigierbar aktuelleKarte) {
-		
+	public ArrayList<Integer[]> aktualisiereZiele(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {
+		// haben wir andere Ziele?
+		for (int x = 0; x < aktuelleKarte.getSize()[0]; x++) {
+			for (int y = 0; y < aktuelleKarte.getSize()[1]; y++) {
+				if (!(aktuelleKarte.getFeld(x, y) instanceof Nebel) || !(aktuelleKarte.getFeld(x, y) instanceof Wand)) {
+					for (int i = 0; i < aktuelleKarte.getNachbarn(x, y).length; i++) {
+						if (aktuelleKarte.getNachbarn(x, y)[i] instanceof Nebel) {
+							ziele.add(10, new Integer[] { x, y });
+							return ziele;
+						}
+					}
+				}
+			}
+		}
+		return ziele;
+	}
+
+	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
+		for (int i = 0; i < aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).length; i++) {
+			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[i].getEntfernung() == 0) {
+				return i;
+			}
+		}
+		if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getNorden(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+			
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getOsten(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+			
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getSueden(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+			
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+		}
+		return 5; //TODO: Wenn 5 kommt funktioniert die Rekursion nicht
+	}
+
+	public static int zumZielLaufen(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {// TODO: Rekursion implementieren
+		// Ziele im Array mit der gerinsten Zahl(index) haben die höchste Priorität
+		int[] Zielkoordinaten = { ziele.get(10)[0], ziele.get(10)[1] };
+		return schrittZumZiel(Zielkoordinaten, aktuelleKarte) +2%4;
+	}
+
+	public void exploration(Karte aktuelleKarte) {
+
 	}
 
 	/**
@@ -62,7 +118,7 @@ public abstract class Bewegung {
 	 * @return Aktion als String fuer system.out.println()
 	 */
 
-	public static String bewegung(navigierbar aktuelleKarte) {
+	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
 		// 1.) Pruefen ob FINISH <playerId> <formCount> auf currentCellStatus equals
 		// true, dann return "finish".
@@ -74,23 +130,20 @@ public abstract class Bewegung {
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
 
-		if (istFinishMoeglich(spielKarte.getFeld(0,0), spielKarte)) { // FINISH <playerId> <formCount> //Basically 5x prüfen, ob finish möglich
-			return "finish";
-
-		}
-		return "c";
-
-		
-		
+		String[] kompass = { "go north", "go east", "go south", "go west" };
+		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();
+		String letzteGetaetigteAktion = kompass[zumZielLaufen(ziele, aktuelleKarte)];
+		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
+		return letzteGetaetigteAktion;
 	}
-	
+
 	// dynamic list = arrayList
 	// concav Füllung
 	// (enum) Variable mit Zuständen mit Werten für unterschiedliche Modi
-	
+
 	// Array mit Feldern: SB, WALL, FLOOR
 	// ArrayList: Dokumente werden mit NR angefügt
-	
+
 	// Erstmal den Raum erkunden...danach die Prioliste!
 
 	// Vor der Bewegung und vor der Prioritaetsliste fuer Abfragen: Weitere

@@ -12,6 +12,15 @@ public class Rundeninformationen {
 	String eastCellStatus;
 	String southCellStatus;
 	String westCellStatus;
+	String lastDoneAction;
+
+	public String getLastDoneAction() {
+		return lastDoneAction;
+	}
+
+	public void setLastDoneAction(String lastDoneAction) {
+		this.lastDoneAction = lastDoneAction;
+	}
 
 	public String getLastActionsResult() {
 		return lastActionsResult;

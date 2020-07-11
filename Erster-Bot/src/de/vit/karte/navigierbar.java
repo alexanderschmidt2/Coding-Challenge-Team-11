@@ -11,7 +11,16 @@ public interface navigierbar {
 
 	public int getFormCount();
 
-	public Feld getFeld(int i, int j);
+	public Feld getFeld(int x, int y);
+	
+	public int[] getSize();
+	
+	public Feld[] getNachbarn(int x, int y);
+
+	public int[] getNorden(int x, int y);
+	public int[] getOsten(int x, int y);
+	public int[] getSueden(int x, int y);
+	public int[] getWesten(int x, int y);
 
 	// Ihr müsst gleichzeitig 5 Zellen setzen. Überprüfen, ob die Zellen Neben sind
 	// oder nicht.

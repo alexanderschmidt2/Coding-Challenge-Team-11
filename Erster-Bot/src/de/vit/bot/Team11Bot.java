@@ -49,7 +49,7 @@ public class Team11Bot {
 			karte.aktualisiereKarte(new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus));
 			
 			//Die Entfernungen der Felder relativ zur Position des Bots werden je Runde aktualisiert:
-			karte.entfernungenAktualisieren();
+			karte.aktualisiereEntfernung();
 
 			// Rundenaktion ausgeben
 			System.out.println(Bewegung.bewegung(karte));
