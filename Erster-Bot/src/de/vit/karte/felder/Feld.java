@@ -1,7 +1,5 @@
 package de.vit.karte.felder;
 
-import de.vit.karte.*;
-
 /**
  * 
  * @author Laura

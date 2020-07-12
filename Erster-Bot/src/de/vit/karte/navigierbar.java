@@ -1,7 +1,6 @@
 package de.vit.karte;
 
 import de.vit.karte.felder.Feld;
-import de.vit.logik.Rundeninformationen;
 
 public interface navigierbar {
 	public int getLevel();

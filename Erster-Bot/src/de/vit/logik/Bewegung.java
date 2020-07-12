@@ -1,8 +1,6 @@
 package de.vit.logik;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import de.vit.karte.Karte;
 import de.vit.karte.felder.*;
@@ -14,6 +12,9 @@ import de.vit.karte.felder.*;
  *         main Methode der Klasse ErsterBot/Team11Bot ausfuehren, indem die
  *         Methode Bewegung.bewegung() dort aufgerufen wird, welche einen String
  *         (Aktion) zurueckgibt.
+ *         
+ *         Die Klasse ist <abstract>, da sie nicht instanziierbar ist und nur die 
+ *         Bewegungsmethode dieser Klasse für die main-Methode Team11Bot notwendig ist.
  * 
  */
 
@@ -30,7 +31,10 @@ public abstract class Bewegung {
 	 * @param aktuelleKarte Es muss die aktuelle Karte uebergeben werden
 	 * @return boolean
 	 */
-
+	
+	// Hier werden Prioritaeten gemaess des Programmablaufplans (PAP) abgeprueft:
+	
+	// 1.) Prioritaet: finish auf currenctCell
 	public static boolean istFinishMoeglich(Feld aktuellesFeld, Karte aktuelleKarte) {
 		if (aktuellesFeld instanceof Sachbearbeiter) {
 			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
@@ -44,7 +48,7 @@ public abstract class Bewegung {
 		}
 	}
 
-//	
+//	// 2.) Prioritaet: finish auf nachbarCell, damit "go nachbar" und dann 1.) greift
 //	public static boolean istFinishMoeglichNachbarfeld(Feld aktuellesFeld, navigierbar aktuelleKarte) {
 //		if (aktuellesFeld instanceof Sachbearbeiter) {
 //			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
@@ -57,15 +61,17 @@ public abstract class Bewegung {
 //			return false;
 //		}
 //	}
-	public ArrayList<Integer[]> aktualisiereZiele(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {
+	
+	
+	public static ArrayList<Integer[]> aktualisiereZiele(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {
 		// haben wir andere Ziele?
 		for (int x = 0; x < aktuelleKarte.getSize()[0]; x++) {
 			for (int y = 0; y < aktuelleKarte.getSize()[1]; y++) {
 				int[] ziel = new int[] {x,y};
-				if (!(aktuelleKarte.getFeld(ziel) instanceof Nebel) || !(aktuelleKarte.getFeld(ziel) instanceof Wand)) {
+				if (!((aktuelleKarte.getFeld(ziel) instanceof Nebel) || (aktuelleKarte.getFeld(ziel) instanceof Wand))) {
 					for (int i = 0; i < aktuelleKarte.getNachbarn(ziel).length; i++) {
 						if (aktuelleKarte.getNachbarn(ziel)[i] instanceof Nebel) {
-							ziele.add(10, new Integer[] { ziel[0], ziel[1] });
+							ziele.add(new Integer[] { ziel[0], ziel[1] });
 							return ziele;
 						}
 					}
@@ -102,7 +108,7 @@ public abstract class Bewegung {
 
 	public static int zumZielLaufen(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {// TODO: Rekursion implementieren
 		// Ziele im Array mit der gerinsten Zahl(index) haben die höchste Priorität
-		int[] Zielkoordinaten = { ziele.get(10)[0], ziele.get(10)[1] };
+		int[] Zielkoordinaten = { ziele.get(0)[0], ziele.get(0)[1] };
 		return schrittZumZiel(Zielkoordinaten, aktuelleKarte) +2%4;
 	}
 
@@ -133,6 +139,7 @@ public abstract class Bewegung {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();
+		aktualisiereZiele(ziele,aktuelleKarte);
 		String letzteGetaetigteAktion = kompass[zumZielLaufen(ziele, aktuelleKarte)];
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 		return letzteGetaetigteAktion;
@@ -168,7 +175,5 @@ public abstract class Bewegung {
 	// Wie bei 1.) Wenn die <playerId>, die eines anderens Bots ist, koennte man den
 	// <formCount> abspeichern, mit der Annahme, dass alle Spieler/Bots denselben
 	// <formCount> haben.
-
-	// 3.) Pruefen ob
 
 }

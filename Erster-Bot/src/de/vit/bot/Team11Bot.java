@@ -1,8 +1,7 @@
 package de.vit.bot;
 
 import java.util.Scanner;
-import de.vit.karte.*;
-import de.vit.karte.felder.*;
+import de.vit.karte.Karte;
 import de.vit.logik.Bewegung;
 import de.vit.logik.Rundeninformationen;
 
@@ -16,8 +15,7 @@ public class Team11Bot {
 
 	public static void main(String[] args) {
 		
-		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und
-		// Rundendaten liefert
+		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und Rundendaten liefert
 		Scanner input = new Scanner(System.in);
 
 		// INIT - Auslesen der Initialdaten
@@ -32,6 +30,8 @@ public class Team11Bot {
 		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
 		input.nextLine(); // Beenden der zweiten Zeile
+		
+		// Karte mit Initialdaten instanziieren und generieren
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
 
 		// TURN (Wiederholung je Runde notwendig)
@@ -45,14 +45,20 @@ public class Team11Bot {
 			String southCellStatus = input.nextLine();
 			String westCellStatus = input.nextLine();
 			
-			// TODO: //Karte muss sich selbst aktualisieren, hier aufrufen
-			karte.aktualisiereKarte(new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus));
+			// Rundeninformationen laden
+			Rundeninformationen runde = new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
 			
-			//Die Entfernungen der Felder relativ zur Position des Bots werden je Runde aktualisiert:
+			// Karte mit Rundeninformationen aktualisieren
+			karte.aktualisiereKarte(runde);
+			
+			// Entfernungen der Felder auf der Karte aktualisierent
 			karte.aktualisiereEntfernung();
+			
+			// Falls Bot ueber Konsole ausgefuehrt wird: Karte als String Konstrukt zeigen
+			//System.out.println(karte.getKarte());
 
 			// Rundenaktion ausgeben
-			System.out.println(Bewegung.bewegung(karte));
+			System.out.println(Bewegung.bewegung(karte,runde));
 		}
 
 		// Eingabe schliessen (letzte Aktion)

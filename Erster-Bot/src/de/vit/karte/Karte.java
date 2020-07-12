@@ -207,7 +207,7 @@ public class Karte implements navigierbar{
 					//das int[] koordinate legen wir hilfsweise an, damit man getNachbarn ein int[] übergeben kann
 					int [] koordinate = new int[] {x,y};
 					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
-					if (!(karte[x][y] instanceof Nebel) || !(karte[x][y] instanceof Wand)) { //Weder ein Nebel, noch eine Wand
+					if (!(karte[x][y] instanceof Nebel || (karte[x][y] instanceof Wand))) { //Weder ein Nebel, noch eine Wand
 						// Hier werden alle Entfernungen abgecheckt:
 						int entfernungImNorden = this.getNachbarn(koordinate)[0].getEntfernung(); 
 						int entfernungImOsten = this.getNachbarn(koordinate)[1].getEntfernung();
