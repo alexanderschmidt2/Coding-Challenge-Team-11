@@ -14,14 +14,6 @@ public class Rundeninformationen {
 	String westCellStatus;
 	String lastDoneAction;
 
-	public String getLastDoneAction() {
-		return lastDoneAction;
-	}
-
-	public void setLastDoneAction(String lastDoneAction) {
-		this.lastDoneAction = lastDoneAction;
-	}
-
 	public String getLastActionsResult() {
 		return lastActionsResult;
 	}
@@ -45,6 +37,39 @@ public class Rundeninformationen {
 	public String getWestCellStatus() {
 		return westCellStatus;
 	}
+	
+	public String getLastDoneAction() {
+		return lastDoneAction;
+	}
+
+	public void setLastActionsResult(String lastActionsResult) {
+		this.lastActionsResult = lastActionsResult;
+	}
+
+	public void setCurrentCellStatus(String currentCellStatus) {
+		this.currentCellStatus = currentCellStatus;
+	}
+
+	public void setNorthCellStatus(String northCellStatus) {
+		this.northCellStatus = northCellStatus;
+	}
+
+	public void setEastCellStatus(String eastCellStatus) {
+		this.eastCellStatus = eastCellStatus;
+	}
+
+	public void setSouthCellStatus(String southCellStatus) {
+		this.southCellStatus = southCellStatus;
+	}
+
+	public void setWestCellStatus(String westCellStatus) {
+		this.westCellStatus = westCellStatus;
+	}
+
+	public void setLastDoneAction(String lastDoneAction) {
+		this.lastDoneAction = lastDoneAction;
+	}
+	
 	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		super();

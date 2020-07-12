@@ -22,7 +22,7 @@ public interface navigierbar {
 	public int[] getSueden(int[] position);
 	public int[] getWesten(int[] position);
 
-	// Ihr müsst gleichzeitig 5 Zellen setzen. Überprüfen, ob die Zellen Neben sind
+	// Ihr müsst gleichzeitig 5 Zellen setzen. Überprüfen, ob die Zellen Nebel sind
 	// oder nicht.
 	// Wenn ihr ein neues Objekt anlegt, dann müsst ihr das, was ihr an CellStatus
 	// habt nur anlegen, wenn A. sich eure Position verändert hat, also ok
