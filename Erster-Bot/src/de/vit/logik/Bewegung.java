@@ -61,10 +61,11 @@ public abstract class Bewegung {
 		// haben wir andere Ziele?
 		for (int x = 0; x < aktuelleKarte.getSize()[0]; x++) {
 			for (int y = 0; y < aktuelleKarte.getSize()[1]; y++) {
-				if (!(aktuelleKarte.getFeld(x, y) instanceof Nebel) || !(aktuelleKarte.getFeld(x, y) instanceof Wand)) {
-					for (int i = 0; i < aktuelleKarte.getNachbarn(x, y).length; i++) {
-						if (aktuelleKarte.getNachbarn(x, y)[i] instanceof Nebel) {
-							ziele.add(10, new Integer[] { x, y });
+				int[] ziel = new int[] {x,y};
+				if (!(aktuelleKarte.getFeld(ziel) instanceof Nebel) || !(aktuelleKarte.getFeld(ziel) instanceof Wand)) {
+					for (int i = 0; i < aktuelleKarte.getNachbarn(ziel).length; i++) {
+						if (aktuelleKarte.getNachbarn(ziel)[i] instanceof Nebel) {
+							ziele.add(10, new Integer[] { ziel[0], ziel[1] });
 							return ziele;
 						}
 					}
@@ -75,26 +76,26 @@ public abstract class Bewegung {
 	}
 
 	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
-		for (int i = 0; i < aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).length; i++) {
-			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[i].getEntfernung() == 0) {
+		for (int i = 0; i < aktuelleKarte.getNachbarn(aktuelleKoordinaten).length; i++) {
+			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[i].getEntfernung() == 0) {
 				return i;
 			}
 		}
-		if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getNorden(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+		if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getNorden(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getOsten(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getOsten(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getSueden(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getSueden(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten[0], aktuelleKoordinaten[1])[0]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten[0], aktuelleKoordinaten[1]).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten[0], aktuelleKoordinaten[1]), aktuelleKarte);
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten), aktuelleKarte);
 		}
 		return 5; //TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
