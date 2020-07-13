@@ -6,16 +6,16 @@ package de.vit.logik;
  */
 public class Rundeninformationen {
 	
-	String lastActionResult;
+	String lastActionsResult;
 	String currentCellStatus;
 	String northCellStatus;
 	String eastCellStatus;
 	String southCellStatus;
 	String westCellStatus;
-	String lastDoneAction;
+	String lastDoneAction = "";
 
-	public String getLastActionResult() {
-		return lastActionResult;
+	public String getLastActionsResult() {
+		return lastActionsResult;
 	}
 
 	public String getCurrentCellStatus() {
@@ -42,8 +42,8 @@ public class Rundeninformationen {
 		return lastDoneAction;
 	}
 
-	public void setLastActionResult(String lastActionResult) {
-		this.lastActionResult = lastActionResult;
+	public void setLastActionsResult(String lastActionsResult) {
+		this.lastActionsResult = lastActionsResult;
 	}
 
 	public void setCurrentCellStatus(String currentCellStatus) {
@@ -79,10 +79,10 @@ public class Rundeninformationen {
 	 * @param southCellStatus
 	 * @param westCellStatus
 	 */
-	public void setInputs(String lastActionResult, String currentCellStatus, String northCellStatus,
+	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus)
 	{
-		this.lastActionResult = lastActionResult;
+		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
 		this.eastCellStatus = eastCellStatus;
@@ -92,10 +92,10 @@ public class Rundeninformationen {
 	
 	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
 	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
-	public Rundeninformationen(String lastActionResult, String currentCellStatus, String northCellStatus,
+	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		super();
-		this.lastActionResult = lastActionResult;
+		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
 		this.eastCellStatus = eastCellStatus;

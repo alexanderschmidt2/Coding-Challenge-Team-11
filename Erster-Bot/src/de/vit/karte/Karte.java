@@ -113,27 +113,53 @@ public class Karte implements navigierbar{
 	public String getKarte() {
 		String karte = "";
 		int i = 0;
+		karte = karte.concat("aktuelle x-Koordinate: " + this.getAktuellePosition()[0] + ", aktuelle y-Koordinate: " + this.getAktuellePosition()[1] + "\n");
 		for (int y=0; y<sizeY; y++) {
 			//hier wird die x-Achsenbeschriftung generiert
 			while (i < sizeX)
 			{
 				if (i==0)
-					karte = karte.concat(" |" + i + " ");	
+					karte = karte.concat(" |  " + i + " ");	
 				else if (i<10)
 				{
-					karte = karte.concat(" |" + i + " ");
+					karte = karte.concat("  |  " + i + " ");
 				}
 				else
 				{
-					karte = karte.concat("|" + i + " ");
+					karte = karte.concat(" |  " + i + " ");
 				}
 				i++;
+			}
+			karte = karte.concat("\n");
+			
+			//hier werden die Zwischenzeilen zur Struktur generiert
+			for (int x=0; x<=sizeX; x++) {
+				if (y!=sizeY)
+				{
+					if (x==0)
+						karte = karte.concat("-+");
+					else if (x==sizeX) {
+						karte = karte.concat("------");
+					}
+					else {
+						karte = karte.concat("------+");
+					}
+				}	
 			}
 			karte = karte.concat("\n");
 			karte = karte.concat("" + y + "|");
 			
 			//hier werden die Werte eingetragen...
 			for (int x=0; x<sizeX; x++) {
+				
+				int e = this.getFeld(new int [] {x,y}).getEntfernung();
+				if ((int) (Math.log10(e) + 1) == 3) 
+					karte = karte.concat(e+"");
+				else if ((int) (Math.log10(e) + 1) == 2) 
+					karte = karte.concat(e+" ");
+				else 
+					karte = karte.concat(e+"  ");
+				
 				if (this.karte[x] [y].getName().equals("FLOOR"))
 					karte = karte.concat("   ");
 				else if (this.karte[x] [y].getName().equals("WALL"))
@@ -146,22 +172,6 @@ public class Karte implements navigierbar{
 					karte = karte.concat(" ~ ");
 				if (x!=sizeX-1)
 					karte = karte.concat("|");
-			}
-			karte = karte.concat("\n");
-			
-			//hier werden die Zwischenzeilen zur Struktur generiert
-			for (int x=0; x<=sizeX; x++) {
-				if (y!=sizeY-1)
-				{
-					if (x==0)
-						karte = karte.concat("-+");
-					else if (x==sizeX) {
-						karte = karte.concat("---");
-					}
-					else {
-						karte = karte.concat("---+");
-					}
-				}	
 			}
 		}
 		return karte;
@@ -426,7 +436,7 @@ public class Karte implements navigierbar{
 	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
 	 */
 	public void aktualisiereKarte(Rundeninformationen ri) {
-		this.aktualisierePosition(ri.getLastActionResult(), ri.getLastDoneAction());
+		this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisereNorden(ri.getNorthCellStatus());
 		this.aktualisereOsten(ri.getEastCellStatus());
 		this.aktualisereSueden(ri.getSouthCellStatus());

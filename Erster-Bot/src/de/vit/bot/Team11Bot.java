@@ -33,6 +33,9 @@ public class Team11Bot {
 		
 		// Karte mit Initialdaten instanziieren und generieren
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
+		
+		//Rundeninformationen anlegen (leer)
+		Rundeninformationen runde = new Rundeninformationen();
 
 		// TURN (Wiederholung je Runde notwendig)
 		while (input.hasNext()) {
@@ -45,23 +48,21 @@ public class Team11Bot {
 			String southCellStatus = input.nextLine();
 			String westCellStatus = input.nextLine();
 			
-			// Rundeninformationen laden
-			Rundeninformationen runde = new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
+			// Rundeninformationen aktualisieren
+			runde.setInputs(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
 			
-			// Postition aktualisieren
-			//karte.aktualisierePosition(runde.getLastActionsResult(), runde);
-			
-			// Karte mit Rundeninformationen aktualisieren
+			// Postition und Karte aktualisieren
 			karte.aktualisiereKarte(runde);
-			
+
 			// Entfernungen der Felder auf der Karte aktualisierent
 			karte.aktualisiereEntfernung();
 			
-			// Falls Bot ueber Konsole ausgefuehrt wird: Karte als String Konstrukt zeigen
-			System.out.println(karte.getKarte());
+			//Karte als String Konstrukt zeigen
+			System.err.println(karte.getKarte());
 
-			// Rundenaktion ausgeben
+			// Rundenaktion ausgeben; die eigentliche Aktion und setLastDoneAction
 			System.out.println(Bewegung.bewegung(karte,runde));
+
 		}
 
 		// Eingabe schliessen (letzte Aktion)
