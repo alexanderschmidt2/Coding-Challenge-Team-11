@@ -54,7 +54,7 @@ public class Team11Bot {
 			// Postition und Karte aktualisieren
 			karte.aktualisiereKarte(runde);
 
-			// Entfernungen der Felder auf der Karte aktualisierent
+			// Entfernungen der Felder auf der Karte aktualisieren
 			karte.aktualisiereEntfernung();
 			
 			//Karte als String Konstrukt zeigen

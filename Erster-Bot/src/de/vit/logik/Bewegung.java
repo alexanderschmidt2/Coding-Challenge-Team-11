@@ -144,6 +144,7 @@ public abstract class Bewegung {
 		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();
 		String letzteGetaetigteAktion = kompass[zumZielLaufen(ziele, aktuelleKarte)];
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
+		//aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()).setEntfernung(1);
 		return letzteGetaetigteAktion;
 	}
 

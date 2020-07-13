@@ -1,0 +1,3 @@
+1.) Entfernung wird mit dem alten Wert verglichen, 0 sollte aber auf 1 schon stehen, bevor er vergleicht!
+
+2.) Der Trace von Nullen entsteht durch den Vergleich: 0+1 < 0 --> liefert false und somit wird nichts geändert und die currentPosition wird immer 0.
