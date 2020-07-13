@@ -6,7 +6,7 @@ package de.vit.logik;
  */
 public class Rundeninformationen {
 	
-	String lastActionsResult;
+	String lastActionResult;
 	String currentCellStatus;
 	String northCellStatus;
 	String eastCellStatus;
@@ -14,8 +14,8 @@ public class Rundeninformationen {
 	String westCellStatus;
 	String lastDoneAction;
 
-	public String getLastActionsResult() {
-		return lastActionsResult;
+	public String getLastActionResult() {
+		return lastActionResult;
 	}
 
 	public String getCurrentCellStatus() {
@@ -42,8 +42,8 @@ public class Rundeninformationen {
 		return lastDoneAction;
 	}
 
-	public void setLastActionsResult(String lastActionsResult) {
-		this.lastActionsResult = lastActionsResult;
+	public void setLastActionResult(String lastActionResult) {
+		this.lastActionResult = lastActionResult;
 	}
 
 	public void setCurrentCellStatus(String currentCellStatus) {
@@ -70,16 +70,41 @@ public class Rundeninformationen {
 		this.lastDoneAction = lastDoneAction;
 	}
 	
-	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus) {
-		super();
-		this.lastActionsResult = lastActionsResult;
+	/**
+	 * soll in jeder Runde alle Attribute der Klasse außer lastDoneAction aktualisieren
+	 * @param lastActionResult
+	 * @param currentCellStatus
+	 * @param northCellStatus
+	 * @param eastCellStatus
+	 * @param southCellStatus
+	 * @param westCellStatus
+	 */
+	public void setInputs(String lastActionResult, String currentCellStatus, String northCellStatus,
+			String eastCellStatus, String southCellStatus, String westCellStatus)
+	{
+		this.lastActionResult = lastActionResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
 		this.eastCellStatus = eastCellStatus;
 		this.southCellStatus = southCellStatus;
 		this.westCellStatus = westCellStatus;
 	}
+	
+	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
+	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
+	public Rundeninformationen(String lastActionResult, String currentCellStatus, String northCellStatus,
+			String eastCellStatus, String southCellStatus, String westCellStatus) {
+		super();
+		this.lastActionResult = lastActionResult;
+		this.currentCellStatus = currentCellStatus;
+		this.northCellStatus = northCellStatus;
+		this.eastCellStatus = eastCellStatus;
+		this.southCellStatus = southCellStatus;
+		this.westCellStatus = westCellStatus;
+	}
+	
+	public Rundeninformationen()
+	{}
 	
 
 }

@@ -71,6 +71,11 @@ public class Karte implements navigierbar{
 		return aktuellePosition;
 	}
 
+	/** da sich bei einer Bewegung nur eine koordinate aendert ist es sinnvoll der Methode anstatt  eines Arrays von int direkt 2 int zu uebergeben. 
+	 * daher wird hier vom Standard abgewichen, wonach Methoden, die mit Koordinaten arbeiten immer ein Array mit 2 int uebergeben wird
+	 * @param x x-Koordinate der aktuellen Position
+	 * @param y y-Koordinate der aktuellen Position
+	 */
 	public void setAktuellePosition(int x, int y) {
 		this.aktuellePosition[0] = x;
 		this.aktuellePosition[1] = y;
@@ -129,9 +134,6 @@ public class Karte implements navigierbar{
 			
 			//hier werden die Werte eingetragen...
 			for (int x=0; x<sizeX; x++) {
-				Integer ent = this.karte[x] [y].getEntfernung();
-				String entfernung = ent.toString();
-				karte = karte.concat(entfernung);
 				if (this.karte[x] [y].getName().equals("FLOOR"))
 					karte = karte.concat("   ");
 				else if (this.karte[x] [y].getName().equals("WALL"))
@@ -165,27 +167,28 @@ public class Karte implements navigierbar{
 		return karte;
 	}
 
+
+	
+
 	/**
-	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der Uebergebenen Groesse des Spielfelds und
-	 * Startposition des Bots
-	 * 
-	 * @param sizeX  Groesse des Spielfelds in der horizontalen
-	 * @param sizeY  Groesse des Spielfelds in der vertikalen
-	 * @param startX Startposition des Bots auf der x-Achse
-	 * @param startY Startposition des Bots auf der y-Achse
+	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
-	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		this.level = level;
-		this.playerId = playerId;
-		this.aktuellePosition[0] = startX;
-		this.aktuellePosition[1] = startY;
-		this.karte = new Feld[sizeX][sizeY];
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
-				karte[x][y] = new Nebel();
-			}
+	public void setFeld(int[] position, String info) {
+		if (info.contains("FLOOR"))
+				{
+					this.karte[position[0]][position[1]] = new Boden();
+				}
+		else if (info.contains("WALL"))
+		{
+			this.karte[position[0]][position[1]] = new Wand();
+		}
+		else if (info.contains("FINISH"))
+		{
+			this.karte[position[0]][position[1]] = new Sachbearbeiter(info);
+		}
+		else //es muss ein Formular sein
+		{
+			this.karte[position[0]][position[1]] = new Dokument(info);
 		}
 	}
 
@@ -239,59 +242,33 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
-	 */
-	public void setFeld(int[] position, String info) {
-		if (info.contains("FLOOR"))
-				{
-					this.karte[position[0]][position[1]] = new Boden();
-				}
-		else if (info.contains("WALL"))
-		{
-			this.karte[position[0]][position[1]] = new Wand();
-		}
-		else if (info.contains("FINISH"))
-		{
-			this.karte[position[0]][position[1]] = new Sachbearbeiter(info);
-		}
-		else //es muss ein Formular sein
-		{
-			this.karte[position[0]][position[1]] = new Dokument(info);
-		}
-		// TODO: Karte mit neuen Instanzen fuellen
-		// geht schwerlich, da man keinen neuen SB anlegen kann, da die levelId noch
-		// nicht existiert
-		// SB anlegen geht nur in MainMethode
-	}
-
-	/**
 	 * Methode, die die aktuelle Position aufgrund der LastActionResult bestimmt
 	 * 
 	 * @param lastActionsResult ist der Ausgabestring der LastActionResult
 	 */
-	public void aktualisierePosition(String lastActionsResult, Rundeninformationen ri) {
+	public void aktualisierePosition(String lastActionResult, String lastDoneAction) {
 
-		switch (lastActionsResult) {
+		switch (lastActionResult) {
 		case "OK NORTH":
-			if (ri.getLastDoneAction().equals("go north"))
+			if (lastDoneAction.equals("go north"))
 			{
 			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + sizeY) % sizeY);
 			}
 			break;
 		case "OK EAST":
-			if (ri.getLastDoneAction().equals("go east"))
+			if (lastDoneAction.equals("go east"))
 			{
 			this.setAktuellePosition(((aktuellePosition[0] + 1) + sizeX) % sizeX, aktuellePosition[1]);
 			}
 			break;
 		case "OK SOUTH":
-			if (ri.getLastDoneAction().equals("go south"))
+			if (lastDoneAction.equals("go south"))
 			{
 			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + sizeY) % sizeY);
 			}
 			break;
 		case "OK WEST":
-			if (ri.getLastDoneAction().equals("go west"))
+			if (lastDoneAction.equals("go west"))
 			{
 			this.setAktuellePosition(((aktuellePosition[0] - 1) + sizeX) % sizeX, aktuellePosition[1]);
 			}
@@ -303,121 +280,117 @@ public class Karte implements navigierbar{
 	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das Feld unbekannt (Nebel) ist,
 	 * wenn bereits ein Feld existiert, wird zunächst ueberprueft, ob es mit dem angezeigten uebereinstimmt,
 	 * wenn nicht (falls ein Dokument gekickt wurde), aktualisiert es das Feld
-	 * @param rundeninformation
+	 * @param ri
 	 */
-	public void aktualisereNorden(Rundeninformationen rundeninformation) {
+	public void aktualisereNorden(String northCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...Uebergebe diese der Methode getNorden(), um die Koordinaten des
 		// noerdlichen Felds zu erhalten
-		int[] nord = getNorden(aktuellePosition);
+		int[] nord = this.getNorden(this.aktuellePosition);
 		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = getFeld(nord).getName();
+		String name = this.getFeld(nord).getName();
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn noerdlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist oder das bereits angelegte Feld dem aktuellen entspricht, gehen wir in die if-Verzweigung
-		String info = rundeninformation.getNorthCellStatus();
-		if (name.equals("NEBEL") || !info.contains(name)) {
+		if (name.equals("NEBEL") || !northCellStatus.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
+			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
-				int [] form = this.getFeld(info.substring(0,8));
+				int [] form = this.getFeld(northCellStatus.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
 				this.setFeld(form, "FLOOR");				
 			}
-			this.setFeld(nord, info);
+			this.setFeld(nord, northCellStatus);
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Osten
-	 * @param rundeninformation
+	 * @param ri
 	 */
-	public void aktualisereOsten(Rundeninformationen rundeninformation) {
+	public void aktualisereOsten(String eastCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getOsten(), um die Koordinaten des
 		// oestlichen Felds zu erhalten
-		int[] ost = getOsten(aktuellePosition);
+		int[] ost = this.getOsten(aktuellePosition);
 		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = new String(getFeld(ost).getName());
+		String name = new String(this.getFeld(ost).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn oestlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		String info = rundeninformation.getEastCellStatus();
-		if (name.equals("NEBEL") || !info.contains(name)) {
+		if (name.equals("NEBEL") || !eastCellStatus.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
+			if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
-				int [] form = this.getFeld(info.substring(0,8));
+				int [] form = this.getFeld(eastCellStatus.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
 				this.setFeld(form, "FLOOR");				
 			}
-			this.setFeld(ost, info);
+			this.setFeld(ost, eastCellStatus);
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Sueden
-	 * @param rundeninformation
+	 * @param ri
 	 */
-	public void aktualisereSueden(Rundeninformationen rundeninformation) {
+	public void aktualisereSueden(String southCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getSueden(), um die Koordinaten des
 		// suedlichen Felds zu erhalten
-		int[] sued = getSueden(aktuellePosition);
+		int[] sued = this.getSueden(aktuellePosition);
 		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = new String(getFeld(sued).getName());
+		String name = new String(this.getFeld(sued).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn suedlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		String info = rundeninformation.getSouthCellStatus();
-		if (name.equals("NEBEL") || !info.contains(name)) {
+		if (name.equals("NEBEL") || !southCellStatus.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
+			if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
-				int [] form = this.getFeld(info.substring(0,8));
+				int [] form = this.getFeld(southCellStatus.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
 				this.setFeld(form, "FLOOR");				
 			}
-			this.setFeld(sued, info);
+			this.setFeld(sued, southCellStatus);
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Westen
-	 * @param rundeninformation
+	 * @param ri
 	 */
-	public void aktualisereWesten(Rundeninformationen rundeninformation) {
+	public void aktualisereWesten(String westCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getWesten(), um die Koordinaten des
 		// westlichen Felds zu erhalten
-		int[] west = getWesten(aktuellePosition);
+		int[] west = this.getWesten(aktuellePosition);
 		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = new String(getFeld(west).getName());
+		String name = new String(this.getFeld(west).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn westlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		String info = rundeninformation.getWestCellStatus();
-		if (name.equals("NEBEL") || !info.contains(name)) {
+		if (name.equals("NEBEL") || !westCellStatus.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
+			if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
-				int [] form = this.getFeld(info.substring(0,8));
+				int [] form = this.getFeld(westCellStatus.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
 				this.setFeld(form, "FLOOR");				
 			}
-			this.setFeld(west, info);
+			this.setFeld(west, westCellStatus);
 		}
 	}
 	
@@ -425,40 +398,40 @@ public class Karte implements navigierbar{
 	 * wie Norden, nur für aktuellePosition
 	 * diese Methode ist nur relevant, wenn ein Dokument auf ein Feld gekickt wird,
 	 * auf das wir uns entschieden haben zu gehen
-	 * @param rundeninformation
+	 * @param ri
 	 */
-	public void aktualisereStandpunkt(Rundeninformationen rundeninformation) {
+	public void aktualisereStandpunkt(String currentCellStatus) {
 		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName() erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
-		String name = new String(getFeld(aktuellePosition).getName());
+		String name = new String(this.getFeld(aktuellePosition).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn westlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
-		String info = rundeninformation.getCurrentCellStatus();
-		if (!info.contains(name)) {
+		if (!currentCellStatus.contains(name)) {
 			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
 			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (info.contains("FORM") && !(this.getFeld(info.substring(0,8))[0]==-1))
+			if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0,8))[0]==-1))
 			{
 				//altes Formular finden
-				int [] form = this.getFeld(info.substring(0,8));
+				int [] form = this.getFeld(currentCellStatus.substring(0,8));
 				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
 				this.setFeld(form, "FLOOR");				
 			}
-			this.setFeld(aktuellePosition, info);
+			this.setFeld(aktuellePosition, currentCellStatus);
 		}
 	}
 
 	/**
 	 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der Karte vermerkt
-	 * @param rundeninformation hierueber können die einzelnen Feldstatus abgerufen werden
+	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
 	 */
-	public void aktualisiereKarte(Rundeninformationen rundeninformation) {
-		this.aktualisereNorden(rundeninformation);
-		this.aktualisereOsten(rundeninformation);
-		this.aktualisereSueden(rundeninformation);
-		this.aktualisereWesten(rundeninformation);
-		this.aktualisereStandpunkt(rundeninformation);
+	public void aktualisiereKarte(Rundeninformationen ri) {
+		this.aktualisierePosition(ri.getLastActionResult(), ri.getLastDoneAction());
+		this.aktualisereNorden(ri.getNorthCellStatus());
+		this.aktualisereOsten(ri.getEastCellStatus());
+		this.aktualisereSueden(ri.getSouthCellStatus());
+		this.aktualisereWesten(ri.getWestCellStatus());
+		this.aktualisereStandpunkt(ri.getCurrentCellStatus());
 	}
 
 	/**
@@ -529,4 +502,28 @@ public class Karte implements navigierbar{
 		return nachbarn;
 	}
 
+	/**
+	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der Uebergebenen Groesse des Spielfelds und
+	 * Startposition des Bots
+	 * 
+	 * @param sizeX  Groesse des Spielfelds in der horizontalen
+	 * @param sizeY  Groesse des Spielfelds in der vertikalen
+	 * @param startX Startposition des Bots auf der x-Achse
+	 * @param startY Startposition des Bots auf der y-Achse
+	 */
+	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.level = level;
+		this.playerId = playerId;
+		this.aktuellePosition[0] = startX;
+		this.aktuellePosition[1] = startY;
+		this.karte = new Feld[sizeX][sizeY];
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				karte[x][y] = new Nebel();
+			}
+		}
+	}
+	
 }
