@@ -129,6 +129,9 @@ public class Karte implements navigierbar{
 			
 			//hier werden die Werte eingetragen...
 			for (int x=0; x<sizeX; x++) {
+				Integer ent = this.karte[x] [y].getEntfernung();
+				String entfernung = ent.toString();
+				karte = karte.concat(entfernung);
 				if (this.karte[x] [y].getName().equals("FLOOR"))
 					karte = karte.concat("   ");
 				else if (this.karte[x] [y].getName().equals("WALL"))
@@ -207,7 +210,7 @@ public class Karte implements navigierbar{
 					//das int[] koordinate legen wir hilfsweise an, damit man getNachbarn ein int[] übergeben kann
 					int [] koordinate = new int[] {x,y};
 					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
-					if (!(karte[x][y] instanceof Nebel || (karte[x][y] instanceof Wand))) { //Weder ein Nebel, noch eine Wand
+					if (!((this.karte[x][y] instanceof Nebel) || (this.karte[x][y] instanceof Wand))) { //Weder ein Nebel, noch eine Wand 
 						// Hier werden alle Entfernungen abgecheckt:
 						int entfernungImNorden = this.getNachbarn(koordinate)[0].getEntfernung(); 
 						int entfernungImOsten = this.getNachbarn(koordinate)[1].getEntfernung();
@@ -223,10 +226,8 @@ public class Karte implements navigierbar{
 				        
 				        int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
 						
-						
-						
-						if (kleinsteEntfernungEinesNachbarn + 1 < karte[x][y].getEntfernung()) {
-							karte[x][y].setEntfernung(kleinsteEntfernungEinesNachbarn + 1); 
+						if (kleinsteEntfernungEinesNachbarn + 1 < this.karte[x][y].getEntfernung()) {
+							this.karte[x][y].setEntfernung(kleinsteEntfernungEinesNachbarn + 1); 
 							aenderung = true;
 						}
 					}

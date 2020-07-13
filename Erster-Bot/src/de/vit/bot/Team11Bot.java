@@ -48,6 +48,9 @@ public class Team11Bot {
 			// Rundeninformationen laden
 			Rundeninformationen runde = new Rundeninformationen(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
 			
+			// Postition aktualisieren
+			//karte.aktualisierePosition(runde.getLastActionsResult(), runde);
+			
 			// Karte mit Rundeninformationen aktualisieren
 			karte.aktualisiereKarte(runde);
 			
@@ -55,7 +58,7 @@ public class Team11Bot {
 			karte.aktualisiereEntfernung();
 			
 			// Falls Bot ueber Konsole ausgefuehrt wird: Karte als String Konstrukt zeigen
-			//System.out.println(karte.getKarte());
+			System.out.println(karte.getKarte());
 
 			// Rundenaktion ausgeben
 			System.out.println(Bewegung.bewegung(karte,runde));

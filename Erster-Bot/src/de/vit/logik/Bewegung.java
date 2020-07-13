@@ -137,6 +137,8 @@ public abstract class Bewegung {
 		// Wenn die <playerId>, die eines anderens Bots ist, koennte man den <formCount>
 		// abspeichern, mit der Annahme, dass alle Spieler/Bots denselben <formCount>
 		// haben.
+		
+		
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();

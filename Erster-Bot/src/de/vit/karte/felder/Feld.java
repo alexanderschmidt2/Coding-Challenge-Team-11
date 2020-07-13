@@ -10,7 +10,7 @@ public abstract class Feld {
 	 * protected, da erst in der Unterklasse initialisiert
 	 */
 	protected String name;
-	private int entfernung;
+	private int entfernung = 500;
 	private int besuche = 0;
 	
 	//Getter und Setter
