@@ -10,7 +10,7 @@ public abstract class Feld {
 	 * protected, da erst in der Unterklasse initialisiert
 	 */
 	protected String name;
-	private int entfernung = 500000000; //Erstmal ist jedes Feld "unendlich weit weg" --> hier: 500 Millionen
+	private int entfernung;
 	private int besuche = 0;
 	
 	//Getter und Setter

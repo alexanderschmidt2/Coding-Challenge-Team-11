@@ -6,6 +6,7 @@ public class Nebel extends Feld {
 	{
 		super();
 		this.name = "FOG";
+		this.setEntfernung(500000000);
 	}
 
 }

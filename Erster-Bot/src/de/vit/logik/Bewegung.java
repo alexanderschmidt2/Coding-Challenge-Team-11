@@ -69,7 +69,7 @@ public abstract class Bewegung {
 			for (int y = 0; y < aktuelleKarte.getSize()[1]; y++) {
 				int[] ziel = new int[] {x,y};
 				if (!((aktuelleKarte.getFeld(ziel) instanceof Nebel) || (aktuelleKarte.getFeld(ziel) instanceof Wand))) {
-					for (int i = 0; i < aktuelleKarte.getNachbarn(ziel).length; i++) {
+					for (int i = 0; i <= 3; i++) {
 						if (aktuelleKarte.getNachbarn(ziel)[i] instanceof Nebel) {
 							ziele.add(new Integer[] { ziel[0], ziel[1] });
 							return ziele;
@@ -82,7 +82,7 @@ public abstract class Bewegung {
 	}
 
 	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
-		for (int i = 0; i < aktuelleKarte.getNachbarn(aktuelleKoordinaten).length; i++) {
+		for (int i = 0; i <= 3; i++) {
 			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[i].getEntfernung() == 0) {
 				return i;
 			}
@@ -91,25 +91,26 @@ public abstract class Bewegung {
 				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
 			return schrittZumZiel(aktuelleKarte.getNorden(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[1]
 				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
 			return schrittZumZiel(aktuelleKarte.getOsten(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[2]
 				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
 			return schrittZumZiel(aktuelleKarte.getSueden(aktuelleKoordinaten), aktuelleKarte);
 			
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
+		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[3]
 				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
 			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten), aktuelleKarte);
 		}
-		return 5; //TODO: Wenn 5 kommt funktioniert die Rekursion nicht
+		return 10; //TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
 	public static int zumZielLaufen(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {// TODO: Rekursion implementieren
 		// Ziele im Array mit der gerinsten Zahl(index) haben die höchste Priorität
+		aktualisiereZiele(ziele, aktuelleKarte);
 		int[] Zielkoordinaten = { ziele.get(0)[0], ziele.get(0)[1] };
-		return schrittZumZiel(Zielkoordinaten, aktuelleKarte) +2%4;
+		return (schrittZumZiel(Zielkoordinaten, aktuelleKarte) +2)%4;
 	}
 
 	public void exploration(Karte aktuelleKarte) {
@@ -139,7 +140,6 @@ public abstract class Bewegung {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();
-		aktualisiereZiele(ziele,aktuelleKarte);
 		String letzteGetaetigteAktion = kompass[zumZielLaufen(ziele, aktuelleKarte)];
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 		return letzteGetaetigteAktion;

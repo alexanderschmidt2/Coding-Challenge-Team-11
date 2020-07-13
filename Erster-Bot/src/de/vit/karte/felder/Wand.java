@@ -6,6 +6,7 @@ public class Wand extends Feld{
 	{
 		super();
 		this.name = "WALL";
+		this.setEntfernung(500000000);
 	}
 
 }
