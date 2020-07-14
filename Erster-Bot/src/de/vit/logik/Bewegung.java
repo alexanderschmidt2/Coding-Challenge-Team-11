@@ -49,18 +49,17 @@ public abstract class Bewegung {
 	}
 
 //	// 2.) Prioritaet: finish auf nachbarCell, damit "go nachbar" und dann 1.) greift
-//	public static boolean istFinishMoeglichNachbarfeld(Feld aktuellesFeld, navigierbar aktuelleKarte) {
-//		if (aktuellesFeld instanceof Sachbearbeiter) {
-//			Sachbearbeiter aktuellesSachbearbeiterFeld = (Sachbearbeiter) aktuellesFeld;
-//			if (aktuellesSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
-//					&& aktuellesSachbearbeiterFeld.getFormCount() == aktuelleKarte.getFormCount()) {
-//				return true;
-//			} else
-//				return false;
-//		} else {
-//			return false;
-//		}
-//	}
+	public static int istFinishMoeglichNachbarfeld(Feld aktuellesFeld, Karte aktuelleKarte) {
+		for (int i = 0; i < 4; i++) {	
+			if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Sachbearbeiter) {
+				Sachbearbeiter nachbarSachbearbeiterFeld = (Sachbearbeiter) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+				if (nachbarSachbearbeiterFeld.getPlayerId() == aktuelleKarte.getPlayerId()
+						&& nachbarSachbearbeiterFeld.getFormCount() == aktuelleKarte.getFormCount()) {
+					return i;
+				} else { return 404;}
+			} 
+		} return 404;
+	} 
 	
 	
 	public static ArrayList<Integer[]> aktualisiereZiele(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {
@@ -142,6 +141,19 @@ public abstract class Bewegung {
 
 		String[] kompass = { "go north", "go east", "go south", "go west" };
 		ArrayList<Integer[]> ziele = new ArrayList<Integer[]>();
+		
+		// 1. Prioritaet: finish auf currentCell
+		if (istFinishMoeglich(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()), aktuelleKarte)) {
+			return "finish";
+		}
+		
+		// 2. Prioritaet: finish auf nachbarCell
+		for (int i = 0; i < 4; i++) {
+			if (istFinishMoeglichNachbarfeld(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()), aktuelleKarte) == i) {
+				return kompass[i];
+			}
+		}
+		
 		String letzteGetaetigteAktion = kompass[zumZielLaufen(ziele, aktuelleKarte)];
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 		//aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()).setEntfernung(1);
