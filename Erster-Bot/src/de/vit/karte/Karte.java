@@ -211,8 +211,17 @@ public class Karte implements navigierbar{
 	 */
 	public void aktualisiereEntfernung() {
 		
+		// Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde voellig neu geschieht!
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				int [] koordinaten = new int[] {x,y};
+				this.getFeld(koordinaten).setEntfernung(500);
+			}
+		}
+		
 		//Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf Entfernung = 0 gesetzt.
 		this.getFeld(aktuellePosition).setEntfernung(0);
+		
 
 		boolean aenderung; 
 		
@@ -220,22 +229,22 @@ public class Karte implements navigierbar{
 			aenderung = false;
 			for (int x = 0; x < sizeX; x++) {
 				for (int y = 0; y < sizeY; y++) {
-					//das int[] koordinate legen wir hilfsweise an, damit man getNachbarn ein int[] übergeben kann
-					int [] koordinate = new int[] {x,y};
+					//das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein int[] übergeben kann
+					int [] koordinaten = new int[] {x,y};
 					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
 					if (!((this.karte[x][y] instanceof Nebel) || (this.karte[x][y] instanceof Wand))) { //Weder ein Nebel, noch eine Wand 
 						// Hier werden alle Entfernungen abgecheckt:
-						int entfernungImNorden = this.getNachbarn(koordinate)[0].getEntfernung(); 
-						int entfernungImOsten = this.getNachbarn(koordinate)[1].getEntfernung();
-						int entfernungImSueden = this.getNachbarn(koordinate)[2].getEntfernung();
-						int entfernungImWester = this.getNachbarn(koordinate)[3].getEntfernung();
+						int entfernungImNorden = this.getNachbarn(koordinaten)[0].getEntfernung(); 
+						int entfernungImOsten = this.getNachbarn(koordinaten)[1].getEntfernung();
+						int entfernungImSueden = this.getNachbarn(koordinaten)[2].getEntfernung();
+						int entfernungImWesten = this.getNachbarn(koordinaten)[3].getEntfernung();
 						//Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
 						List<Integer> listeVonEntfernungen = new ArrayList<>();
 						
 						listeVonEntfernungen.add(entfernungImNorden); 
 				        listeVonEntfernungen.add(entfernungImOsten); 
 				        listeVonEntfernungen.add(entfernungImSueden); 
-				        listeVonEntfernungen.add(entfernungImWester);
+				        listeVonEntfernungen.add(entfernungImWesten);
 				        
 				        int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
 						
@@ -285,6 +294,7 @@ public class Karte implements navigierbar{
 			break;
 		}
 	}
+	
 
 	/**
 	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das Feld unbekannt (Nebel) ist,
