@@ -21,15 +21,15 @@ public class Sachbearbeiter extends Feld {
 	{
 		super();
 		//info slicen, um an spielerId zu kommen und in int casten
-		String spielerId = info.substring(7, 8);
-		int spielerId2 = Integer.valueOf(spielerId);
+		String spielerId_string = info.substring(7, 8);
+		int spielerId_int = Integer.valueOf(spielerId_string);
 		//info slicen, um an formCount zu kommen und in int casten
-		String formCount = info.substring(9, 10);
-		int formCount2 = Integer.valueOf(formCount);
+		String formCount_string = info.substring(9, 10);
+		int formCount_int = Integer.valueOf(formCount_string);
 
-		this.name = "FINISH " + spielerId + " " + formCount;
-		this.playerId = spielerId2;
-		this.formCount = formCount2;
+		this.name = "FINISH " + spielerId_string + " " + formCount_string;
+		this.playerId = spielerId_int;
+		this.formCount = formCount_int;
 	}
 
 
