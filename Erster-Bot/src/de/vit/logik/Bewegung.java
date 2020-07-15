@@ -61,24 +61,6 @@ public abstract class Bewegung {
 		} return 404;
 	} 
 	
-	
-	public static ArrayList<Integer[]> aktualisiereZiele(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {
-		// haben wir andere Ziele?
-		for (int x = 0; x < aktuelleKarte.getSize()[0]; x++) {
-			for (int y = 0; y < aktuelleKarte.getSize()[1]; y++) {
-				int[] ziel = new int[] {x,y};
-				if (!((aktuelleKarte.getFeld(ziel) instanceof Nebel) || (aktuelleKarte.getFeld(ziel) instanceof Wand))) {
-					for (int i = 0; i <= 3; i++) {
-						if (aktuelleKarte.getNachbarn(ziel)[i] instanceof Nebel) {
-							ziele.add(new Integer[] { ziel[0], ziel[1] });
-							return ziele;
-						}
-					}
-				}
-			}
-		}
-		return ziele;
-	}
 
 	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
 		for (int i = 0; i <= 3; i++) {
@@ -105,11 +87,10 @@ public abstract class Bewegung {
 		return 10; //TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int zumZielLaufen(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {// TODO: Rekursion implementieren
+	public static int zumZielLaufen(ArrayList<Integer[]> ziele, Karte aktuelleKarte) {// TODO: Methode sinnnnnvoll umbennen
+		
 		// Ziele im Array mit der gerinsten Zahl(index) haben die höchste Priorität
-		aktualisiereZiele(ziele, aktuelleKarte);
-		int[] Zielkoordinaten = { ziele.get(0)[0], ziele.get(0)[1] };
-		return (schrittZumZiel(Zielkoordinaten, aktuelleKarte) +2)%4;
+		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) +2)%4;
 	}
 
 	public void exploration(Karte aktuelleKarte) {

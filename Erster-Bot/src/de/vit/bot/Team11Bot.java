@@ -58,7 +58,7 @@ public class Team11Bot {
 			karte.aktualisiereEntfernung();
 			
 			//Karte als String Konstrukt zeigen
-			System.err.println(karte.getKarte());
+			//System.err.println(karte.getKarte());
 
 			// Rundenaktion ausgeben; die eigentliche Aktion und setLastDoneAction
 			System.out.println(Bewegung.bewegung(karte,runde));

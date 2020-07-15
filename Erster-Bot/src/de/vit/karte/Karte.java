@@ -12,12 +12,13 @@ import de.vit.logik.*;
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
  *         Koordinaten beinhaltet
  */
-public class Karte implements navigierbar{
+public class Karte implements navigierbar {
 	private int sizeX;
 	private int sizeY;
 	private final int level;
 	private final int playerId;
 	private int formCount;
+	private int[] dynamischesZiel;
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -31,9 +32,18 @@ public class Karte implements navigierbar{
 		int[] size = new int[] { sizeX, sizeY };
 		return size;
 	}
-	
+
+	public int[] getDynamischesZiel() {
+		return this.dynamischesZiel;
+	}
+
+	public void setDynamischesZiel(int[] koordinaten) {
+		this.dynamischesZiel = koordinaten;
+	}
+
 	/**
 	 * diese Methode sucht ein Feld mittels bekannter Koordinaten
+	 * 
 	 * @param x Koordinate
 	 * @param y Koordinate
 	 * @return das gesuchte Feld
@@ -41,23 +51,27 @@ public class Karte implements navigierbar{
 	public Feld getFeld(int[] position) {
 		return this.karte[position[0]][position[1]];
 	}
-	
+
 	/**
-	 * diese Methode sucht die Koordinaten ein Feld mittels
-	 * bekanntem Namen und evtl. Ids (aus dem Feldstatus)
-	 * @param feldtyp soll den kompletten String, den die getCellStatus-Methoden ausgeben, entegegennehmen
-	 * Ausnahme: wenn Dokument gekickt wurde, dann übergeben wir eine geslicten String, ohne andere Bots (ohne !)
-	 * @return Achtung! Gibt -1|-1 zurück, wenn Feld nicht gefunden wurde!! TODO Exception
+	 * diese Methode sucht die Koordinaten ein Feld mittels bekanntem Namen und
+	 * evtl. Ids (aus dem Feldstatus)
+	 * 
+	 * @param feldtyp soll den kompletten String, den die getCellStatus-Methoden
+	 *                ausgeben, entegegennehmen Ausnahme: wenn Dokument gekickt
+	 *                wurde, dann übergeben wir eine geslicten String, ohne andere
+	 *                Bots (ohne !)
+	 * @return Achtung! Gibt -1|-1 zurück, wenn Feld nicht gefunden wurde!! TODO
+	 *         Exception
 	 */
 	public int[] getFeld(String feldtyp) {
-		int [] koordinaten = new int[2];
+		int[] koordinaten = new int[2];
 		int koordinateX = -1;
 		int koordinateY = -1;
-		for (int j= 0; j<sizeY; j++) {
-			for (int i= 0; i<sizeX; i++) {	
+		for (int j = 0; j < sizeY; j++) {
+			for (int i = 0; i < sizeX; i++) {
 				if (feldtyp.contains(this.karte[i][j].getName())) {
-					koordinateX=i;
-					koordinateY=j;
+					koordinateX = i;
+					koordinateY = j;
 					break;
 				}
 			}
@@ -71,8 +85,12 @@ public class Karte implements navigierbar{
 		return aktuellePosition;
 	}
 
-	/** da sich bei einer Bewegung nur eine koordinate aendert ist es sinnvoll der Methode anstatt  eines Arrays von int direkt 2 int zu uebergeben. 
-	 * daher wird hier vom Standard abgewichen, wonach Methoden, die mit Koordinaten arbeiten immer ein Array mit 2 int uebergeben wird
+	/**
+	 * da sich bei einer Bewegung nur eine koordinate aendert ist es sinnvoll der
+	 * Methode anstatt eines Arrays von int direkt 2 int zu uebergeben. daher wird
+	 * hier vom Standard abgewichen, wonach Methoden, die mit Koordinaten arbeiten
+	 * immer ein Array mit 2 int uebergeben wird
+	 * 
 	 * @param x x-Koordinate der aktuellen Position
 	 * @param y y-Koordinate der aktuellen Position
 	 */
@@ -88,21 +106,21 @@ public class Karte implements navigierbar{
 	public int getPlayerId() {
 		return playerId;
 	}
-	
-	public int getFormCount()
-	{
+
+	public int getFormCount() {
 		return formCount;
 	}
-	
+
 	/**
-	 * wird nur verwendet, wenn wir ein Formular entdecken und die FormularNr groeßer ist als der bisher gespeicherte formCount
-	 * sobald Sachbearbeiter gefunden wurde, wird maximaler Wert gesetzt und Methode wird nicht mehr benoetigt
+	 * wird nur verwendet, wenn wir ein Formular entdecken und die FormularNr
+	 * groeßer ist als der bisher gespeicherte formCount sobald Sachbearbeiter
+	 * gefunden wurde, wird maximaler Wert gesetzt und Methode wird nicht mehr
+	 * benoetigt
+	 * 
 	 * @param formCount
 	 */
-	public void setFormCount(int formCount)
-	{
-		if (this.formCount < formCount)
-		{
+	public void setFormCount(int formCount) {
+		if (this.formCount < formCount) {
 			this.formCount = formCount;
 		}
 	}
@@ -113,152 +131,165 @@ public class Karte implements navigierbar{
 	public String getKarte() {
 		String karte = "";
 		int i = 0;
-		karte = karte.concat("aktuelle x-Koordinate: " + this.getAktuellePosition()[0] + ", aktuelle y-Koordinate: " + this.getAktuellePosition()[1] + "\n");
-		for (int y=0; y<sizeY; y++) {
-			//hier wird die x-Achsenbeschriftung generiert
-			while (i < sizeX)
-			{
-				if (i==0)
-					karte = karte.concat(" |  " + i + " ");	
-				else if (i<10)
-				{
+		karte = karte.concat("aktuelle x-Koordinate: " + this.getAktuellePosition()[0] + ", aktuelle y-Koordinate: "
+				+ this.getAktuellePosition()[1] + "\n");
+		for (int y = 0; y < sizeY; y++) {
+			// hier wird die x-Achsenbeschriftung generiert
+			while (i < sizeX) {
+				if (i == 0)
+					karte = karte.concat(" |  " + i + " ");
+				else if (i < 10) {
 					karte = karte.concat("  |  " + i + " ");
-				}
-				else
-				{
+				} else {
 					karte = karte.concat(" |  " + i + " ");
 				}
 				i++;
 			}
 			karte = karte.concat("\n");
-			
-			//hier werden die Zwischenzeilen zur Struktur generiert
-			for (int x=0; x<=sizeX; x++) {
-				if (y!=sizeY)
-				{
-					if (x==0)
+
+			// hier werden die Zwischenzeilen zur Struktur generiert
+			for (int x = 0; x <= sizeX; x++) {
+				if (y != sizeY) {
+					if (x == 0)
 						karte = karte.concat("-+");
-					else if (x==sizeX) {
+					else if (x == sizeX) {
 						karte = karte.concat("------");
-					}
-					else {
+					} else {
 						karte = karte.concat("------+");
 					}
-				}	
+				}
 			}
 			karte = karte.concat("\n");
 			karte = karte.concat("" + y + "|");
-			
-			//hier werden die Werte eingetragen...
-			for (int x=0; x<sizeX; x++) {
-				
-				int e = this.getFeld(new int [] {x,y}).getEntfernung();
-				if ((int) (Math.log10(e) + 1) == 3) 
-					karte = karte.concat(e+"");
-				else if ((int) (Math.log10(e) + 1) == 2) 
-					karte = karte.concat(e+" ");
-				else 
-					karte = karte.concat(e+"  ");
-				
-				if (this.karte[x] [y].getName().equals("FLOOR"))
+
+			// hier werden die Werte eingetragen...
+			for (int x = 0; x < sizeX; x++) {
+
+				int e = this.getFeld(new int[] { x, y }).getEntfernung();
+				if ((int) (Math.log10(e) + 1) == 3)
+					karte = karte.concat(e + "");
+				else if ((int) (Math.log10(e) + 1) == 2)
+					karte = karte.concat(e + " ");
+				else
+					karte = karte.concat(e + "  ");
+
+				if (this.karte[x][y].getName().equals("FLOOR"))
 					karte = karte.concat("   ");
-				else if (this.karte[x] [y].getName().equals("WALL"))
+				else if (this.karte[x][y].getName().equals("WALL"))
 					karte = karte.concat(" X ");
-				else if (this.karte[x] [y].getName().contains("FINISH"))
+				else if (this.karte[x][y].getName().contains("FINISH"))
 					karte = karte.concat(" S ");
-				else if (this.karte[x] [y].getName().contains("FORM"))
+				else if (this.karte[x][y].getName().contains("FORM"))
 					karte = karte.concat(" F ");
 				else
 					karte = karte.concat(" ~ ");
-				if (x!=sizeX-1)
+				if (x != sizeX - 1)
 					karte = karte.concat("|");
 			}
 		}
 		return karte;
 	}
 
-
-	
-
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
 	public void setFeld(int[] position, String info) {
-		if (info.contains("FLOOR"))
-				{
-					this.karte[position[0]][position[1]] = new Boden();
-				}
-		else if (info.contains("WALL"))
-		{
+		if (info.contains("FLOOR")) {
+			this.karte[position[0]][position[1]] = new Boden();
+		} else if (info.contains("WALL")) {
 			this.karte[position[0]][position[1]] = new Wand();
-		}
-		else if (info.contains("FINISH"))
-		{
+		} else if (info.contains("FINISH")) {
 			this.karte[position[0]][position[1]] = new Sachbearbeiter(info);
-		}
-		else //es muss ein Formular sein
+		} else // es muss ein Formular sein
 		{
 			this.karte[position[0]][position[1]] = new Dokument(info);
 		}
 	}
 
-
 	/**
-	 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen um die Entfernungen der bereits bekannten Felder/Zellen
-	 * in der Karte anzupassen. So entsteht eine Entfernungskarte, welche unserem Bot die Entscheidungsfähigkeit gibt
-	 * den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu gehen.
+	 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen um die
+	 * Entfernungen der bereits bekannten Felder/Zellen in der Karte anzupassen. So
+	 * entsteht eine Entfernungskarte, welche unserem Bot die Entscheidungsfähigkeit
+	 * gibt den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu
+	 * gehen.
 	 * 
 	 */
-	public void aktualisiereEntfernung() {
-		
-		// Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde voellig neu geschieht!
+	public void aktualisiereEntfernung() {// TODO: einem Attribut ein dynamischesZiel mitgeben?
+
+		// Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde
+		// voellig neu geschieht!
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < sizeY; y++) {
-				int [] koordinaten = new int[] {x,y};
+				int[] koordinaten = new int[] { x, y };
 				this.getFeld(koordinaten).setEntfernung(500);
 			}
 		}
-		
-		//Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf Entfernung = 0 gesetzt.
-		this.getFeld(aktuellePosition).setEntfernung(0);
-		
 
-		boolean aenderung; 
-		
+		// Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf
+		// Entfernung = 0 gesetzt.
+		this.getFeld(aktuellePosition).setEntfernung(0);
+
+		boolean aenderung;
+		int letzte_beste_entfernung = this.getFeld(new int[]{0,0}).getEntfernung();
 		do {
 			aenderung = false;
 			for (int x = 0; x < sizeX; x++) {
 				for (int y = 0; y < sizeY; y++) {
-					//das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein int[] übergeben kann
-					int [] koordinaten = new int[] {x,y};
-					//Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir auch exploriert haben, oder welche keine Wand darstellen
-					if (!((this.karte[x][y] instanceof Nebel) || (this.karte[x][y] instanceof Wand))) { //Weder ein Nebel, noch eine Wand 
+					// das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein
+					// int[] übergeben kann
+					int[] derzeitige_koordinaten = new int[] { x, y };
+					// Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir
+					// auch exploriert haben, oder welche keine Wand darstellen
+					if (!((this.getFeld(derzeitige_koordinaten) instanceof Nebel)
+							|| (this.getFeld(derzeitige_koordinaten) instanceof Wand))) { // Weder ein //If für
+																							// entfernungen
+						// Nebel, noch
+						// eine Wand
 						// Hier werden alle Entfernungen abgecheckt:
-						int entfernungImNorden = this.getNachbarn(koordinaten)[0].getEntfernung(); 
-						int entfernungImOsten = this.getNachbarn(koordinaten)[1].getEntfernung();
-						int entfernungImSueden = this.getNachbarn(koordinaten)[2].getEntfernung();
-						int entfernungImWesten = this.getNachbarn(koordinaten)[3].getEntfernung();
-						//Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
-						List<Integer> listeVonEntfernungen = new ArrayList<>();
-						
-						listeVonEntfernungen.add(entfernungImNorden); 
-				        listeVonEntfernungen.add(entfernungImOsten); 
-				        listeVonEntfernungen.add(entfernungImSueden); 
-				        listeVonEntfernungen.add(entfernungImWesten);
-				        
-				        int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
-						
-						if (kleinsteEntfernungEinesNachbarn + 1 < this.karte[x][y].getEntfernung()) {
-							this.karte[x][y].setEntfernung(kleinsteEntfernungEinesNachbarn + 1); 
+						int entfernungen_im_norden = this.getNachbarn(derzeitige_koordinaten)[0].getEntfernung();
+						int entfernungen_im_osten = this.getNachbarn(derzeitige_koordinaten)[1].getEntfernung();
+						int entfernungen_im_sueden = this.getNachbarn(derzeitige_koordinaten)[2].getEntfernung();
+						int entfernungen_im_westen = this.getNachbarn(derzeitige_koordinaten)[3].getEntfernung();
+						// Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der
+						// Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
+						List<Integer> liste_von_entfernungen = new ArrayList<>();
+
+						liste_von_entfernungen.add(entfernungen_im_norden);
+						liste_von_entfernungen.add(entfernungen_im_osten);
+						liste_von_entfernungen.add(entfernungen_im_sueden);
+						liste_von_entfernungen.add(entfernungen_im_westen);
+
+						int kleinste_entfernung_eines_nachbarn = Collections.min(liste_von_entfernungen);
+
+						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten, letzte_beste_entfernung);
+
+						if (kleinste_entfernung_eines_nachbarn + 1 < this.getFeld(derzeitige_koordinaten)
+								.getEntfernung()) {
+							this.getFeld(derzeitige_koordinaten).setEntfernung(kleinste_entfernung_eines_nachbarn + 1);
 							aenderung = true;
 						}
+
 					}
-					
+
 				}
 			}
 		} while (aenderung == true);
 
 	}
+
+	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {//TODO: falls wir alles erkundet haben müssen wir auch damit umgehen können!
+		for (int i = 0; i <= 3; i++) {
+			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
+				if (this.getFeld(koordinaten).getEntfernung() < entfernung)
+
+				{
+					this.setDynamischesZiel(koordinaten);
+					return this.getFeld(koordinaten).getEntfernung();
+				}
+			}
+		}
+		return entfernung;
+	};
 
 	/**
 	 * Methode, die die aktuelle Position aufgrund der LastActionResult bestimmt
@@ -269,37 +300,34 @@ public class Karte implements navigierbar{
 
 		switch (lastActionResult) {
 		case "OK NORTH":
-			if (lastDoneAction.equals("go north"))
-			{
-			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + sizeY) % sizeY);
+			if (lastDoneAction.equals("go north")) {
+				this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + sizeY) % sizeY);
 			}
 			break;
 		case "OK EAST":
-			if (lastDoneAction.equals("go east"))
-			{
-			this.setAktuellePosition(((aktuellePosition[0] + 1) + sizeX) % sizeX, aktuellePosition[1]);
+			if (lastDoneAction.equals("go east")) {
+				this.setAktuellePosition(((aktuellePosition[0] + 1) + sizeX) % sizeX, aktuellePosition[1]);
 			}
 			break;
 		case "OK SOUTH":
-			if (lastDoneAction.equals("go south"))
-			{
-			this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + sizeY) % sizeY);
+			if (lastDoneAction.equals("go south")) {
+				this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + sizeY) % sizeY);
 			}
 			break;
 		case "OK WEST":
-			if (lastDoneAction.equals("go west"))
-			{
-			this.setAktuellePosition(((aktuellePosition[0] - 1) + sizeX) % sizeX, aktuellePosition[1]);
+			if (lastDoneAction.equals("go west")) {
+				this.setAktuellePosition(((aktuellePosition[0] - 1) + sizeX) % sizeX, aktuellePosition[1]);
 			}
 			break;
 		}
 	}
-	
 
 	/**
-	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das Feld unbekannt (Nebel) ist,
-	 * wenn bereits ein Feld existiert, wird zunächst ueberprueft, ob es mit dem angezeigten uebereinstimmt,
-	 * wenn nicht (falls ein Dokument gekickt wurde), aktualisiert es das Feld
+	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
+	 * Feld unbekannt (Nebel) ist, wenn bereits ein Feld existiert, wird zunächst
+	 * ueberprueft, ob es mit dem angezeigten uebereinstimmt, wenn nicht (falls ein
+	 * Dokument gekickt wurde), aktualisiert es das Feld
+	 * 
 	 * @param ri
 	 */
 	public void aktualisereNorden(String northCellStatus) {
@@ -312,16 +340,19 @@ public class Karte implements navigierbar{
 		String name = this.getFeld(nord).getName();
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn noerdlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
-		// ist oder das bereits angelegte Feld dem aktuellen entspricht, gehen wir in die if-Verzweigung
+		// ist oder das bereits angelegte Feld dem aktuellen entspricht, gehen wir in
+		// die if-Verzweigung
 		if (name.equals("NEBEL") || !northCellStatus.contains(name)) {
-			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
-			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0,8))[0]==-1))
-			{
-				//altes Formular finden
-				int [] form = this.getFeld(northCellStatus.substring(0,8));
-				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.setFeld(form, "FLOOR");				
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] form = this.getFeld(northCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(form, "FLOOR");
 			}
 			this.setFeld(nord, northCellStatus);
 		}
@@ -329,6 +360,7 @@ public class Karte implements navigierbar{
 
 	/**
 	 * wie Norden, nur für Osten
+	 * 
 	 * @param ri
 	 */
 	public void aktualisereOsten(String eastCellStatus) {
@@ -343,14 +375,16 @@ public class Karte implements navigierbar{
 		// ergo: Wenn oestlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
 		if (name.equals("NEBEL") || !eastCellStatus.contains(name)) {
-			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
-			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0,8))[0]==-1))
-			{
-				//altes Formular finden
-				int [] form = this.getFeld(eastCellStatus.substring(0,8));
-				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.setFeld(form, "FLOOR");				
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] form = this.getFeld(eastCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(form, "FLOOR");
 			}
 			this.setFeld(ost, eastCellStatus);
 		}
@@ -358,6 +392,7 @@ public class Karte implements navigierbar{
 
 	/**
 	 * wie Norden, nur für Sueden
+	 * 
 	 * @param ri
 	 */
 	public void aktualisereSueden(String southCellStatus) {
@@ -372,14 +407,16 @@ public class Karte implements navigierbar{
 		// ergo: Wenn suedlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
 		if (name.equals("NEBEL") || !southCellStatus.contains(name)) {
-			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
-			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0,8))[0]==-1))
-			{
-				//altes Formular finden
-				int [] form = this.getFeld(southCellStatus.substring(0,8));
-				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.setFeld(form, "FLOOR");				
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] form = this.getFeld(southCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(form, "FLOOR");
 			}
 			this.setFeld(sued, southCellStatus);
 		}
@@ -387,6 +424,7 @@ public class Karte implements navigierbar{
 
 	/**
 	 * wie Norden, nur für Westen
+	 * 
 	 * @param ri
 	 */
 	public void aktualisereWesten(String westCellStatus) {
@@ -401,48 +439,56 @@ public class Karte implements navigierbar{
 		// ergo: Wenn westlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
 		if (name.equals("NEBEL") || !westCellStatus.contains(name)) {
-			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
-			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0,8))[0]==-1))
-			{
-				//altes Formular finden
-				int [] form = this.getFeld(westCellStatus.substring(0,8));
-				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.setFeld(form, "FLOOR");				
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] form = this.getFeld(westCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(form, "FLOOR");
 			}
 			this.setFeld(west, westCellStatus);
 		}
 	}
-	
+
 	/**
-	 * wie Norden, nur für aktuellePosition
-	 * diese Methode ist nur relevant, wenn ein Dokument auf ein Feld gekickt wird,
-	 * auf das wir uns entschieden haben zu gehen
+	 * wie Norden, nur für aktuellePosition diese Methode ist nur relevant, wenn ein
+	 * Dokument auf ein Feld gekickt wird, auf das wir uns entschieden haben zu
+	 * gehen
+	 * 
 	 * @param ri
 	 */
 	public void aktualisereStandpunkt(String currentCellStatus) {
-		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName() erhalten wir den Namen des
+		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName()
+		// erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
 		String name = new String(this.getFeld(aktuellePosition).getName());
 		// name wird zum Vergleich mit NEBEL herangezogen
 		// ergo: Wenn westlich von der aktuellen Positon ein unbekanntes Feld (Nebel)
 		// ist, gehen wir in die if-Verzweigung
 		if (!currentCellStatus.contains(name)) {
-			//falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt wurde, aber weggekickt wurde,
-			//wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0,8))[0]==-1))
-			{
-				//altes Formular finden
-				int [] form = this.getFeld(currentCellStatus.substring(0,8));
-				//altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf SB liegen kann)
-				this.setFeld(form, "FLOOR");				
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] form = this.getFeld(currentCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(form, "FLOOR");
 			}
 			this.setFeld(aktuellePosition, currentCellStatus);
 		}
 	}
 
 	/**
-	 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der Karte vermerkt
+	 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der
+	 * Karte vermerkt
+	 * 
 	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
 	 */
 	public void aktualisiereKarte(Rundeninformationen ri) {
@@ -455,8 +501,8 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Methode, die abhaengig vom übergebenen Standpunkt die Koordinaten des im Norden
-	 * angrenzenden Objekts zurueckgibt
+	 * Methode, die abhaengig vom übergebenen Standpunkt die Koordinaten des im
+	 * Norden angrenzenden Objekts zurueckgibt
 	 * 
 	 * @return Koordinaten des Objekts noerdlich vom aktuellen Standpunkt, welches
 	 *         eine Spezialisierung des Typs Feld ist
@@ -523,8 +569,8 @@ public class Karte implements navigierbar{
 	}
 
 	/**
-	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der Uebergebenen Groesse des Spielfelds und
-	 * Startposition des Bots
+	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der
+	 * Uebergebenen Groesse des Spielfelds und Startposition des Bots
 	 * 
 	 * @param sizeX  Groesse des Spielfelds in der horizontalen
 	 * @param sizeY  Groesse des Spielfelds in der vertikalen
@@ -545,5 +591,5 @@ public class Karte implements navigierbar{
 			}
 		}
 	}
-	
+
 }
