@@ -1,8 +1,6 @@
 package de.vit.karte;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import de.vit.karte.felder.*;
 import de.vit.logik.*;
@@ -12,13 +10,15 @@ import de.vit.logik.*;
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
  *         Koordinaten beinhaltet
  */
-public class Karte implements navigierbar {
+public class Karte {
 	private int sizeX;
 	private int sizeY;
 	private final int level;
 	private final int playerId;
 	private int formCount;
 	private int[] dynamischesZiel;
+	private HashSet<Integer[]> statischeZiele; // Ein Zielfeld gilt als Entdeckt, sobald es in der statischen Zielmap
+												// ist
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -40,7 +40,11 @@ public class Karte implements navigierbar {
 	public void setDynamischesZiel(int[] koordinaten) {
 		this.dynamischesZiel = koordinaten;
 	}
+	public HashSet<Integer[]> getStatischeZiele() {
+		return statischeZiele;
+	}
 
+	// getter und setter für unsere Statischen Ziele
 	/**
 	 * diese Methode sucht ein Feld mittels bekannter Koordinaten
 	 * 
@@ -79,6 +83,7 @@ public class Karte implements navigierbar {
 		koordinaten[0] = koordinateX;
 		koordinaten[1] = koordinateY;
 		return koordinaten;
+
 	}
 
 	public int[] getAktuellePosition() {
@@ -230,7 +235,7 @@ public class Karte implements navigierbar {
 		this.getFeld(aktuellePosition).setEntfernung(0);
 
 		boolean aenderung;
-		int letzte_beste_entfernung = this.getFeld(new int[]{0,0}).getEntfernung();
+		int letzte_beste_entfernung = this.getFeld(new int[] { 0, 0 }).getEntfernung();
 		do {
 			aenderung = false;
 			for (int x = 0; x < sizeX; x++) {
@@ -261,7 +266,8 @@ public class Karte implements navigierbar {
 
 						int kleinste_entfernung_eines_nachbarn = Collections.min(liste_von_entfernungen);
 
-						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten, letzte_beste_entfernung);
+						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten,
+								letzte_beste_entfernung);
 
 						if (kleinste_entfernung_eines_nachbarn + 1 < this.getFeld(derzeitige_koordinaten)
 								.getEntfernung()) {
@@ -277,7 +283,8 @@ public class Karte implements navigierbar {
 
 	}
 
-	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {//TODO: falls wir alles erkundet haben müssen wir auch damit umgehen können!
+	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {// TODO: falls wir alles erkundet haben müssen
+																			// wir auch damit umgehen können!
 		for (int i = 0; i <= 3; i++) {
 			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
 				if (this.getFeld(koordinaten).getEntfernung() < entfernung)
@@ -584,6 +591,7 @@ public class Karte implements navigierbar {
 		this.playerId = playerId;
 		this.aktuellePosition[0] = startX;
 		this.aktuellePosition[1] = startY;
+		this.statischeZiele = new HashSet<Integer[]>();
 		this.karte = new Feld[sizeX][sizeY];
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < sizeY; y++) {
@@ -591,5 +599,8 @@ public class Karte implements navigierbar {
 			}
 		}
 	}
+
+
+
 
 }
