@@ -22,15 +22,15 @@ public class Dokument extends Feld {
 	{
 		super();
 		//info slicen, um an spielerId zu kommen und in int casten
-		String spielerId = info.substring(5, 6);
-		int spielerId2 = Integer.valueOf(spielerId);
+		String spielerId_string = info.substring(5, 6);
+		int spielerId_int = Integer.valueOf(spielerId_string);
 		//info slicen, um an nr zu kommen und in int casten
-		String nr = info.substring(7, 8);
-		int formNr = Integer.valueOf(nr);
+		String formNr_string = info.substring(7, 8);
+		int formNr_int = Integer.valueOf(formNr_string);
 
-		this.name = "FORM " + spielerId + " " + nr;
-		this.playerId = spielerId2;
-		this.nr = formNr;
+		this.name = "FORM " + spielerId_string + " " + formNr_string;
+		this.playerId = spielerId_int;
+		this.nr = formNr_int;
 	}
 
 }
