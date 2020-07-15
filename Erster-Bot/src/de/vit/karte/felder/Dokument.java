@@ -8,6 +8,7 @@ package de.vit.karte.felder;
 public class Dokument extends Feld {
 	private final int playerId;
 	private final int nr;
+	private boolean aufgenommen = false;
 	
 	//Getter und Setter
 	public int getPlayerId() {
@@ -17,7 +18,9 @@ public class Dokument extends Feld {
 	public int getNr() {
 		return nr;
 	}
-
+	
+	
+	
 	public Dokument(String info)
 	{
 		super();
@@ -31,6 +34,14 @@ public class Dokument extends Feld {
 		this.name = "FORM " + spielerId_string + " " + formNr_string;
 		this.playerId = spielerId_int;
 		this.nr = formNr_int;
+	}
+
+	public boolean isAufgenommen() {
+		return aufgenommen;
+	}
+
+	public void setAufgenommen(boolean aufgenommen) {
+		this.aufgenommen = aufgenommen;
 	}
 
 }

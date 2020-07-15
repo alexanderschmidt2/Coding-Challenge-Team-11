@@ -3,6 +3,7 @@ package de.vit.logik;
  * 
  * @author Alex
  * @Klasse speichert die Informationen der Runde in einem Objekt und aktualisiert diese jede Runde
+ * warum machen wir hier keine Objekte? Grund für den Garbage Kollektor, was ist perfomanter Objektvergleich/Stringvergleich? 
  */
 public class Rundeninformationen {
 	
@@ -13,7 +14,7 @@ public class Rundeninformationen {
 	String southCellStatus;
 	String westCellStatus;
 	String lastDoneAction = "";
-
+	
 	public String getLastActionsResult() {
 		return lastActionsResult;
 	}
@@ -82,6 +83,7 @@ public class Rundeninformationen {
 	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus)
 	{
+		
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
@@ -90,8 +92,13 @@ public class Rundeninformationen {
 		this.westCellStatus = westCellStatus;
 	}
 	
+	
+	
+	
+	
 	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
 	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
+	//Wozu brauchen wir diesen Konstruktor?
 	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		super();

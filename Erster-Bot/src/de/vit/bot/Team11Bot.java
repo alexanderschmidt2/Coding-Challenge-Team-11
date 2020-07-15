@@ -30,7 +30,8 @@ public class Team11Bot {
 		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
 		input.nextLine(); // Beenden der zweiten Zeile
-		
+						  //TODO: Sheetcount 
+						  //TODO: 
 		// Karte mit Initialdaten instanziieren und generieren
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
 		

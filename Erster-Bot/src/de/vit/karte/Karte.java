@@ -2,6 +2,7 @@ package de.vit.karte;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import de.vit.karte.felder.*;
@@ -18,6 +19,7 @@ public class Karte implements navigierbar {
 	private final int playerId;
 	private int formCount;
 	private int[] dynamischesZiel;
+	private final HashSet<Integer[]> statischeZiele;
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -37,6 +39,10 @@ public class Karte implements navigierbar {
 
 	public void setDynamischesZiel(int[] koordinaten) {
 		this.dynamischesZiel = koordinaten;
+	}
+	
+	public HashSet<Integer[]> getStatischeZiele() {
+		return statischeZiele;
 	}
 
 	/**
@@ -187,7 +193,7 @@ public class Karte implements navigierbar {
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
-	public void setFeld(int[] position, String info) {
+	public void setFeld(int[] position, String info) {//n Switch? y/n?
 		if (info.contains("FLOOR")) {
 			this.karte[position[0]][position[1]] = new Boden();
 		} else if (info.contains("WALL")) {
@@ -386,7 +392,7 @@ public class Karte implements navigierbar {
 	 * wie Norden, nur für Sueden
 	 * 
 	 * @param ri
-	 */
+	 */						
 	public void aktualisereSueden(String southCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getSueden(), um die Koordinaten des
@@ -485,6 +491,9 @@ public class Karte implements navigierbar {
 	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
 	 */
 	public void aktualisiereKarte(Rundeninformationen ri) {
+		//TODO: Wenn irgendwas aktualisert wird und es ein statisches Ziel ist, was wir immer anpeilen soll das in den Stack gehauen werden.
+		//WICHTIG! Alles, was unser Ziel sein *könnte* davon die Koordinaten
+		//was ist wenn auf einmal ein Sheet kommt
 		this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisereNorden(ri.getNorthCellStatus());
 		this.aktualisereOsten(ri.getEastCellStatus());
@@ -577,11 +586,14 @@ public class Karte implements navigierbar {
 		this.aktuellePosition[0] = startX;
 		this.aktuellePosition[1] = startY;
 		this.karte = new Feld[sizeX][sizeY];
+		this.statischeZiele = new HashSet<Integer[]>();
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < sizeY; y++) {
 				karte[x][y] = new Nebel();
 			}
 		}
 	}
+
+
 
 }

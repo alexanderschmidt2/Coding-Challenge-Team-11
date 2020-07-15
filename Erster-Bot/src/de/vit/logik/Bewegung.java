@@ -94,7 +94,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		String letzteGetaetigteAktion;
 		try {
 			letzteGetaetigteAktion = befehl_für_ausgabe[istFinishMoeglich(aktuelleKarte)];
-		} catch (Exception e) {
+		} catch (Exception e) {//TODO: was wenn kicken nicht möglich ist, weil dort auf einmal ein Bot hingekommen ist? Gibt es den Usecase? NOKBLOKED kann passieren
 		} finally {
 			letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 		}
