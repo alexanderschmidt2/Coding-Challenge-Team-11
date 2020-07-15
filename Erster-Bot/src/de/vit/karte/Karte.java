@@ -19,7 +19,7 @@ public class Karte implements navigierbar {
 	private final int playerId;
 	private int formCount;
 	private int[] dynamischesZiel;
-	private final HashSet<Integer[]> statischeZiele;
+	private final HashSet<int[]> statischeZiele; //Wenn es zu viel wird eine Menge von Maps
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -41,7 +41,7 @@ public class Karte implements navigierbar {
 		this.dynamischesZiel = koordinaten;
 	}
 	
-	public HashSet<Integer[]> getStatischeZiele() {
+	public HashSet<int[]> getStatischeZiele() {
 		return statischeZiele;
 	}
 
@@ -586,7 +586,7 @@ public class Karte implements navigierbar {
 		this.aktuellePosition[0] = startX;
 		this.aktuellePosition[1] = startY;
 		this.karte = new Feld[sizeX][sizeY];
-		this.statischeZiele = new HashSet<Integer[]>();
+		this.statischeZiele = new HashSet<int[]>();
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < sizeY; y++) {
 				karte[x][y] = new Nebel();
