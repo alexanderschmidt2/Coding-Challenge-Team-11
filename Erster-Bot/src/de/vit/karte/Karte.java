@@ -19,7 +19,17 @@ public class Karte implements navigierbar {
 	private final int playerId;
 	private int formCount;
 	private int[] dynamischesZiel;
-	private final HashSet<int[]> statischeZiele; //Wenn es zu viel wird eine Menge von Maps
+	private final HashSet<int[]> statischeZiele;
+	private int Spielphase = 0;
+	public int getSpielphase() {
+		return Spielphase;
+	}
+
+	public void setSpielphase(int spielphase) {
+		Spielphase = spielphase;
+	}
+
+	//Wenn es zu viel wird eine Menge von Maps
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse

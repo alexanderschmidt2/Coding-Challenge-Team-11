@@ -39,7 +39,8 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	// 1.) Prioritaet: finish auf currenctCell
 
-	public static boolean alleFormulareAufgesammelt(Karte aktuelleKarte) {//Wir können erst dann zum Ziel laufen, wenn wir unseren SB haben
+	public static boolean alleFormulareAufgesammelt(Karte aktuelleKarte) {// Wir können erst dann zum Ziel laufen, wenn
+																			// wir unseren SB haben
 		int zaehler_aufgehobene_formulare = 0;
 		for (int[] e : aktuelleKarte.getStatischeZiele()) {// Save nur unsere Dokumente drin
 			if (aktuelleKarte.getFeld(e) instanceof Dokument) {
@@ -55,11 +56,26 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return false;
 	}
 
-	public static int istFinishMoeglich(Karte aktuelleKarte) {//Die karte tut in die Menge, obs unser Sachbearbeiter ist!)
-		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter && alleFormulareAufgesammelt(aktuelleKarte) == true) {
+	public static int papierAufsammeln(Karte aktuelleKarte) {
+		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
+			return 4;
+		}
+		for (int i = 0; i <= 3; i++) {
+			if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
+				return i;
+			}
+		}
+		return -1;
+
+	}
+
+	public static int istFinishMoeglich(Karte aktuelleKarte) {// Die karte tut in die Menge, obs unser Sachbearbeiter
+																// ist!)
+		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
+				&& alleFormulareAufgesammelt(aktuelleKarte) == true) {
 			return 4;
 		} else {
-			
+
 			return 500000000;
 		}
 
@@ -90,11 +106,13 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int zumZielLaufen(Karte aktuelleKarte) {// TODO: 
-		//Methode sinnnnnvoll umbennen
-		//Methode, die schaut, welche Formulare noch rein müssen und daraus uns die Ziele generiert bzw. sagt, dass exploration gestartet werden muss. 
-		//Methode, die prüft, ob finish irgendwie irgendwo möglich ist und ggf. dorthin läuft bzw. finish callt. 
-		//Methode, die so ein blödes Blatt einsammelt. 
+	public static int zumZielLaufen(Karte aktuelleKarte) {// TODO:
+		// Methode sinnnnnvoll umbennen
+		// Methode, die schaut, welche Formulare noch rein müssen und daraus uns die
+		// Ziele generiert bzw. sagt, dass exploration gestartet werden muss.
+		// Methode, die prüft, ob finish irgendwie irgendwo möglich ist und ggf. dorthin
+		// läuft bzw. finish callt.
+		// Methode, die so ein blödes Blatt einsammelt.
 		return exploration(aktuelleKarte);
 	}
 
@@ -104,19 +122,23 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
-		String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "finish" };
-
-		String letzteGetaetigteAktion;
-		try {
-			letzteGetaetigteAktion = befehl_für_ausgabe[istFinishMoeglich(aktuelleKarte)];
-		} catch (Exception e) {// TODO: was wenn kicken nicht möglich ist, weil dort auf einmal ein Bot
-								// hingekommen ist? Gibt es den Usecase? NOKBLOKED kann passieren
-		} finally {
-			letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
+		String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "take", "finish" };
+		String letzteGetaetigteAktion = "test";
+		if (aktuelleKarte.getSpielphase() == 0) {
+			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
+				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
+			} else {
+				aktuelleKarte.setSpielphase(1);
+			}
+		} else if (aktuelleKarte.getSpielphase() == 1) {//Wir suchen den Sachbearbeiter! 
+			
+		} else if (aktuelleKarte.getSpielphase() == 2) {
+		} else if (aktuelleKarte.getSpielphase() == 3) {
+		} else if (aktuelleKarte.getSpielphase() == 4) {
+		} else {
 		}
-
+		;
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
-		// aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()).setEntfernung(1);
 		return letzteGetaetigteAktion;
 	}
 }
