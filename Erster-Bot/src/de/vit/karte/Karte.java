@@ -2,7 +2,7 @@ package de.vit.karte;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 
 import de.vit.karte.felder.*;
@@ -19,7 +19,7 @@ public class Karte implements navigierbar {
 	private final int playerId;
 	private int formCount;
 	private int[] dynamischesZiel;
-	private final HashSet<int[]> statischeZiele;
+	private HashMap<String, int[]> statischeZiele;
 	private int Spielphase = 0;
 	public int getSpielphase() {
 		return Spielphase;
@@ -51,7 +51,7 @@ public class Karte implements navigierbar {
 		this.dynamischesZiel = koordinaten;
 	}
 	
-	public HashSet<int[]> getStatischeZiele() {
+	public HashMap<String, int[]> getStatischeZiele() {
 		return statischeZiele;
 	}
 
@@ -341,9 +341,18 @@ public class Karte implements navigierbar {
 	 * 
 	 * @param ri
 	 */
+	/**
+	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
+	 * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben
+	 * falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+	 * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+	 * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle geloescht
+	 * (Boden wird instanziiert) und an der neuen neu angelegt
+	 * @param northCellStatus das Feld, das wir tatsaechlich "sehen"
+	 */
 	public void aktualisereNorden(String northCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
-		// ...Uebergebe diese der Methode getNorden(), um die Koordinaten des
+		// ...uebergebe diese der Methode getNorden(), um die Koordinaten des
 		// noerdlichen Felds zu erhalten
 		int[] nord_koordinate = this.getNorden(this.aktuellePosition);
 		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
@@ -351,26 +360,55 @@ public class Karte implements navigierbar {
 		String name_feld_nord = this.getFeld(nord_koordinate).getName();
 		// wenn das bereits angelegte noerdlichen Feld nicht dem aktuellen entspricht,
 		// gehen wir in die if-Verzweigung
-		if (!northCellStatus.contains(name_feld_nord)) { //!this.getFeld(nord_koordinate) instanceof northCellStatus.substring[
+		if (!northCellStatus.contains(name_feld_nord)) {
+			
 			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
-			// wurde, aber weggekickt wurde,
-			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
-			// Dokument gespeichert hat
-			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) {
+			// wurde, aber weggekickt wurde, wird das alte mit einem Bodenfeld ersetzt,
+			//damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { // 
 				// altes Formular finden
 				int[] formular_koordinaten = this.getFeld(northCellStatus.substring(0, 8));
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
+				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(northCellStatus.substring(0, 8));
 			}
+			//hier wird das eigentliche Objekt angelegt
 			this.setFeld(nord_koordinate, northCellStatus);
+			
+			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			//fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(nord_koordinate) instanceof Sachbearbeiter)
+			{
+				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(nord_koordinate);
+				if (sb.getPlayerId() == this.getPlayerId())
+					{
+					this.statischeZiele.put(northCellStatus.substring(0, 10), nord_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(sb.getFormCount());
+					}
+			}
+			else if (this.getFeld(nord_koordinate) instanceof Dokument)
+			{
+				//s. Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
+				if (dok.getPlayerId() == this.getPlayerId())
+				{
+					this.statischeZiele.put(northCellStatus.substring(0, 8), nord_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(dok.getNr());
+				}
+			}
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Osten
 	 * 
-	 * @param ri
+	 * @param eastCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
 	public void aktualisereOsten(String eastCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
@@ -393,15 +431,44 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
+				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(eastCellStatus.substring(0, 8));
 			}
+			//hier wird das eigentliche Objekt angelegt
 			this.setFeld(ost_koordinate, eastCellStatus);
+			
+			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			//fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(ost_koordinate) instanceof Sachbearbeiter)
+			{
+				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(ost_koordinate);
+				if (sb.getPlayerId() == this.getPlayerId())
+					{
+					this.statischeZiele.put(eastCellStatus.substring(0, 10), ost_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(sb.getFormCount());
+					}
+			}
+			else if (this.getFeld(ost_koordinate) instanceof Dokument)
+			{
+				//s. Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
+				if (dok.getPlayerId() == this.getPlayerId())
+				{
+					this.statischeZiele.put(eastCellStatus.substring(0, 8), ost_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(dok.getNr());
+				}
+			}
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Sueden
 	 * 
-	 * @param ri
+	 * @param southCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */						
 	public void aktualisereSueden(String southCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
@@ -424,15 +491,44 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
+				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(southCellStatus.substring(0, 8));
 			}
+			//hier wird das eigentliche Objekt angelegt
 			this.setFeld(sued_koordinate, southCellStatus);
+			
+			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			//fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(sued_koordinate) instanceof Sachbearbeiter)
+			{
+				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(sued_koordinate);
+				if (sb.getPlayerId() == this.getPlayerId())
+					{
+					this.statischeZiele.put(southCellStatus.substring(0, 10), sued_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(sb.getFormCount());
+					}
+			}
+			else if (this.getFeld(sued_koordinate) instanceof Dokument)
+			{
+				//s. Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
+				if (dok.getPlayerId() == this.getPlayerId())
+				{
+					this.statischeZiele.put(southCellStatus.substring(0, 8), sued_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(dok.getNr());
+				}
+			}
 		}
 	}
 
 	/**
 	 * wie Norden, nur für Westen
 	 * 
-	 * @param ri
+	 * @param westCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
 	public void aktualisereWesten(String westCellStatus) {
 		// man nehme sich die Koordinaten der aktuellen Position...
@@ -455,17 +551,46 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
+				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(westCellStatus.substring(0, 8));
 			}
+			//hier wird das eigentliche Objekt angelegt
 			this.setFeld(west_koordinate, westCellStatus);
+			
+			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			//fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(west_koordinate) instanceof Sachbearbeiter)
+			{
+				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(west_koordinate);
+				if (sb.getPlayerId() == this.getPlayerId())
+					{
+					this.statischeZiele.put(westCellStatus.substring(0, 10), west_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(sb.getFormCount());
+					}
+			}
+			else if (this.getFeld(west_koordinate) instanceof Dokument)
+			{
+				//s. Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(west_koordinate);
+				if (dok.getPlayerId() == this.getPlayerId())
+				{
+					this.statischeZiele.put(westCellStatus.substring(0, 8), west_koordinate);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(dok.getNr());
+				}
+			}
 		}
 	}
 
 	/**
-	 * wie Norden, nur für aktuellePosition diese Methode ist nur relevant, wenn ein
+	 * wie Norden, nur für aktuellePosition. Diese Methode ist nur relevant, wenn ein
 	 * Dokument auf ein Feld gekickt wird, auf das wir uns entschieden haben zu
 	 * gehen
 	 * 
-	 * @param ri
+	 * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
 	public void aktualisereStandpunkt(String currentCellStatus) {
 		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName()
@@ -489,8 +614,21 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
+				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(currentCellStatus.substring(0, 8));
 			}
 			this.setFeld(aktuellePosition, currentCellStatus);
+			if (this.getFeld(aktuellePosition) instanceof Dokument)
+			{
+				//s. Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
+				if (dok.getPlayerId() == this.getPlayerId())
+				{
+					this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);
+					//dabei wird der formCount erhoeht (wenn moeglich)
+					this.setFormCount(dok.getNr());
+				}
+			}
 		}
 	}
 
@@ -564,12 +702,12 @@ public class Karte implements navigierbar {
 
 	/**
 	 * Methode, die ein Array von vier Feldern zurueckgibt, welche den Feldern
-	 * entsprechen, die an die aktuelle Position angrenzen die Reihenfolge der
-	 * Objekte: Nord, Ost, Sued, West die Methode ruft die Methoden getNorden(),
-	 * getOsten(), getSueden(), getWesten() auf
+	 * entsprechen, die an die aktuelle Position angrenzen.
+	 * Die Methode ruft die Methoden getNorden(), getOsten(), getSueden(), getWesten() auf
 	 * 
-	 * @param karte
-	 * @return
+	 * @param position hierüber soll gesteuert werden, von welchem Feld die
+	 * Nachbarn gefunden werden sollen
+	 * @return die Reihenfolge der Objekte: Nord, Ost, Sued, West
 	 */
 	public Feld[] getNachbarn(int[] position) {
 		Feld[] nachbar_felder = new Feld[4];
@@ -582,10 +720,12 @@ public class Karte implements navigierbar {
 
 	/**
 	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der
-	 * Uebergebenen Groesse des Spielfelds und Startposition des Bots
+	 * uebergebenen Groesse des Spielfelds und Startposition des Bots
 	 * 
 	 * @param sizeX  Groesse des Spielfelds in der horizontalen
 	 * @param sizeY  Groesse des Spielfelds in der vertikalen
+	 * @param level  Level des Spiels
+	 * @param playerId  id des Spielers in diesem Spiel
 	 * @param startX Startposition des Bots auf der x-Achse
 	 * @param startY Startposition des Bots auf der y-Achse
 	 */
@@ -596,14 +736,11 @@ public class Karte implements navigierbar {
 		this.aktuellePosition[0] = startX;
 		this.aktuellePosition[1] = startY;
 		this.karte = new Feld[sizeX][sizeY];
-		this.statischeZiele = new HashSet<int[]>();
 		for (int x = 0; x < sizeX; x++) {
 			for (int y = 0; y < sizeY; y++) {
 				karte[x][y] = new Nebel();
 			}
 		}
+		this.statischeZiele = new HashMap<String, int[]>();
 	}
-
-
-
 }
