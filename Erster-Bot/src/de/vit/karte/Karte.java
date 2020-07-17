@@ -5,9 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+
 import de.vit.karte.felder.*;
 import de.vit.logik.*;
-
+import de.vit.karte.typen.*;
 /**
  * 
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
@@ -19,7 +20,7 @@ public class Karte implements navigierbar {
 	private final int playerId;
 	private int formCount = 0;
 	private int[] dynamischesZiel;
-	private HashMap<String, int[]> statischeZiele;
+	private ZielMap statischeZiele;
 	private int Spielphase = 0;
 	private int sheetCount;
 	//Wenn es zu viel wird eine Menge von Maps
@@ -785,6 +786,6 @@ public class Karte implements navigierbar {
 				karte[x][y] = new Nebel();
 			}
 		}
-		this.statischeZiele = new HashMap<String, int[]>();
+		this.statischeZiele = new ZielMap();
 	}
 }

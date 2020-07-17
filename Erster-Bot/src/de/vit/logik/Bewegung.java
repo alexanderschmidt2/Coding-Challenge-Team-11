@@ -66,13 +66,13 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return dokumentCounter;
 	}
 
-	public static boolean aufnahmeMoeglich(Karte aktuelleKarte, Dokument dokument) {
+	public static boolean aufnahmeMoeglich(Karte aktuelleKarte, Dokument dokument) {//Kann ich das derzeitige Dokument aufnehmen?
+	
 		if (aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) {
 			if (dokumentZaehler(aktuelleKarte) == dokument.getNr()) {
 				return true;
 			}
 			return false;
-
 		}
 		return false;
 	}
