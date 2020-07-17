@@ -14,6 +14,7 @@ public class Team11Bot {
 	 */
 
 	public static void main(String[] args) {
+		int sheetCount = 0; //lokal die Variable sheeCount initialisieren, damit diese genutzt werden kann
 		
 		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und Rundendaten liefert
 		Scanner input = new Scanner(System.in);
@@ -29,11 +30,14 @@ public class Team11Bot {
 		int playerId = input.nextInt(); // id dieses Players / Bots
 		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
+		if (level == 5) { //wenn level 5: dann SheetCount abfragen
+			sheetCount = input.nextInt(); //Anzahl der Papiere zu Beginn des Spiels
+		}
 		input.nextLine(); // Beenden der zweiten Zeile
-						  //TODO: Sheetcount 
-						  //TODO: 
-		// Karte mit Initialdaten instanziieren und generieren
+		// Level 1-4-Karte mit Initialdaten instanziieren (ohne SheetCount)
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
+		karte.setSheetCount(sheetCount); //sheetCount aktualisieren, falls wir Level 5 spielen
+
 		
 		//Rundeninformationen anlegen (leer)
 		Rundeninformationen runde = new Rundeninformationen();
