@@ -1,6 +1,7 @@
 package de.vit.logik;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import de.vit.karte.Karte;
@@ -25,57 +26,6 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
 			"kick east", "kick south", "kick west", "take", "put", "finish" };
 	private static String letzteGetaetigteAktion;
-	public static Sachbearbeiter sachbearbeiterAusgeben(Karte aktuelleKarte) {// unseren SB
-		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter)
-					return (Sachbearbeiter) aktuelleKarte.getFeld(e);
-			}
-		}
-		return null; // noch nicht gefunden
-	}
-
-	public static int dokumentZaehler(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als
-															// nächstes Aufnehmen sollen
-		int dokumentCounter = 0;
-		if (aktuelleKarte.getLevel() == 1) {
-			return dokumentCounter; // Er bricht sofort ab, wenns Level 1 ist, dann ist nämlich kein DOkument mehr
-									// da
-		} else {
-			dokumentCounter = 1;
-		}
-		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-				if (aktuelleKarte.getFeld(e) instanceof Dokument) {
-					Dokument dokument = (Dokument) aktuelleKarte.getFeld(e);
-					if (dokument.getNr() == 1 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 2 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 3 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 4 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 5 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					}
-
-				}
-			}
-		}
-		return dokumentCounter;
-	}
-
-	public static boolean aufnahmeMoeglich(Karte aktuelleKarte, Dokument dokument) {//Kann ich das derzeitige Dokument aufnehmen?
-	
-		if (aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) {
-			if (dokumentZaehler(aktuelleKarte) == dokument.getNr()) {
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
 
 	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
 		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
@@ -89,37 +39,47 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 					}
 				}
 			}
-			for (int i = 0; i <= 3; i++) {
-				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
-					Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
-					if (!papier.isGekickt()) {
-						return i;
-					}
-				}
-			}
+//			for (int i = 0; i <= 3; i++) {
+//				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
+//					Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+//					if (!papier.isGekickt()) {
+//						return i;
+//					}
+//				}
+//			}
 		}
 		return -1;
 	}
 
 	public static int finishHandlung(Karte aktuelleKarte) {
 		if (aktuelleKarte.getLevel() == 1) {
-			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-					&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter && aktuelleKarte
+					.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {// Einne
+																														// koordinate,
+																														// die
+																														// übergeben
+																														// wird
+																														// mit
+																														// einer
+																														// Koordinate
+																														// aus
+																														// den
+																														// Zielen
+																														// übereinstimt?
 				return 10;
 			} else {
-				return (schrittZumZiel(
-						aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
-						aktuelleKarte) + 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
+				return (schrittZumZiel(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte), aktuelleKarte)
+						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
 		} else {
-			if (aktuelleKarte.getFormCount() == dokumentZaehler(aktuelleKarte)
-					&& sachbearbeiterAusgeben(aktuelleKarte) != null) {// Der Usecase für Level 1, da wir ansonsten ggf
+			if (aktuelleKarte.getFormCount() == aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte)
+					&& aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null) {
 				if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-						&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+						&& aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
+								aktuelleKarte)) {
 					return 10;
 				} else {
-					return (schrittZumZiel(
-							aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
+					return (schrittZumZiel(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte),
 							aktuelleKarte) + 2) % 4;
 				}
 			}
@@ -152,8 +112,36 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int formularHandlung(Karte aktuelleKarte) {//
-		return 4;
+	public static int formularHandlung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {// Ein Formular
+																										// gönnen
+		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
+			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
+					aktuelleKarte)) {
+				if (dokument.getNr() == aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte)) {
+					dokument.setAufgenommen(true);
+					return 8;
+				}
+			} else {
+				if (aktuelleKarte.getSheetCount() > 0) {
+					aktuelleKarte.reduziereSheetCount();
+					return 9;
+				}
+			}
+		} else if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Boden && aktuelleKarte
+				.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
+			aktuelleKarte.vernebleKarte(); // TODO: prüfen ob wir ggf. doch die ganze Karte aktualisieren können, müssen
+											// wir :(
+			return exploration(aktuelleKarte);
+		} else {
+			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte);
+			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
+				schrittZumZiel(
+						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),
+						aktuelleKarte);
+			}
+		}
+		return -1;
 	}
 
 	public static int exploration(Karte aktuelleKarte) {
@@ -162,20 +150,19 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
-		
 		if (aktuelleKarte.getSpielphase() == 0) {
 			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
 				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 			} else {
 				if (finishHandlung(aktuelleKarte) != -1) {
 					letzteGetaetigteAktion = befehl_für_ausgabe[finishHandlung(aktuelleKarte)];
-				} else if (formularHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[formularHandlung(aktuelleKarte)];
+				} else if (formularHandlung(aktuelleKarte, rundeninformationen) != -1) {
+					letzteGetaetigteAktion = befehl_für_ausgabe[formularHandlung(aktuelleKarte, rundeninformationen)];
 				} else if (papierHandlung(aktuelleKarte) != -1) {
 					letzteGetaetigteAktion = befehl_für_ausgabe[papierHandlung(aktuelleKarte)];
-				}else
+				} else
 					letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-				
+
 			}
 		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
 

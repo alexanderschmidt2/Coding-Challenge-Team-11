@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-
 import de.vit.karte.felder.*;
 import de.vit.logik.*;
 import de.vit.karte.typen.*;
+
 /**
  * 
  * @author Laura Klasse, die das Spielfeld und die aktuelle Position in Form von
@@ -23,7 +23,7 @@ public class Karte implements navigierbar {
 	private ZielMap statischeZiele;
 	private int Spielphase = 0;
 	private int sheetCount;
-	//Wenn es zu viel wird eine Menge von Maps
+	// Wenn es zu viel wird eine Menge von Maps
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -32,7 +32,7 @@ public class Karte implements navigierbar {
 	// die momentane Position, wird regelmaessig aktualisiert
 	private int[] aktuellePosition = new int[2];
 
-	// Getter und Setter	
+	// Getter und Setter
 	public int[] getSize() {
 		return size;
 	}
@@ -60,7 +60,7 @@ public class Karte implements navigierbar {
 	 *         Exception
 	 */
 	public int[] getFeld(String feldtyp) {
-		int[] koordinaten = new int[] {-1, -1};
+		int[] koordinaten = new int[] { -1, -1 };
 		for (int j = 0; j < this.getSize()[1]; j++) {
 			for (int i = 0; i < this.getSize()[0]; i++) {
 				if (feldtyp.contains(this.karte[i][j].getName())) {
@@ -116,7 +116,7 @@ public class Karte implements navigierbar {
 			this.formCount = formCount;
 		}
 	}
-	
+
 	public int[] getDynamischesZiel() {
 		return this.dynamischesZiel;
 	}
@@ -124,11 +124,11 @@ public class Karte implements navigierbar {
 	public void setDynamischesZiel(int[] koordinaten) {
 		this.dynamischesZiel = koordinaten;
 	}
-	
-	public HashMap<String, int[]> getStatischeZiele() {
+
+	public ZielMap getStatischeZiele() {
 		return statischeZiele;
 	}
-	
+
 	public int getSpielphase() {
 		return Spielphase;
 	}
@@ -136,25 +136,24 @@ public class Karte implements navigierbar {
 	public void setSpielphase(int spielphase) {
 		Spielphase = spielphase;
 	}
-	
+
 	public int getSheetCount() {
 		return sheetCount;
 	}
 
-	
 	public void reduziereSheetCount() {
 		this.sheetCount--;
 	}
-	
+
 	public void erhoeheSheetCount() {
 		this.sheetCount++;
 	}
-	
+
 	public void setSheetCount(int sheetCount) {
 		this.sheetCount = sheetCount;
 	}
 
-	//grafische Ausgabe der Karte inklusive Entfernungen als String
+	// grafische Ausgabe der Karte inklusive Entfernungen als String
 	public String getKarte() {
 		String karte = "";
 		int i = 0;
@@ -220,7 +219,7 @@ public class Karte implements navigierbar {
 	/**
 	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
 	 */
-	public void setFeld(int[] position, String info) {//n Switch? y/n?
+	public void setFeld(int[] position, String info) {// n Switch? y/n?
 		if (info.contains("FLOOR")) {
 			this.karte[position[0]][position[1]] = new Boden();
 		} else if (info.contains("WALL")) {
@@ -229,7 +228,7 @@ public class Karte implements navigierbar {
 			this.karte[position[0]][position[1]] = new Sachbearbeiter(info);
 		} else if (info.contains("FORM")) {
 			this.karte[position[0]][position[1]] = new Dokument(info);
-		} else {//es muss ein Papier sein
+		} else {// es muss ein Papier sein
 			this.karte[position[0]][position[1]] = new Papier();
 		}
 	}
@@ -258,7 +257,7 @@ public class Karte implements navigierbar {
 		this.getFeld(aktuellePosition).setEntfernung(0);
 
 		boolean aenderung;
-		int letzte_beste_entfernung = this.getFeld(new int[]{0,0}).getEntfernung();
+		int letzte_beste_entfernung = 500000000;
 		do {
 			aenderung = false;
 			for (int x = 0; x < this.getSize()[0]; x++) {
@@ -289,7 +288,8 @@ public class Karte implements navigierbar {
 
 						int kleinste_entfernung_eines_nachbarn = Collections.min(liste_von_entfernungen);
 
-						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten, letzte_beste_entfernung);
+						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten,
+								letzte_beste_entfernung);
 
 						if (kleinste_entfernung_eines_nachbarn + 1 < this.getFeld(derzeitige_koordinaten)
 								.getEntfernung()) {
@@ -305,18 +305,25 @@ public class Karte implements navigierbar {
 
 	}
 
-	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {//TODO: falls wir alles erkundet haben müssen wir auch damit umgehen können!
+	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {// TODO: falls wir alles erkundet haben müssen
+																			// wir auch damit umgehen können!
+		int temp_entfernung = entfernung;
+		if (this.getFeld(koordinaten) instanceof Papier) {
+			Papier papier = (Papier) this.getFeld(koordinaten);
+			if (papier.getEntfernung() < entfernung && !papier.isGekickt()) {
+				this.setDynamischesZiel(koordinaten);
+				temp_entfernung = papier.getEntfernung();
+			}
+		}
 		for (int i = 0; i <= 3; i++) {
 			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
-				if (this.getFeld(koordinaten).getEntfernung() < entfernung)
-
-				{
+				if (this.getFeld(koordinaten).getEntfernung() < temp_entfernung) {
 					this.setDynamischesZiel(koordinaten);
-					return this.getFeld(koordinaten).getEntfernung();
+					temp_entfernung = this.getFeld(koordinaten).getEntfernung();
 				}
 			}
 		}
-		return entfernung;
+		return temp_entfernung;
 	};
 
 	/**
@@ -355,8 +362,9 @@ public class Karte implements navigierbar {
 	 * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben
 	 * falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
 	 * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-	 * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle geloescht
-	 * (Boden wird instanziiert) und an der neuen neu angelegt
+	 * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+	 * geloescht (Boden wird instanziiert) und an der neuen neu angelegt
+	 * 
 	 * @param northCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
 	public void aktualisereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
@@ -370,51 +378,47 @@ public class Karte implements navigierbar {
 		// wenn das bereits angelegte noerdlichen Feld nicht dem aktuellen entspricht,
 		// gehen wir in die if-Verzweigung
 		if (!northCellStatus.contains(name_feld_nord)) {
-			
+
 			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
 			// wurde, aber weggekickt wurde, wird das alte mit einem Bodenfeld ersetzt,
-			//damit man nicht mehrfach dasselbe Dokument gespeichert hat
-			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { // 
+			// damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { //
 				// altes Formular finden
 				int[] formular_koordinaten = this.getFeld(northCellStatus.substring(0, 8));
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
-				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(northCellStatus.substring(0, 8));
 			}
-			//hier wird das eigentliche Objekt angelegt
+			// hier wird das eigentliche Objekt angelegt
 			this.setFeld(nord_koordinate, northCellStatus);
-			
-			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
-			//fuegen wir der Abbildung statischeZiele ein Element hinzu
-			if (this.getFeld(nord_koordinate) instanceof Sachbearbeiter)
-			{
-				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
-				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(nord_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(nord_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
-					{
+				if (sb.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(northCellStatus.substring(0, 10), nord_koordinate);
-					}
-			}
-			else if (this.getFeld(nord_koordinate) instanceof Dokument)
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+				}
+			} else if (this.getFeld(nord_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
-				{
+				if (dok.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(northCellStatus.substring(0, 8), nord_koordinate);
 				}
 			}
-			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
-			else if (this.getFeld(nord_koordinate) instanceof Papier && lastActionsResult.equals("OK NORTH") && lastDoneAction.equals("kick north"))
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(nord_koordinate) instanceof Papier && lastActionsResult.equals("OK NORTH")
+					&& lastDoneAction.equals("kick north")) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(nord_koordinate);
 				papier.setGekickt(true);
 			}
@@ -447,41 +451,37 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
-				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(eastCellStatus.substring(0, 8));
 			}
-			//hier wird das eigentliche Objekt angelegt
+			// hier wird das eigentliche Objekt angelegt
 			this.setFeld(ost_koordinate, eastCellStatus);
-			
-			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
-			//fuegen wir der Abbildung statischeZiele ein Element hinzu
-			if (this.getFeld(ost_koordinate) instanceof Sachbearbeiter)
-			{
-				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
-				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(ost_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(ost_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
-					{
+				if (sb.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(eastCellStatus.substring(0, 10), ost_koordinate);
-					}
-			}
-			else if (this.getFeld(ost_koordinate) instanceof Dokument)
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+				}
+			} else if (this.getFeld(ost_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
-				{
+				if (dok.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(eastCellStatus.substring(0, 8), ost_koordinate);
 				}
 			}
-			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
-			else if (this.getFeld(ost_koordinate) instanceof Papier && lastActionsResult.equals("OK EAST") && lastDoneAction.equals("kick east"))
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(ost_koordinate) instanceof Papier && lastActionsResult.equals("OK EAST")
+					&& lastDoneAction.equals("kick east")) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(ost_koordinate);
 				papier.setGekickt(true);
 			}
@@ -492,7 +492,7 @@ public class Karte implements navigierbar {
 	 * wie Norden, nur für Sueden
 	 * 
 	 * @param southCellStatus das Feld, das wir tatsaechlich "sehen"
-	 */						
+	 */
 	public void aktualisereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getSueden(), um die Koordinaten des
@@ -514,41 +514,37 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
-				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(southCellStatus.substring(0, 8));
 			}
-			//hier wird das eigentliche Objekt angelegt
+			// hier wird das eigentliche Objekt angelegt
 			this.setFeld(sued_koordinate, southCellStatus);
-			
-			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
-			//fuegen wir der Abbildung statischeZiele ein Element hinzu
-			if (this.getFeld(sued_koordinate) instanceof Sachbearbeiter)
-			{
-				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
-				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(sued_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(sued_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
-					{
+				if (sb.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(southCellStatus.substring(0, 10), sued_koordinate);
-					}
-			}
-			else if (this.getFeld(sued_koordinate) instanceof Dokument)
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+				}
+			} else if (this.getFeld(sued_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
-				{
+				if (dok.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(southCellStatus.substring(0, 8), sued_koordinate);
 				}
 			}
-			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
-			else if (this.getFeld(sued_koordinate) instanceof Papier && lastActionsResult.equals("OK SOUTH") && lastDoneAction.equals("kick south"))
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(sued_koordinate) instanceof Papier && lastActionsResult.equals("OK SOUTH")
+					&& lastDoneAction.equals("kick south")) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(sued_koordinate);
 				papier.setGekickt(true);
 			}
@@ -581,41 +577,37 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
-				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(westCellStatus.substring(0, 8));
 			}
-			//hier wird das eigentliche Objekt angelegt
+			// hier wird das eigentliche Objekt angelegt
 			this.setFeld(west_koordinate, westCellStatus);
-			
-			//wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
-			//fuegen wir der Abbildung statischeZiele ein Element hinzu
-			if (this.getFeld(west_koordinate) instanceof Sachbearbeiter)
-			{
-				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
-				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(west_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(west_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
-					{
+				if (sb.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(westCellStatus.substring(0, 10), west_koordinate);
-					}
-			}
-			else if (this.getFeld(west_koordinate) instanceof Dokument)
-			{
-				//s. Prüfung instanceof Sachbearbeiter...
+				}
+			} else if (this.getFeld(west_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter...
 				Dokument dok = (Dokument) this.getFeld(west_koordinate);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
-				{
+				if (dok.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(westCellStatus.substring(0, 8), west_koordinate);
 				}
 			}
-			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
-			else if (this.getFeld(west_koordinate) instanceof Papier && lastActionsResult.equals("OK WEST") && lastDoneAction.equals("kick west"))
-			{
-				//s. Prüfung instanceof Sachbearbeiter
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(west_koordinate) instanceof Papier && lastActionsResult.equals("OK WEST")
+					&& lastDoneAction.equals("kick west")) {
+				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(west_koordinate);
 				papier.setGekickt(true);
 			}
@@ -623,8 +615,8 @@ public class Karte implements navigierbar {
 	}
 
 	/**
-	 * wie Norden, nur für aktuellePosition. Diese Methode ist nur relevant, wenn ein
-	 * Dokument auf ein Feld gekickt wird, auf das wir uns entschieden haben zu
+	 * wie Norden, nur für aktuellePosition. Diese Methode ist nur relevant, wenn
+	 * ein Dokument auf ein Feld gekickt wird, auf das wir uns entschieden haben zu
 	 * gehen
 	 * 
 	 * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
@@ -636,10 +628,10 @@ public class Karte implements navigierbar {
 		String name_feld_unter_uns = new String(this.getFeld(aktuellePosition).getName());
 		// wenn das bereits angelegte Feld "unter uns" nicht dem aktuellen entspricht,
 		// gehen wir in die if-Verzweigung
-		//if (this.getFeld(aktuellePosition) instanceof currentCellStatus.getClass())
-		//	{
-			//instanz instanceof klasse
-		//	}
+		// if (this.getFeld(aktuellePosition) instanceof currentCellStatus.getClass())
+		// {
+		// instanz instanceof klasse
+		// }
 		if (!currentCellStatus.contains(name_feld_unter_uns)) {
 			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
 			// wurde, aber weggekickt wurde,
@@ -651,26 +643,22 @@ public class Karte implements navigierbar {
 				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
 				// SB liegen kann)
 				this.setFeld(formular_koordinaten, "FLOOR");
-				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(currentCellStatus.substring(0, 8));
 			}
-			//hier wird das eigentliche Objekt angelegt
+			// hier wird das eigentliche Objekt angelegt
 			this.setFeld(aktuellePosition, currentCellStatus);
-			
-			if (this.getFeld(aktuellePosition) instanceof Dokument)
-			{
-				//wenn es sich um ein Dokument handelt,
-				//fuegen wir der Abbildung statischeZiele ein Element hinzu
+
+			if (this.getFeld(aktuellePosition) instanceof Dokument) {
+				// wenn es sich um ein Dokument handelt,
+				// fuegen wir der Abbildung statischeZiele ein Element hinzu
 				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
-				//dabei wird der formCount erhoeht (wenn moeglich)
+				// dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
-				{
+				if (dok.getPlayerId() == this.getPlayerId()) {
 					this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);
 				}
-			}
-			else if (this.getFeld(aktuellePosition) instanceof Papier)
-			{
+			} else if (this.getFeld(aktuellePosition) instanceof Papier) {
 				Papier papier = (Papier) this.getFeld(aktuellePosition);
 				papier.setGekickt(true);
 			}
@@ -684,9 +672,10 @@ public class Karte implements navigierbar {
 	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
 	 */
 	public void aktualisiereKarte(Rundeninformationen ri) {
-		//TODO: Wenn irgendwas aktualisert wird und es ein statisches Ziel ist, was wir immer anpeilen soll das in den Stack gehauen werden.
-		//WICHTIG! Alles, was unser Ziel sein *könnte* davon die Koordinaten
-		//was ist wenn auf einmal ein Sheet kommt
+		// TODO: Wenn irgendwas aktualisert wird und es ein statisches Ziel ist, was wir
+		// immer anpeilen soll das in den Stack gehauen werden.
+		// WICHTIG! Alles, was unser Ziel sein *könnte* davon die Koordinaten
+		// was ist wenn auf einmal ein Sheet kommt
 		this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisereNorden(ri.getNorthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisereOsten(ri.getEastCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
@@ -747,11 +736,11 @@ public class Karte implements navigierbar {
 
 	/**
 	 * Methode, die ein Array von vier Feldern zurueckgibt, welche den Feldern
-	 * entsprechen, die an die aktuelle Position angrenzen.
-	 * Die Methode ruft die Methoden getNorden(), getOsten(), getSueden(), getWesten() auf
+	 * entsprechen, die an die aktuelle Position angrenzen. Die Methode ruft die
+	 * Methoden getNorden(), getOsten(), getSueden(), getWesten() auf
 	 * 
-	 * @param position hierüber soll gesteuert werden, von welchem Feld die
-	 * Nachbarn gefunden werden sollen
+	 * @param position hierüber soll gesteuert werden, von welchem Feld die Nachbarn
+	 *                 gefunden werden sollen
 	 * @return die Reihenfolge der Objekte: Nord, Ost, Sued, West
 	 */
 	public Feld[] getNachbarn(int[] position) {
@@ -762,20 +751,17 @@ public class Karte implements navigierbar {
 		nachbar_felder[3] = getFeld(this.getWesten(position));
 		return nachbar_felder;
 	}
-	
+
 	/**
-	 * setzt alle nicht Wand-Felder, die mit maximal 3 Schritten erreichbar sind, wieder auf Nebel,
-	 * damit ein eventuell nicht gefundenes Formular erneut gesucht werden kann
+	 * setzt alle nicht Wand-Felder, die mit maximal 3 Schritten erreichbar sind,
+	 * wieder auf Nebel, damit ein eventuell nicht gefundenes Formular erneut
+	 * gesucht werden kann
 	 */
-	public void vernebleKarte()
-	{		
-		for (int i = 0; i < size[1]; i++)
-		{
-			for (int j = 0; j < size[0]; j++)
-			{
-				if (this.karte[j] [i].getEntfernung() <= 3)
-				{
-					this.karte[j] [i] = new Nebel();
+	public void vernebleKarte() {
+		for (int i = 0; i < size[1]; i++) {
+			for (int j = 0; j < size[0]; j++) {
+				if (this.karte[j][i].getEntfernung() <= 3) {
+					this.karte[j][i] = new Nebel();
 				}
 			}
 		}
@@ -785,15 +771,15 @@ public class Karte implements navigierbar {
 	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der
 	 * uebergebenen Groesse des Spielfelds und Startposition des Bots
 	 * 
-	 * @param sizeX  Groesse des Spielfelds in der horizontalen
-	 * @param sizeY  Groesse des Spielfelds in der vertikalen
-	 * @param level  Level des Spiels
-	 * @param playerId  id des Spielers in diesem Spiel
-	 * @param startX Startposition des Bots auf der x-Achse
-	 * @param startY Startposition des Bots auf der y-Achse
+	 * @param sizeX    Groesse des Spielfelds in der horizontalen
+	 * @param sizeY    Groesse des Spielfelds in der vertikalen
+	 * @param level    Level des Spiels
+	 * @param playerId id des Spielers in diesem Spiel
+	 * @param startX   Startposition des Bots auf der x-Achse
+	 * @param startY   Startposition des Bots auf der y-Achse
 	 */
 	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
-		this.size = new int[] {sizeX, sizeY};
+		this.size = new int[] { sizeX, sizeY };
 		this.level = level;
 		this.playerId = playerId;
 		this.aktuellePosition[0] = startX;
