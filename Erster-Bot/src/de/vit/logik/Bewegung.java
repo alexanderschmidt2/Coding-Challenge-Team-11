@@ -138,7 +138,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
 				return (schrittZumZiel(
 						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),
-						aktuelleKarte)+2)%4;
+						aktuelleKarte) + 2) % 4;
 			}
 		}
 		return -1;
@@ -150,28 +150,29 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
-		if (aktuelleKarte.getSpielphase() == 0) {
-			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
-				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-			} else {
-				if (finishHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[finishHandlung(aktuelleKarte)];
-				} else if (formularHandlung(aktuelleKarte, rundeninformationen) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[formularHandlung(aktuelleKarte, rundeninformationen)];
-				} else if (papierHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[papierHandlung(aktuelleKarte)];
-				} else
-					letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-
-			}
-		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
-
-		} else if (aktuelleKarte.getSpielphase() == 2) {
-		} else if (aktuelleKarte.getSpielphase() == 3) {
-		} else if (aktuelleKarte.getSpielphase() == 4) {
+		int hilf = 0;
+		if (aktuelleKarte.getStatischeZiele().isEmpty()) {
+			letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 		} else {
+			hilf = finishHandlung(aktuelleKarte);
+
+			if (hilf != -1) {
+				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
+			} else {
+				hilf = formularHandlung(aktuelleKarte, rundeninformationen);
+			}
+			if (hilf != -1) {
+				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
+			} else {
+				hilf = papierHandlung(aktuelleKarte);
+			}
+			if (hilf != -1) {
+				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
+			} else {
+				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
+			}
 		}
-		;
+
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 		return letzteGetaetigteAktion;
 	}
