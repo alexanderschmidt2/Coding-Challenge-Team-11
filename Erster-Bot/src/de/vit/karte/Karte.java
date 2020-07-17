@@ -17,7 +17,7 @@ public class Karte implements navigierbar {
 	private int[] size;
 	private final int level;
 	private final int playerId;
-	private int formCount;
+	private int formCount = 0;
 	private int[] dynamischesZiel;
 	private HashMap<String, int[]> statischeZiele;
 	private int Spielphase = 0;

@@ -22,49 +22,81 @@ import de.vit.karte.felder.*;
 
 public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Parameter verwenden, die wir auch
 								// tatsächlich brauchen!
-
-	/**
-	 * Die Methode istFinishMoeglich prueft, ob ein "finish" moeglich ist, sprich ob
-	 * es bei einem Sachbearbeiter Feld/FINISH Feld um unseren Sachbearbeiter
-	 * (unsere playerId) handelt und ob alle noetigen Formulare aufgesammelt wurde,
-	 * sodass man faktisch fertig ist.
-	 * 
-	 * @param aktuellesFeld Es muss das aktuelle Feld (currentCell) uebergeben
-	 *                      werden, auf welchem sich der Bot befindet
-	 * @param aktuelleKarte Es muss die aktuelle Karte uebergeben werden
-	 * @return boolean
-	 */
-
-	// Hier werden Prioritaeten gemaess des Programmablaufplans (PAP) abgeprueft:
-
-	// 1.) Prioritaet: finish auf currenctCell
+	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
+			"kick east", "kick south", "kick west", "take", "put", "finish" };
 
 	public static boolean alleFormulareAufgesammelt(Karte aktuelleKarte) {// Wir können erst dann zum Ziel laufen, wenn
 																			// wir unseren SB haben
-		int zaehler_aufgehobene_formulare = 0;
-		for (int[] e : aktuelleKarte.getStatischeZiele()) {// Save nur unsere Dokumente drin
-			if (aktuelleKarte.getFeld(e) instanceof Dokument) {
-				Dokument aktuellesFormular = (Dokument) aktuelleKarte.getFeld(e);
-				if (aktuellesFormular.isAufgenommen() == true) {
-					zaehler_aufgehobene_formulare++;
+		return true;
+
+	}
+
+	public static int dokumentZaehler(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als nächstes Aufnehmen sollen
+		int dokumentCounter = 0;
+		if (aktuelleKarte.getLevel() == 1) {
+			return dokumentCounter; //Er bricht sofort ab, wenns Level 1 ist, dann ist nämlich kein DOkument mehr da
+		} else {
+			dokumentCounter = 1;
+		}
+		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
+			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
+				if (aktuelleKarte.getFeld(e) instanceof Dokument) {
+					Dokument dokument = (Dokument) aktuelleKarte.getFeld(e);
+					if (dokument.getNr() == 1 && dokument.isAufgenommen()) {
+						dokumentCounter++;
+					} else if (dokument.getNr() == 2 && dokument.isAufgenommen()) {
+						dokumentCounter++;
+					} else if (dokument.getNr() == 3 && dokument.isAufgenommen()) {
+						dokumentCounter++;
+					} else if (dokument.getNr() == 4 && dokument.isAufgenommen()) {
+						dokumentCounter++;
+					} else if (dokument.getNr() == 5 && dokument.isAufgenommen()) {
+						dokumentCounter++;
+					}
+
 				}
 			}
 		}
-		if (zaehler_aufgehobene_formulare == aktuelleKarte.getFormCount()) {
-			return true;
-		}
-		return false;
+		return dokumentCounter;
 	}
 
-	public static int papierAufsammeln(Karte aktuelleKarte) {
+	public static boolean aufnahmeMoeglich(Karte aktuelleKarte, Dokument dokument) {
+		if (aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) {
+			if (dokumentZaehler(aktuelleKarte) == dokument.getNr()) {
+				return true;
+			} return false;
+
+		} return false;
+	}
+
+	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
+															// kicken können und nie das selbe Papier 2x kicken
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
-			return 4;
+			Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+			for (int i = 0; i < 3; i++) {
+				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
+						&& !papier.isGekickt()) {
+					papier.setGekickt(true);
+					return (i + 4);
+				}
+			}
 		}
 		for (int i = 0; i <= 3; i++) {
 			if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
-				return i;
+				Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+				if (!papier.isGekickt()) {
+					return i;
+				}
+
+			} else if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Dokument) {
+				Dokument dokument = (Dokument) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+				if (!(aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) && aktuelleKarte.getShee) {
+					return i;
+				}
+				;
 			}
 		}
+
 		return -1;
 
 	}
@@ -76,7 +108,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			return 4;
 		} else {
 
-			return 500000000;
+			return -1;
 		}
 
 	}
@@ -106,32 +138,22 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int zumZielLaufen(Karte aktuelleKarte) {// TODO:
-		// Methode sinnnnnvoll umbennen
-		// Methode, die schaut, welche Formulare noch rein müssen und daraus uns die
-		// Ziele generiert bzw. sagt, dass exploration gestartet werden muss.
-		// Methode, die prüft, ob finish irgendwie irgendwo möglich ist und ggf. dorthin
-		// läuft bzw. finish callt.
-		// Methode, die so ein blödes Blatt einsammelt.
-		return exploration(aktuelleKarte);
-	}
-
 	public static int exploration(Karte aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
-		String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "take", "finish" };
 		String letzteGetaetigteAktion = "test";
 		if (aktuelleKarte.getSpielphase() == 0) {
 			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
+
 				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 			} else {
 				aktuelleKarte.setSpielphase(1);
 			}
-		} else if (aktuelleKarte.getSpielphase() == 1) {//Wir suchen den Sachbearbeiter! 
-			
+		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
+
 		} else if (aktuelleKarte.getSpielphase() == 2) {
 		} else if (aktuelleKarte.getSpielphase() == 3) {
 		} else if (aktuelleKarte.getSpielphase() == 4) {
