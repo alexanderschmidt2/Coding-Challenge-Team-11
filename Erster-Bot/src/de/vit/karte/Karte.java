@@ -329,22 +329,22 @@ public class Karte implements navigierbar {
 		switch (lastActionsResult) {
 		case "OK NORTH":
 			if (lastDoneAction.equals("go north")) {
-				this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] - 1) + this.getSize()[1]) % this.getSize()[1]);
+				this.setAktuellePosition(this.getNorden(aktuellePosition)[0], this.getNorden(aktuellePosition)[1]);
 			}
 			break;
 		case "OK EAST":
 			if (lastDoneAction.equals("go east")) {
-				this.setAktuellePosition(((aktuellePosition[0] + 1) + this.getSize()[0]) % this.getSize()[0], aktuellePosition[1]);
+				this.setAktuellePosition(this.getOsten(aktuellePosition)[0], this.getOsten(aktuellePosition)[1]);
 			}
 			break;
 		case "OK SOUTH":
 			if (lastDoneAction.equals("go south")) {
-				this.setAktuellePosition(aktuellePosition[0], ((aktuellePosition[1] + 1) + this.getSize()[1]) % this.getSize()[1]);
+				this.setAktuellePosition(this.getSueden(aktuellePosition)[0], this.getSueden(aktuellePosition)[1]);
 			}
 			break;
 		case "OK WEST":
 			if (lastDoneAction.equals("go west")) {
-				this.setAktuellePosition(((aktuellePosition[0] - 1) + this.getSize()[0]) % this.getSize()[0], aktuellePosition[1]);
+				this.setAktuellePosition(this.getWesten(aktuellePosition)[0], this.getWesten(aktuellePosition)[1]);
 			}
 			break;
 		}
@@ -393,22 +393,22 @@ public class Karte implements navigierbar {
 				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
 				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(nord_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
 				if (sb.getPlayerId() == this.getPlayerId())
 					{
 					this.statischeZiele.put(northCellStatus.substring(0, 10), nord_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(sb.getFormCount());
 					}
 			}
 			else if (this.getFeld(nord_koordinate) instanceof Dokument)
 			{
 				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
 					this.statischeZiele.put(northCellStatus.substring(0, 8), nord_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(dok.getNr());
 				}
 			}
 			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
@@ -460,22 +460,22 @@ public class Karte implements navigierbar {
 				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
 				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(ost_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
 				if (sb.getPlayerId() == this.getPlayerId())
 					{
 					this.statischeZiele.put(eastCellStatus.substring(0, 10), ost_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(sb.getFormCount());
 					}
 			}
 			else if (this.getFeld(ost_koordinate) instanceof Dokument)
 			{
 				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
 					this.statischeZiele.put(eastCellStatus.substring(0, 8), ost_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(dok.getNr());
 				}
 			}
 			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
@@ -527,22 +527,22 @@ public class Karte implements navigierbar {
 				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
 				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(sued_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
 				if (sb.getPlayerId() == this.getPlayerId())
 					{
 					this.statischeZiele.put(southCellStatus.substring(0, 10), sued_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(sb.getFormCount());
 					}
 			}
 			else if (this.getFeld(sued_koordinate) instanceof Dokument)
 			{
 				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
 					this.statischeZiele.put(southCellStatus.substring(0, 8), sued_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(dok.getNr());
 				}
 			}
 			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
@@ -594,22 +594,22 @@ public class Karte implements navigierbar {
 				//da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
 				//Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(west_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
 				if (sb.getPlayerId() == this.getPlayerId())
 					{
 					this.statischeZiele.put(westCellStatus.substring(0, 10), west_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(sb.getFormCount());
 					}
 			}
 			else if (this.getFeld(west_koordinate) instanceof Dokument)
 			{
 				//s. Prüfung instanceof Sachbearbeiter...
 				Dokument dok = (Dokument) this.getFeld(west_koordinate);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
 					this.statischeZiele.put(westCellStatus.substring(0, 8), west_koordinate);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(dok.getNr());
 				}
 			}
 			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
@@ -662,11 +662,11 @@ public class Karte implements navigierbar {
 				//wenn es sich um ein Dokument handelt,
 				//fuegen wir der Abbildung statischeZiele ein Element hinzu
 				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
+				//dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
 					this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);
-					//dabei wird der formCount erhoeht (wenn moeglich)
-					this.setFormCount(dok.getNr());
 				}
 			}
 			else if (this.getFeld(aktuellePosition) instanceof Papier)
@@ -761,6 +761,24 @@ public class Karte implements navigierbar {
 		nachbar_felder[2] = getFeld(this.getSueden(position));
 		nachbar_felder[3] = getFeld(this.getWesten(position));
 		return nachbar_felder;
+	}
+	
+	/**
+	 * setzt alle nicht Wand-Felder, die mit maximal 3 Schritten erreichbar sind, wieder auf Nebel,
+	 * damit ein eventuell nicht gefundenes Formular erneut gesucht werden kann
+	 */
+	public void vernebleKarte()
+	{		
+		for (int i = 0; i < size[1]; i++)
+		{
+			for (int j = 0; j < size[0]; j++)
+			{
+				if (this.karte[j] [i].getEntfernung() <= 3)
+				{
+					this.karte[j] [i] = new Nebel();
+				}
+			}
+		}
 	}
 
 	/**
