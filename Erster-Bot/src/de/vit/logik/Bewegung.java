@@ -136,9 +136,9 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		} else {
 			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte);
 			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
-				schrittZumZiel(
+				return (schrittZumZiel(
 						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),
-						aktuelleKarte);
+						aktuelleKarte)+2)%4;
 			}
 		}
 		return -1;
