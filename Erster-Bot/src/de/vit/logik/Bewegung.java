@@ -25,16 +25,22 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
 			"kick east", "kick south", "kick west", "take", "put", "finish" };
 
-	public static boolean alleFormulareAufgesammelt(Karte aktuelleKarte) {// Wir können erst dann zum Ziel laufen, wenn
-																			// wir unseren SB haben
-		return true;
-
+	public static Sachbearbeiter sachbearbeiterAusgeben(Karte aktuelleKarte) {// unseren SB
+		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
+			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
+				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter)
+					return (Sachbearbeiter) aktuelleKarte.getFeld(e);
+			}
+		}
+		return null; // noch nicht gefunden
 	}
 
-	public static int dokumentZaehler(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als nächstes Aufnehmen sollen
+	public static int dokumentZaehler(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als
+															// nächstes Aufnehmen sollen
 		int dokumentCounter = 0;
 		if (aktuelleKarte.getLevel() == 1) {
-			return dokumentCounter; //Er bricht sofort ab, wenns Level 1 ist, dann ist nämlich kein DOkument mehr da
+			return dokumentCounter; // Er bricht sofort ab, wenns Level 1 ist, dann ist nämlich kein DOkument mehr
+									// da
 		} else {
 			dokumentCounter = 1;
 		}
@@ -64,53 +70,56 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		if (aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) {
 			if (dokumentZaehler(aktuelleKarte) == dokument.getNr()) {
 				return true;
-			} return false;
+			}
+			return false;
 
-		} return false;
+		}
+		return false;
 	}
 
 	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
-															// kicken können und nie das selbe Papier 2x kicken
-		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
-			Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
-			for (int i = 0; i < 3; i++) {
-				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
-						&& !papier.isGekickt()) {
-					papier.setGekickt(true);
-					return (i + 4);
+		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
+			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
+				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+				for (int i = 0; i < 3; i++) {
+					if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
+							&& !papier.isGekickt()) {
+						papier.setGekickt(true);
+						return (i + 4);
+					}
+				}
+			}
+			for (int i = 0; i <= 3; i++) {
+				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
+					Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+					if (!papier.isGekickt()) {
+						return i;
+					}
 				}
 			}
 		}
-		for (int i = 0; i <= 3; i++) {
-			if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
-				Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
-				if (!papier.isGekickt()) {
-					return i;
-				}
-
-			} else if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Dokument) {
-				Dokument dokument = (Dokument) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
-				if (!(aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) && aktuelleKarte.getShee) {
-					return i;
-				}
-				;
-			}
-		}
-
 		return -1;
-
 	}
 
-	public static int istFinishMoeglich(Karte aktuelleKarte) {// Die karte tut in die Menge, obs unser Sachbearbeiter
-																// ist!)
-		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-				&& alleFormulareAufgesammelt(aktuelleKarte) == true) {
-			return 4;
-		} else {
-
-			return -1;
+	public static int finishHandulung(Karte aktuelleKarte) {
+		if(aktuelleKarte.getLevel() == 1) {
+			if(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
+				&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+				return 10;
+			}else {
+				schrittZumZiel(aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()), aktuelleKarte); //Die gemappten Koordinaten des Sachbearbeiters
+				}
 		}
-
+		if(aktuelleKarte.getFormCount() == dokumentZaehler(aktuelleKarte) && sachbearbeiterAusgeben(aktuelleKarte) != null) {//Der Usecase für Level 1, da wir ansonsten ggf
+			if(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
+				&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+				return 10;
+			}
+			else {
+				return schrittZumZiel()
+			}
+		}
+		return -1;
 	}
 
 	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
@@ -138,6 +147,8 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
+	public static int formularHandlung() {aktuelelKarte}();
+
 	public static int exploration(Karte aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
@@ -147,9 +158,12 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		String letzteGetaetigteAktion = "test";
 		if (aktuelleKarte.getSpielphase() == 0) {
 			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
-
 				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 			} else {
+				if (finishHandulung(aktuelleKarte) != -1) {
+
+				}
+				;
 				aktuelleKarte.setSpielphase(1);
 			}
 		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
