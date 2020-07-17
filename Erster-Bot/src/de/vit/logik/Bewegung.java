@@ -24,7 +24,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 								// tatsächlich brauchen!
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
 			"kick east", "kick south", "kick west", "take", "put", "finish" };
-
+	private static String letzteGetaetigteAktion;
 	public static Sachbearbeiter sachbearbeiterAusgeben(Karte aktuelleKarte) {// unseren SB
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
@@ -101,22 +101,27 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return -1;
 	}
 
-	public static int finishHandulung(Karte aktuelleKarte) {
-		if(aktuelleKarte.getLevel() == 1) {
-			if(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-				&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+	public static int finishHandlung(Karte aktuelleKarte) {
+		if (aktuelleKarte.getLevel() == 1) {
+			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
+					&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
 				return 10;
-			}else {
-				schrittZumZiel(aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()), aktuelleKarte); //Die gemappten Koordinaten des Sachbearbeiters
-				}
-		}
-		if(aktuelleKarte.getFormCount() == dokumentZaehler(aktuelleKarte) && sachbearbeiterAusgeben(aktuelleKarte) != null) {//Der Usecase für Level 1, da wir ansonsten ggf
-			if(aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-				&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
-				return 10;
+			} else {
+				return (schrittZumZiel(
+						aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
+						aktuelleKarte) + 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
-			else {
-				return schrittZumZiel()
+		} else {
+			if (aktuelleKarte.getFormCount() == dokumentZaehler(aktuelleKarte)
+					&& sachbearbeiterAusgeben(aktuelleKarte) != null) {// Der Usecase für Level 1, da wir ansonsten ggf
+				if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
+						&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+					return 10;
+				} else {
+					return (schrittZumZiel(
+							aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
+							aktuelleKarte) + 2) % 4;
+				}
 			}
 		}
 		return -1;
@@ -147,7 +152,9 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int formularHandlung() {aktuelelKarte}();
+	public static int formularHandlung(Karte aktuelleKarte) {//
+		return 4;
+	}
 
 	public static int exploration(Karte aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
@@ -155,16 +162,20 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
-		String letzteGetaetigteAktion = "test";
+		
 		if (aktuelleKarte.getSpielphase() == 0) {
 			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
 				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
 			} else {
-				if (finishHandulung(aktuelleKarte) != -1) {
-
-				}
-				;
-				aktuelleKarte.setSpielphase(1);
+				if (finishHandlung(aktuelleKarte) != -1) {
+					letzteGetaetigteAktion = befehl_für_ausgabe[finishHandlung(aktuelleKarte)];
+				} else if (formularHandlung(aktuelleKarte) != -1) {
+					letzteGetaetigteAktion = befehl_für_ausgabe[formularHandlung(aktuelleKarte)];
+				} else if (papierHandlung(aktuelleKarte) != -1) {
+					letzteGetaetigteAktion = befehl_für_ausgabe[papierHandlung(aktuelleKarte)];
+				}else
+					letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
+				
 			}
 		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
 
