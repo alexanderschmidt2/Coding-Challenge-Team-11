@@ -21,14 +21,7 @@ public class Karte implements navigierbar {
 	private int[] dynamischesZiel;
 	private HashMap<String, int[]> statischeZiele;
 	private int Spielphase = 0;
-	public int getSpielphase() {
-		return Spielphase;
-	}
-
-	public void setSpielphase(int spielphase) {
-		Spielphase = spielphase;
-	}
-
+	private int sheetCount;
 	//Wenn es zu viel wird eine Menge von Maps
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
@@ -38,21 +31,9 @@ public class Karte implements navigierbar {
 	// die momentane Position, wird regelmaessig aktualisiert
 	private int[] aktuellePosition = new int[2];
 
-	// Getter und Setter
+	// Getter und Setter	
 	public int[] getSize() {
 		return size;
-	}
-
-	public int[] getDynamischesZiel() {
-		return this.dynamischesZiel;
-	}
-
-	public void setDynamischesZiel(int[] koordinaten) {
-		this.dynamischesZiel = koordinaten;
-	}
-	
-	public HashMap<String, int[]> getStatischeZiele() {
-		return statischeZiele;
 	}
 
 	/**
@@ -134,10 +115,45 @@ public class Karte implements navigierbar {
 			this.formCount = formCount;
 		}
 	}
+	
+	public int[] getDynamischesZiel() {
+		return this.dynamischesZiel;
+	}
 
-	// TODO grafische ausgabe der Karte als String
-	// mit Art entscheidet man, ob man die Entfernungen oder die Inhalte der Zellen
-	// sehen moechte
+	public void setDynamischesZiel(int[] koordinaten) {
+		this.dynamischesZiel = koordinaten;
+	}
+	
+	public HashMap<String, int[]> getStatischeZiele() {
+		return statischeZiele;
+	}
+	
+	public int getSpielphase() {
+		return Spielphase;
+	}
+
+	public void setSpielphase(int spielphase) {
+		Spielphase = spielphase;
+	}
+	
+	public int getSheetCount() {
+		return sheetCount;
+	}
+
+	
+	public void reduziereSheetCount() {
+		this.sheetCount--;
+	}
+	
+	public void erhoeheSheetCount() {
+		this.sheetCount++;
+	}
+	
+	public void setSheetCount(int sheetCount) {
+		this.sheetCount = sheetCount;
+	}
+
+	//grafische Ausgabe der Karte inklusive Entfernungen als String
 	public String getKarte() {
 		String karte = "";
 		int i = 0;
@@ -335,14 +351,6 @@ public class Karte implements navigierbar {
 
 	/**
 	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
-	 * Feld unbekannt (Nebel) ist, wenn bereits ein Feld existiert, wird zunächst
-	 * ueberprueft, ob es mit dem angezeigten uebereinstimmt, wenn nicht (falls ein
-	 * Dokument gekickt wurde), aktualisiert es das Feld
-	 * 
-	 * @param ri
-	 */
-	/**
-	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
 	 * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben
 	 * falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
 	 * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
@@ -350,7 +358,7 @@ public class Karte implements navigierbar {
 	 * (Boden wird instanziiert) und an der neuen neu angelegt
 	 * @param northCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
-	public void aktualisereNorden(String northCellStatus) {
+	public void aktualisereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getNorden(), um die Koordinaten des
 		// noerdlichen Felds zu erhalten
@@ -393,7 +401,7 @@ public class Karte implements navigierbar {
 			}
 			else if (this.getFeld(nord_koordinate) instanceof Dokument)
 			{
-				//s. Sachbearbeiter...
+				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
@@ -401,6 +409,13 @@ public class Karte implements navigierbar {
 					//dabei wird der formCount erhoeht (wenn moeglich)
 					this.setFormCount(dok.getNr());
 				}
+			}
+			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
+			else if (this.getFeld(nord_koordinate) instanceof Papier && lastActionsResult.equals("OK NORTH") && lastDoneAction.equals("kick north"))
+			{
+				//s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(nord_koordinate);
+				papier.setGekickt(true);
 			}
 		}
 	}
@@ -410,7 +425,7 @@ public class Karte implements navigierbar {
 	 * 
 	 * @param eastCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
-	public void aktualisereOsten(String eastCellStatus) {
+	public void aktualisereOsten(String eastCellStatus, String lastActionsResult, String lastDoneAction) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getOsten(), um die Koordinaten des
 		// oestlichen Felds zu erhalten
@@ -453,7 +468,7 @@ public class Karte implements navigierbar {
 			}
 			else if (this.getFeld(ost_koordinate) instanceof Dokument)
 			{
-				//s. Sachbearbeiter...
+				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
@@ -461,6 +476,13 @@ public class Karte implements navigierbar {
 					//dabei wird der formCount erhoeht (wenn moeglich)
 					this.setFormCount(dok.getNr());
 				}
+			}
+			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
+			else if (this.getFeld(ost_koordinate) instanceof Papier && lastActionsResult.equals("OK EAST") && lastDoneAction.equals("kick east"))
+			{
+				//s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(ost_koordinate);
+				papier.setGekickt(true);
 			}
 		}
 	}
@@ -470,7 +492,7 @@ public class Karte implements navigierbar {
 	 * 
 	 * @param southCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */						
-	public void aktualisereSueden(String southCellStatus) {
+	public void aktualisereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getSueden(), um die Koordinaten des
 		// suedlichen Felds zu erhalten
@@ -513,7 +535,7 @@ public class Karte implements navigierbar {
 			}
 			else if (this.getFeld(sued_koordinate) instanceof Dokument)
 			{
-				//s. Sachbearbeiter...
+				//s. Prüfung instanceof Sachbearbeiter
 				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
@@ -521,6 +543,13 @@ public class Karte implements navigierbar {
 					//dabei wird der formCount erhoeht (wenn moeglich)
 					this.setFormCount(dok.getNr());
 				}
+			}
+			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
+			else if (this.getFeld(sued_koordinate) instanceof Papier && lastActionsResult.equals("OK SOUTH") && lastDoneAction.equals("kick south"))
+			{
+				//s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(sued_koordinate);
+				papier.setGekickt(true);
 			}
 		}
 	}
@@ -530,7 +559,7 @@ public class Karte implements navigierbar {
 	 * 
 	 * @param westCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
-	public void aktualisereWesten(String westCellStatus) {
+	public void aktualisereWesten(String westCellStatus, String lastActionsResult, String lastDoneAction) {
 		// man nehme sich die Koordinaten der aktuellen Position...
 		// ...uebergebe diese der Methode getWesten(), um die Koordinaten des
 		// westlichen Felds zu erhalten
@@ -573,7 +602,7 @@ public class Karte implements navigierbar {
 			}
 			else if (this.getFeld(west_koordinate) instanceof Dokument)
 			{
-				//s. Sachbearbeiter...
+				//s. Prüfung instanceof Sachbearbeiter...
 				Dokument dok = (Dokument) this.getFeld(west_koordinate);
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
@@ -581,6 +610,13 @@ public class Karte implements navigierbar {
 					//dabei wird der formCount erhoeht (wenn moeglich)
 					this.setFormCount(dok.getNr());
 				}
+			}
+			//hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt, damit wir es nicht noch einmal kicken
+			else if (this.getFeld(west_koordinate) instanceof Papier && lastActionsResult.equals("OK WEST") && lastDoneAction.equals("kick west"))
+			{
+				//s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(west_koordinate);
+				papier.setGekickt(true);
 			}
 		}
 	}
@@ -617,10 +653,13 @@ public class Karte implements navigierbar {
 				//das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
 				this.statischeZiele.remove(currentCellStatus.substring(0, 8));
 			}
+			//hier wird das eigentliche Objekt angelegt
 			this.setFeld(aktuellePosition, currentCellStatus);
+			
 			if (this.getFeld(aktuellePosition) instanceof Dokument)
 			{
-				//s. Sachbearbeiter...
+				//wenn es sich um ein Dokument handelt,
+				//fuegen wir der Abbildung statischeZiele ein Element hinzu
 				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
 				if (dok.getPlayerId() == this.getPlayerId())
 				{
@@ -628,6 +667,11 @@ public class Karte implements navigierbar {
 					//dabei wird der formCount erhoeht (wenn moeglich)
 					this.setFormCount(dok.getNr());
 				}
+			}
+			else if (this.getFeld(aktuellePosition) instanceof Papier)
+			{
+				Papier papier = (Papier) this.getFeld(aktuellePosition);
+				papier.setGekickt(true);
 			}
 		}
 	}
@@ -643,10 +687,10 @@ public class Karte implements navigierbar {
 		//WICHTIG! Alles, was unser Ziel sein *könnte* davon die Koordinaten
 		//was ist wenn auf einmal ein Sheet kommt
 		this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
-		this.aktualisereNorden(ri.getNorthCellStatus());
-		this.aktualisereOsten(ri.getEastCellStatus());
-		this.aktualisereSueden(ri.getSouthCellStatus());
-		this.aktualisereWesten(ri.getWestCellStatus());
+		this.aktualisereNorden(ri.getNorthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisereOsten(ri.getEastCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisereSueden(ri.getSouthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisereWesten(ri.getWestCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisereStandpunkt(ri.getCurrentCellStatus());
 	}
 
