@@ -1,9 +1,9 @@
 package de.vit.karte.felder;
 
 /**
- * 
+ * pro Dokument wird eine weitere Instanz angelegt mit entsprechender Nummer und PlayerId
  * @author Laura
- *pro Dokument wird eine weitere Instanz angelegt mit entsprechender Nummer
+ * @author Constantin
  */
 public class Dokument extends Feld {
 	private final int playerId;
@@ -18,8 +18,6 @@ public class Dokument extends Feld {
 	public int getNr() {
 		return nr;
 	}
-	
-	
 	
 	public Dokument(String info)
 	{

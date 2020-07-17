@@ -1,9 +1,9 @@
 package de.vit.karte.felder;
 
 /**
- * 
+ * der Name der jeweiligen Spezialisierung entspricht der Bezeichnung der Spieleumgebung fuer das Feld
  * @author Laura
- *der Name der jeweiligen Spezialisierung entspricht der Bezeichnung der Spieleumgebung für das Feld
+ * @author Constantin
  */
 public abstract class Feld {
 	/**
@@ -15,7 +15,7 @@ public abstract class Feld {
 	
 	//Getter und Setter
 	/**
-	 * kein Setter, da Name nicht geändert werden soll, bei Änderung der Feldart wird ein neues Objekt einer anderen Klasse angelegt
+	 * kein Setter, da Name nicht geaendert werden soll, bei Aenderung der Feldart wird ein neues Objekt einer anderen Klasse angelegt
 	 * @return
 	 */
 	public String getName() {
@@ -38,11 +38,7 @@ public abstract class Feld {
 		this.besuche = besuche;
 	}
 
-	/**
-	 * die Koordinate wird mithilfe des Setters gesetzt, da beim Sachbearbeiter die Koordinate zunächst nicht bekannt ist
-	 */
 	public Feld()
 	{
-		
 	}
 }

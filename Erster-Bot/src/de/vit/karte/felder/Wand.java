@@ -1,5 +1,10 @@
 package de.vit.karte.felder;
 
+/**
+ * Klasse, deren Instanzen ein Wandfeld in der Karte darstellen
+ * @author Laura
+ * @author Constantin
+ */
 public class Wand extends Feld{
 	
 	public Wand()
@@ -8,5 +13,4 @@ public class Wand extends Feld{
 		this.name = "WALL";
 		
 	}
-
 }

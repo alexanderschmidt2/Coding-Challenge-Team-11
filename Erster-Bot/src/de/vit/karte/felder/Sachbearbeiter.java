@@ -1,5 +1,10 @@
 package de.vit.karte.felder;
 
+/**
+ * pro Dokument wird eine weitere Instanz angelegt mit entsprechender PlayerId und Anzahl der Formulare
+ * @author Laura
+ * @author Constantin
+ */
 public class Sachbearbeiter extends Feld {
 	private final int playerId;
 	private int formCount;
@@ -17,7 +22,7 @@ public class Sachbearbeiter extends Feld {
 		this.formCount = formCount;
 	}
 
-	public Sachbearbeiter(String info) //TODO String sachbearbeiterdaten uebergeben und slicen
+	public Sachbearbeiter(String info)
 	{
 		super();
 		//info slicen, um an spielerId zu kommen und in int casten
@@ -31,6 +36,4 @@ public class Sachbearbeiter extends Feld {
 		this.playerId = spielerId_int;
 		this.formCount = formCount_int;
 	}
-
-
 }
