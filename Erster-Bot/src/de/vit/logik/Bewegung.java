@@ -74,7 +74,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
 		} else {
-			if (aktuelleKarte.getFormCount() == aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte)
+			if (aktuelleKarte.getFormCount() == aktuelleKarte.getStatischeZiele().getDokumentenZaehler()
 					&& aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null) {
 				if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
 						&& aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -120,9 +120,11 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
 					aktuelleKarte)) {
-				if (dokument.getNr() == aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte)) {
-					dokument.setAufgenommen(true);
+				if (dokument.getNr() == aktuelleKarte.getStatischeZiele().getDokumentenZaehler()) {
+					aktuelleKarte.getStatischeZiele().addDokumentenZaehler();
+					aktuelleKarte.getStatischeZiele().remove(dokument.getName());
 					return 9;
+					
 				}
 			} else {
 				if (aktuelleKarte.getSheetCount() > 0) {
@@ -140,7 +142,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			// explorieren
 			// wenn Dokumentnr == was wir in der Liste haben und nicht-aufgenommne, dann
 			// gehe zu diesem Dokument
-			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte);
+			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().getDokumentenZaehler();
 			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
 				return (schrittZumZiel(
 						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),

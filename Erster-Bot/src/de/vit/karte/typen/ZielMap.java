@@ -10,6 +10,15 @@ import de.vit.logik.*;
 
 @SuppressWarnings("serial")
 public class ZielMap extends HashMap<String, int[]> {
+	private int dokumentenZaehler = 0;
+
+	public int getDokumentenZaehler() {
+		return dokumentenZaehler;
+	}
+
+	public void addDokumentenZaehler() {
+		this.dokumentenZaehler++;
+	}
 
 	public ZielMap() {
 		super();
@@ -39,36 +48,6 @@ public class ZielMap extends HashMap<String, int[]> {
 		return null; // noch nicht gefunden es gibt keine Form ID bei Null
 	}
 
-	public int aktuellesDokument(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als
-		// nächstes Aufnehmen sollen
-		int dokument_zaehler = 0;
-		if (aktuelleKarte.getLevel() == 1) {
-			return dokument_zaehler;
-		} else {
-			dokument_zaehler = 1;
-		}
-		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-				if (aktuelleKarte.getFeld(e) instanceof Dokument) {
-					Dokument dokument = (Dokument) aktuelleKarte.getFeld(e);
-					if (dokument.getNr() == 1 && dokument.isAufgenommen()) {
-						dokument_zaehler++;
-					} else if (dokument.getNr() == 2 && dokument.isAufgenommen()) {
-						dokument_zaehler++;
-					} else if (dokument.getNr() == 3 && dokument.isAufgenommen()) {
-						dokument_zaehler++;
-					} else if (dokument.getNr() == 4 && dokument.isAufgenommen()) {
-						dokument_zaehler++;
-					} else if (dokument.getNr() == 5 && dokument.isAufgenommen()) {
-						dokument_zaehler++;
-					}
-
-				}
-			}
-		}
-		return dokument_zaehler;
-	}
-
 	public boolean isKoordinatenVorhanden(int[] koordinaten, Karte aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 
@@ -87,12 +66,11 @@ public class ZielMap extends HashMap<String, int[]> {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
 				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter) {
-					return e;		
+					return e;
 				}
 			}
 		}
 		return null; // noch nicht gefunden es gibt keine Form ID bei Null
 	}
-
 
 }
