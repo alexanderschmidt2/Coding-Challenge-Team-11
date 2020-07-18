@@ -36,8 +36,11 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 							&& !papier.isGekickt()) {
 						papier.setGekickt(true);
 						return (i + 4);
+					}else {
+						return 9;
 					}
 				}
+
 			}
 
 		}
@@ -135,7 +138,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
-	public static int verquatschtHandlung(Rundeninformationen rundeninformationen) {
+	public static int fehlgeschlageneHandlung(Rundeninformationen rundeninformationen) {
 		if (rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
 			return Arrays.asList(befehl_für_ausgabe).indexOf(rundeninformationen.getLastDoneAction());
 		}
@@ -145,7 +148,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
 
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
-		prioritäts_liste.add(verquatschtHandlung(rundeninformationen));
+		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
 		prioritäts_liste.add(formularHandlung(aktuelleKarte));
 		prioritäts_liste.add(papierHandlung(aktuelleKarte));

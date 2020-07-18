@@ -53,9 +53,7 @@ public class ZielMap extends HashMap<String, int[]> {
 
 	public boolean isKoordinatenVorhanden(int[] koordinaten, Karte aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-
 				if (Arrays.equals(e, koordinaten)) {
 					return true;
 				}
