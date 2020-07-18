@@ -794,6 +794,6 @@ public class Karte implements navigierbar {
 				karte[x][y] = new Nebel();
 			}
 		}
-		this.statischeZiele = new ZielMap();
+		this.statischeZiele = new ZielMap(this.level);
 	}
 }

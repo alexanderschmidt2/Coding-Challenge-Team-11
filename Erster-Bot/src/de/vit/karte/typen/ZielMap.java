@@ -6,11 +6,11 @@ import java.util.HashMap;
 import de.vit.karte.Karte;
 import de.vit.karte.felder.Dokument;
 import de.vit.karte.felder.Sachbearbeiter;
-import de.vit.logik.*;
 
 @SuppressWarnings("serial")
 public class ZielMap extends HashMap<String, int[]> {
-	private int dokumentenZaehler = 0;
+	
+	private int dokumentenZaehler = 1;
 
 	public int getDokumentenZaehler() {
 		return dokumentenZaehler;
@@ -20,8 +20,11 @@ public class ZielMap extends HashMap<String, int[]> {
 		this.dokumentenZaehler++;
 	}
 
-	public ZielMap() {
+	public ZielMap(int level) {
 		super();
+		if (level == 1) {
+			this.dokumentenZaehler = 0;
+		}
 	}
 
 	public Sachbearbeiter gibSachbearbeiter(Karte aktuelleKarte) {

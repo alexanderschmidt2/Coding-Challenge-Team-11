@@ -1,9 +1,6 @@
 package de.vit.logik;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import de.vit.karte.Karte;
@@ -63,7 +60,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
 		} else {
-			if (aktuelleKarte.getFormCount() == aktuelleKarte.getStatischeZiele().getDokumentenZaehler()
+			if (aktuelleKarte.getFormCount() == (aktuelleKarte.getStatischeZiele().getDokumentenZaehler() - 1)
 					&& aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null) {
 				if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
 						&& aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -129,8 +126,6 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		} else {
 			// wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann
 			// explorieren
-			// wenn Dokumentnr == was wir in der Liste haben und nicht-aufgenommne, dann
-			// gehe zu diesem Dokument
 			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().getDokumentenZaehler();
 			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
 				return (schrittZumZiel(
@@ -157,7 +152,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			if (moegliche_ausgabe != -1) {
 				letzteGetaetigteAktion = befehl_für_ausgabe[moegliche_ausgabe];
 				rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
-				
+				break;
 			}
 		}return letzteGetaetigteAktion;
 	}
