@@ -36,8 +36,10 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 							&& !papier.isGekickt()) {
 						papier.setGekickt(true);
 						return (i + 4);
+					}else {
+						return 9;
 					}
-				}return 9;
+				}
 
 			}
 
