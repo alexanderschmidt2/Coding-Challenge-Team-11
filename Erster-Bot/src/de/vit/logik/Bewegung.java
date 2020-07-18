@@ -115,7 +115,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	}
 
 	public static int formularHandlung(Karte aktuelleKarte) {// Ein Formular
-																										// gönnen
+																// gönnen
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -136,10 +136,12 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 											// wir :(
 			return explorationsHandlung(aktuelleKarte);
 		} else {
-			//wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann explorieren
-			//wenn Dokumentnr == was wir in der Liste haben und nicht-aufgenommne, dann gehe zu diesem Dokument
+			// wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann
+			// explorieren
+			// wenn Dokumentnr == was wir in der Liste haben und nicht-aufgenommne, dann
+			// gehe zu diesem Dokument
 			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte);
-			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null ) {
+			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
 				return (schrittZumZiel(
 						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),
 						aktuelleKarte) + 2) % 4;
@@ -152,15 +154,20 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
+
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-		List<Integer> prioritäts_liste= new ArrayList<Integer>();
+		List<Integer> prioritäts_liste = new ArrayList<Integer>();
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
 		prioritäts_liste.add(formularHandlung(aktuelleKarte));
 		prioritäts_liste.add(papierHandlung(aktuelleKarte));
 		prioritäts_liste.add(explorationsHandlung(aktuelleKarte));
-		
-		letzteGetaetigteAktion = befehl_für_ausgabe[Collections.max(prioritäts_liste)];
-		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
-		return letzteGetaetigteAktion;
+
+		for (int moegliche_ausgabe : prioritäts_liste) {
+			if (moegliche_ausgabe != -1) {
+				letzteGetaetigteAktion = befehl_für_ausgabe[moegliche_ausgabe];
+				rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
+				
+			}
+		}return letzteGetaetigteAktion;
 	}
 }
