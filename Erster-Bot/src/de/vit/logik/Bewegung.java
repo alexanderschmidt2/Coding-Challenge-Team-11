@@ -2,7 +2,9 @@ package de.vit.logik;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import de.vit.karte.Karte;
 import de.vit.karte.felder.*;
@@ -24,7 +26,7 @@ import de.vit.karte.felder.*;
 public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Parameter verwenden, die wir auch
 								// tatsächlich brauchen!
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
-			"kick east", "kick south", "kick west", "take", "put", "finish" };
+			"kick east", "kick south", "kick west", "put", "take", "finish" };
 	private static String letzteGetaetigteAktion;
 
 	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
@@ -112,7 +114,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int formularHandlung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {// Ein Formular
+	public static int formularHandlung(Karte aktuelleKarte) {// Ein Formular
 																										// gönnen
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
@@ -120,22 +122,24 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 					aktuelleKarte)) {
 				if (dokument.getNr() == aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte)) {
 					dokument.setAufgenommen(true);
-					return 8;
+					return 9;
 				}
 			} else {
 				if (aktuelleKarte.getSheetCount() > 0) {
 					aktuelleKarte.reduziereSheetCount();
-					return 9;
+					return 8;
 				}
 			}
 		} else if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Boden && aktuelleKarte
 				.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 			aktuelleKarte.vernebleKarte(); // TODO: prüfen ob wir ggf. doch die ganze Karte aktualisieren können, müssen
 											// wir :(
-			return exploration(aktuelleKarte);
+			return explorationsHandlung(aktuelleKarte);
 		} else {
+			//wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann explorieren
+			//wenn Dokumentnr == was wir in der Liste haben und nicht-aufgenommne, dann gehe zu diesem Dokument
 			int ges_dokuments_nr = aktuelleKarte.getStatischeZiele().aktuellesDokument(aktuelleKarte);
-			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null) {
+			if (aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte) != null ) {
 				return (schrittZumZiel(
 						aktuelleKarte.getStatischeZiele().gibKoordinatenDokument(ges_dokuments_nr, aktuelleKarte),
 						aktuelleKarte) + 2) % 4;
@@ -144,35 +148,18 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return -1;
 	}
 
-	public static int exploration(Karte aktuelleKarte) {
+	public static int explorationsHandlung(Karte aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-
-		int hilf = 0;
-		if (aktuelleKarte.getStatischeZiele().isEmpty()) {
-			letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-		} else {
-			hilf = finishHandlung(aktuelleKarte);
-
-			if (hilf != -1) {
-				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
-			} else {
-				hilf = formularHandlung(aktuelleKarte, rundeninformationen);
-			}
-			if (hilf != -1) {
-				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
-			} else {
-				hilf = papierHandlung(aktuelleKarte);
-			}
-			if (hilf != -1) {
-				letzteGetaetigteAktion = befehl_für_ausgabe[hilf];
-			} else {
-				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-			}
-		}
-
+		List<Integer> prioritäts_liste= new ArrayList<Integer>();
+		prioritäts_liste.add(finishHandlung(aktuelleKarte));
+		prioritäts_liste.add(formularHandlung(aktuelleKarte));
+		prioritäts_liste.add(papierHandlung(aktuelleKarte));
+		prioritäts_liste.add(explorationsHandlung(aktuelleKarte));
+		
+		letzteGetaetigteAktion = befehl_für_ausgabe[Collections.max(prioritäts_liste)];
 		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 		return letzteGetaetigteAktion;
 	}
