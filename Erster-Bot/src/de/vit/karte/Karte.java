@@ -763,7 +763,7 @@ public class Karte implements navigierbar {
 	}
 	
 	/**
-	 * setzt alle nicht Wand-Felder, die mit maximal 3 Schritten erreichbar sind, wieder auf Nebel,
+	 * setzt alle nicht Wand-Felder, die mit 2 oder 4 Schritten erreichbar sind, wieder auf Nebel,
 	 * damit ein eventuell nicht gefundenes Formular erneut gesucht werden kann
 	 */
 	public void vernebleKarte()
@@ -772,12 +772,21 @@ public class Karte implements navigierbar {
 		{
 			for (int j = 0; j < size[0]; j++)
 			{
-				if (this.karte[j] [i].getEntfernung() <= 3)
+				//es werden nur Felder vernebelt, die...
+				//entweder 2 oder 4 Felder entfernt sind
+				if ((this.karte[j] [i].getEntfernung() == 2 || this.karte[j] [i].getEntfernung() == 4) &&
+						//oder kein Dokument oder Sachbearbeiter sind (also ein Ziel sind)
+						!((this.karte[j] [i] instanceof Dokument) || (this.karte[j] [i] instanceof Sachbearbeiter)) &&
+						//oder kein Nadeloehr sind, also nicht im Norden und im Sueden ein Wandfeld haben
+						(!(this.getNachbarn(new int [] {j,i})[0].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[2].getEntfernung() == 500000000) ||
+						//oder nicht im Osten und Westen ein Wandfeld haben
+						!(this.getNachbarn(new int [] {j,i})[1].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[3].getEntfernung() == 500000000)))
 				{
-					this.karte[j] [i] = new Nebel();
+						this.karte[j] [i] = new Nebel();		
 				}
 			}
 		}
+		this.aktualisiereEntfernung();
 	}
 
 	/**
