@@ -56,18 +56,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	public static int finishHandlung(Karte aktuelleKarte) {
 		if (aktuelleKarte.getLevel() == 1) {
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter && aktuelleKarte
-					.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {// Einne
-																														// koordinate,
-																														// die
-																														// übergeben
-																														// wird
-																														// mit
-																														// einer
-																														// Koordinate
-																														// aus
-																														// den
-																														// Zielen
-																														// übereinstimt?
+					.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 				return 10;
 			} else {
 				return (schrittZumZiel(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte), aktuelleKarte)
