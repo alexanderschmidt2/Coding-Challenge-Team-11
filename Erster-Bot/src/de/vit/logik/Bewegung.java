@@ -31,20 +31,26 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
 				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+				int h = -1;
 				for (int i = 0; i < 3; i++) {
 					if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
 							&& !papier.isGekickt()) {
-						papier.setGekickt(true);
-						return (i + 4);
-					}else {
+						h = i;
+					}
+				}
+				if (h > -1) {
+					papier.setGekickt(true);
+					return (h + 4);
+				} else {
+					if (!papier.isGekickt()) {
 						return 9;
 					}
 				}
 
 			}
+			
+		} return -1;
 
-		}
-		return -1;
 	}
 
 	public static int finishHandlung(Karte aktuelleKarte) {
@@ -97,8 +103,14 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
 	}
 
-	public static int formularHandlung(Karte aktuelleKarte) {// Ein Formular
-																// gönnen
+	public static int formularHandlung(Karte aktuelleKarte, Rundeninformationen rundeninfo) {
+
+		if (rundeninfo.getLastDoneAction().equals("put")) {
+			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
+				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+				papier.setGekickt(true);
+			}
+		}		
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -150,7 +162,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
 		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
-		prioritäts_liste.add(formularHandlung(aktuelleKarte));
+		prioritäts_liste.add(formularHandlung(aktuelleKarte, rundeninformationen));
 		prioritäts_liste.add(papierHandlung(aktuelleKarte));
 		prioritäts_liste.add(explorationsHandlung(aktuelleKarte));
 
