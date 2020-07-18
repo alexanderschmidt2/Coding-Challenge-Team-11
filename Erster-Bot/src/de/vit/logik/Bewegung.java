@@ -23,7 +23,6 @@ import de.vit.karte.felder.*;
 
 public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Parameter verwenden, die wir auch
 								// tatsächlich brauchen!
-	
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
 			"kick east", "kick south", "kick west", "put", "take", "finish" };
 	private static String letzteGetaetigteAktion;
@@ -32,19 +31,16 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
 				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
-				int h = -1;
 				for (int i = 0; i < 3; i++) {
 					if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
 							&& !papier.isGekickt()) {
-						h = i;
-					}
-				}
-				if (h > -1) {
-					papier.setGekickt(true);
-					return (h + 4);
-				} else {
-					if (!papier.isGekickt()) {
-						return 9;
+						// TODO: Der Bot geht hier nicht rein bei 2 Spielern, MAP: 04 Kreis, LVL: 5
+						papier.setGekickt(true);
+						return (i + 4);
+					}else {
+						if (!papier.isGekickt()) {
+							return 9;
+						}
 					}
 				}
 
@@ -105,15 +101,14 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	}
 
 	public static int formularHandlung(Karte aktuelleKarte, Rundeninformationen rundeninfo) {// Ein Formular
-
+		
 		if (rundeninfo.getLastDoneAction().equals("put")) {
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
 				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 				papier.setGekickt(true);
 			}
-		}
-		// TODO: Der Bot geht hier rein, wenn ein Papier liegt auf einem gesuchten
-		// Formular Feld
+		}												
+		// TODO: Der Bot geht hier rein, wenn ein Papier liegt auf einem gesuchten Formular Feld
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -126,11 +121,11 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			} else {
 				if (aktuelleKarte.getSheetCount() > 0) {
 					aktuelleKarte.reduziereSheetCount();
-
+					
 					return 8;
 				}
 			}
-			// TODO: Das alte Formular aus statischeZiele rauslöschen
+			//TODO: Das alte Formular aus statischeZiele rauslöschen
 		} else if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Boden && aktuelleKarte
 				.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 			System.err.println("Ich verneble");
@@ -163,12 +158,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	}
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-		
-		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
-			Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
-			System.err.println("Das Papier ist gekickt = " + papier.isGekickt());
-		}
-		
+
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
 		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
@@ -197,7 +187,6 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 				System.err.println(e);
 			}
 		}
-
 		return letzteGetaetigteAktion;
 	}
 }
