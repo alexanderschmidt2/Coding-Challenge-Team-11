@@ -98,11 +98,12 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 																// gönnen
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
-			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),aktuelleKarte)) {
+			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
+					aktuelleKarte)) {
 				if (dokument.getNr() == aktuelleKarte.getStatischeZiele().getDokumentenZaehler()) {
 					aktuelleKarte.getStatischeZiele().addDokumentenZaehler();
 					aktuelleKarte.getStatischeZiele().remove(dokument.getName());
-					return 9;		
+					return 9;
 				}
 			} else {
 				if (aktuelleKarte.getSheetCount() > 0) {
@@ -114,8 +115,8 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 				.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 			System.err.println("Ich verneble");
 			aktuelleKarte.vernebleKarte(); // TODO: prüfen ob wir ggf. doch die ganze Karte aktualisieren können, müssen
-											// wir :(
-			return explorationsHandlung(aktuelleKarte);
+
+			return -1;
 		} else {
 			// wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann
 			// explorieren
@@ -133,17 +134,16 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 	public static int explorationsHandlung(Karte aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
+
 	public static int verquatschtHandlung(Rundeninformationen rundeninformationen) {
-		if(rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
+		if (rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
 			return Arrays.asList(befehl_für_ausgabe).indexOf(rundeninformationen.getLastDoneAction());
 		}
 		return -1;
 	}
 
 	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-		
-		
-		
+
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
 		prioritäts_liste.add(verquatschtHandlung(rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
@@ -153,12 +153,25 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 		for (int moegliche_ausgabe : prioritäts_liste) {
 			System.err.println(moegliche_ausgabe);
+
 			if (moegliche_ausgabe != -1) {
-				
+
 				letzteGetaetigteAktion = befehl_für_ausgabe[moegliche_ausgabe];
 				rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
 				break;
 			}
-		}return letzteGetaetigteAktion;
+		}
+		System.err.println(rundeninformationen.getCurrentCellStatus());
+		for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
+			if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
+				System.err.println(aktuelleKarte.getFeld(e).getClass() + "" + e);
+			}
+		}
+		for (String e : aktuelleKarte.getStatischeZiele().keySet()) {
+			if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
+				System.err.println(e);
+			}
+		}
+		return letzteGetaetigteAktion;
 	}
 }
