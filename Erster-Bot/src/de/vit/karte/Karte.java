@@ -638,7 +638,7 @@ public class Karte implements navigierbar {
 	 * gehen
 	 * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
 	 */
-	public void aktualisiereStandpunkt(String currentCellStatus) {
+	public void aktualisiereStandpunkt(String currentCellStatus, String lastDoneAction) {
 		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName()
 		// erhalten wir den Namen des
 		// Objekts und speichern diesen im String name
@@ -679,7 +679,7 @@ public class Karte implements navigierbar {
 				}
 			}
 			//hier bekommt ein Papier, welches von uns hingelegt wurde, den status gekickt, damit wir es nicht wegkicken
-			else if (this.getFeld(aktuellePosition) instanceof Papier)
+			else if (this.getFeld(aktuellePosition) instanceof Papier && lastDoneAction.equals("put"))
 			{
 				Papier papier = (Papier) this.getFeld(aktuellePosition);
 				papier.setGekickt(true);
@@ -698,7 +698,7 @@ public class Karte implements navigierbar {
 		this.aktualisiereOsten(ri.getEastCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisiereSueden(ri.getSouthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisiereWesten(ri.getWestCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
-		this.aktualisiereStandpunkt(ri.getCurrentCellStatus());
+		this.aktualisiereStandpunkt(ri.getCurrentCellStatus(), ri.getLastDoneAction());
 	}
 
 	/**
