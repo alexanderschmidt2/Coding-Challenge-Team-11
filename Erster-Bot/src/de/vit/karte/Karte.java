@@ -299,17 +299,25 @@ public class Karte implements navigierbar {
 	}
 
 	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {//TODO: falls wir alles erkundet haben müssen wir auch damit umgehen können!
+		int temp_entfernung = entfernung;
+		if (this.getFeld(koordinaten) instanceof Papier) {
+			Papier papier = (Papier) this.getFeld(koordinaten);
+			if (papier.getEntfernung() < entfernung && !papier.isGekickt()) {
+				this.setDynamischesZiel(koordinaten);
+				temp_entfernung = papier.getEntfernung();
+			}
+		}
 		for (int i = 0; i <= 3; i++) {
 			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
 				if (this.getFeld(koordinaten).getEntfernung() < entfernung)
 
 				{
 					this.setDynamischesZiel(koordinaten);
-					return this.getFeld(koordinaten).getEntfernung();
+					temp_entfernung = this.getFeld(koordinaten).getEntfernung();
 				}
 			}
 		}
-		return entfernung;
+		return temp_entfernung;
 	};
 
 	/**

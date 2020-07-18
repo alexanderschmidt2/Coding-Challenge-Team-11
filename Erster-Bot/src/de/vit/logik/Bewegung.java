@@ -38,14 +38,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 					}
 				}
 			}
-//			for (int i = 0; i <= 3; i++) {
-//				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
-//					Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
-//					if (!papier.isGekickt()) {
-//						return i;
-//					}
-//				}
-//			}
+
 		}
 		return -1;
 	}
