@@ -398,7 +398,7 @@ public class Karte implements navigierbar {
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(nord_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
+				if (sb.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(nord_koordinate))
 					{
 					//der Abbildung statischeZiele hinzufuegen
 					this.statischeZiele.put(northCellStatus.substring(0, 10), nord_koordinate);
@@ -410,7 +410,7 @@ public class Karte implements navigierbar {
 				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
+				if (dok.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(nord_koordinate))
 				{
 					this.statischeZiele.put(northCellStatus.substring(0, 8), nord_koordinate);
 				}
@@ -467,7 +467,7 @@ public class Karte implements navigierbar {
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(ost_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
+				if (sb.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(ost_koordinate))
 					{
 					//der Abbildung statischeZiele hinzufuegen
 					this.statischeZiele.put(eastCellStatus.substring(0, 10), ost_koordinate);
@@ -479,7 +479,7 @@ public class Karte implements navigierbar {
 				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
+				if (dok.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(ost_koordinate))
 				{
 					this.statischeZiele.put(eastCellStatus.substring(0, 8), ost_koordinate);
 				}
@@ -536,7 +536,7 @@ public class Karte implements navigierbar {
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(sued_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
+				if (sb.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(sued_koordinate))
 					{
 					//der Abbildung statischeZiele hinzufuegen
 					this.statischeZiele.put(southCellStatus.substring(0, 10), sued_koordinate);
@@ -548,7 +548,7 @@ public class Karte implements navigierbar {
 				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
+				if (dok.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(sued_koordinate))
 				{
 					this.statischeZiele.put(southCellStatus.substring(0, 8), sued_koordinate);
 				}
@@ -605,7 +605,7 @@ public class Karte implements navigierbar {
 				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(west_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(sb.getFormCount());
-				if (sb.getPlayerId() == this.getPlayerId())
+				if (sb.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(west_koordinate))
 					{
 					//der Abbildung statischeZiele hinzufuegen
 					this.statischeZiele.put(westCellStatus.substring(0, 10), west_koordinate);
@@ -617,7 +617,7 @@ public class Karte implements navigierbar {
 				Dokument dok = (Dokument) this.getFeld(west_koordinate);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
+				if (dok.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(west_koordinate))
 				{
 					this.statischeZiele.put(westCellStatus.substring(0, 8), west_koordinate);
 				}
@@ -672,7 +672,7 @@ public class Karte implements navigierbar {
 				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
 				//dabei wird der formCount erhoeht (wenn moeglich)
 				this.setFormCount(dok.getNr());
-				if (dok.getPlayerId() == this.getPlayerId())
+				if (dok.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(aktuellePosition))
 				{
 					//der Abbildung statischeZiele hinzufuegen
 					this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);
@@ -773,14 +773,14 @@ public class Karte implements navigierbar {
 			for (int j = 0; j < size[0]; j++)
 			{
 				//es werden nur Felder vernebelt, die...
-				//entweder 2 oder 4 Felder entfernt sind
+				// 2 oder 4 Felder entfernt sind
 				if ((this.karte[j] [i].getEntfernung() == 2 || this.karte[j] [i].getEntfernung() == 4) &&
-						//oder kein Dokument oder Sachbearbeiter sind (also ein Ziel sind)
+						//und kein Dokument oder Sachbearbeiter sind (also ein Ziel sind)
 						!((this.karte[j] [i] instanceof Dokument) || (this.karte[j] [i] instanceof Sachbearbeiter)) &&
-						//oder kein Nadeloehr sind, also nicht im Norden und im Sueden ein Wandfeld haben
-						(!(this.getNachbarn(new int [] {j,i})[0].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[2].getEntfernung() == 500000000) ||
-						//oder nicht im Osten und Westen ein Wandfeld haben
-						!(this.getNachbarn(new int [] {j,i})[1].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[3].getEntfernung() == 500000000)))
+						//und kein Nadeloehr sind, also entweder im Norden und im Sueden ein Wandfeld haben
+						!((this.getNachbarn(new int [] {j,i})[0].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[2].getEntfernung() == 500000000) ||
+						//oder im Osten und Westen ein Wandfeld haben
+						(this.getNachbarn(new int [] {j,i})[1].getEntfernung() == 500000000 && this.getNachbarn(new int [] {j,i})[3].getEntfernung() == 500000000)))
 				{
 						this.karte[j] [i] = new Nebel();		
 				}
