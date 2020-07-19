@@ -239,7 +239,7 @@ public class Karte implements Inavigierbar {
 	 * gibt den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu
 	 * gehen.
 	 */
-	public void aktualisiereEntfernung() {// TODO: einem Attribut ein dynamischesZiel mitgeben?
+	public void aktualisiereEntfernung() {
 
 		// Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde
 		// voellig neu geschieht!

@@ -7,14 +7,15 @@ import de.vit.logik.Rundeninformationen;
 
 public class Team11Bot {
 	/**
-	 * Hauptmethode zum Ausführen des Team11Bots
+	 * Hauptmethode zum Ausfuehren des Team11Bots
 	 *
-	 * @authors Alexander Schmidt, Franz Bogmann, Laura Fenzl und Constantin Graedtke
+	 * @authors Team11Bot: Alexander Schmidt, Franz Bogmann, Laura Fenzl und Constantin Graedtke
 	 * 
 	 */
 
 	public static void main(String[] args) {
-		int sheetCount = 0; //lokal die Variable sheeCount initialisieren, damit diese genutzt werden kann, in lv 4 spielen wie ohne Sheets
+		
+		int sheetCount = 0; // Lokale Variable sheetCount initialisieren, damit diese genutzt werden kann. In Level 1 bis 4 spielen wir ohne Sheets.
 		
 		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und Rundendaten liefert
 		Scanner input = new Scanner(System.in);
@@ -34,12 +35,12 @@ public class Team11Bot {
 			sheetCount = input.nextInt();//Anzahl der Papiere zu Beginn des Spiels
 		}
 		input.nextLine(); // Beenden der zweiten Zeile
-		// Level 1-4-Karte mit Initialdaten instanziieren (ohne SheetCount)
-		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
-		karte.setSheetCount(sheetCount); 
-		//sheetCount aktualisieren, falls wir Level 5 spielen
-
 		
+		// Level 1-4-Karte mit Initialdaten instanziieren (ohne sheetCount)
+		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
+		// Level 5 Zusatz: sheetCount
+		karte.setSheetCount(sheetCount); 
+
 		//Rundeninformationen anlegen (leer)
 		Rundeninformationen runde = new Rundeninformationen();
 
@@ -57,16 +58,16 @@ public class Team11Bot {
 			// Rundeninformationen aktualisieren
 			runde.setInputs(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
 			
-			// Postition und Karte aktualisieren
+			// Position und Karte aktualisieren
 			karte.aktualisiereKarte(runde);
 
 			// Entfernungen der Felder auf der Karte aktualisieren
 			karte.aktualisiereEntfernung();
 			
-			//Karte als String Konstrukt zeigen
+			//Karte als String Konstrukt zeigen (nur zu Debug-Zwecken)
 			//System.err.println(karte.getKarte());
 
-			// Rundenaktion ausgeben; die eigentliche Aktion und setLastDoneAction
+			// Rundenaktion ausgeben: Die Aktion des Bots je Runde
 			System.out.println(Bewegung.bewegung(karte,runde));
 
 		}
