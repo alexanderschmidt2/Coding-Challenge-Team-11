@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import de.vit.karte.Inavigierbar;
 import de.vit.karte.felder.*;
+import de.vit.karte.typen.ZielMap;
 
 /**
  * @author Franz
@@ -53,24 +54,23 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	}
 
-	public static int finishHandlung(Inavigierbar karte) {
-		if (karte.getLevel() == 1) {
-			if (karte.getFeld(karte.getAktuellePosition()) instanceof Sachbearbeiter && karte
-					.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(), karte)) {
+	public static int finishHandlung(ZielMap ziele, Feld aktuellesFeld, int[] aktuelleKoordinaten, int benoetigteFormulare, int level, Inavigierbar karte) {
+		if (level == 1) {
+			if (aktuellesFeld instanceof Sachbearbeiter && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 				return 10;
-			} else if (karte.getStatischeZiele().getKoordinatenSb(karte) != null) {
-				return (schrittZumZiel(karte.getStatischeZiele().getKoordinatenSb(karte), karte)
+			} else if (ziele.getKoordinatenSb(karte) != null) {
+				return (schrittZumZiel(ziele.getKoordinatenSb(karte), karte)
 						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
 		} else {
-			if (karte.getFormCount() == (karte.getStatischeZiele().getAufgesammelteFormulare() - 1)
-					&& karte.getStatischeZiele().getKoordinatenSb(karte) != null) {
-				if (karte.getFeld(karte.getAktuellePosition()) instanceof Sachbearbeiter
-						&& karte.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(),
+			if (benoetigteFormulare == (ziele.getAufgesammelteFormulare() - 1)
+					&& ziele.getKoordinatenSb(karte) != null) {
+				if (aktuellesFeld instanceof Sachbearbeiter
+						&& ziele.isKoordinatenVorhanden(aktuelleKoordinaten,
 								karte)) {
 					return 10;
 				} else {
-					return (schrittZumZiel(karte.getStatischeZiele().getKoordinatenSb(karte),
+					return (schrittZumZiel(ziele.getKoordinatenSb(karte),
 							karte) + 2) % 4;
 				}
 			}
@@ -150,18 +150,18 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return (schrittZumZiel(karte.getDynamischesZiel(), karte) + 2) % 4;
 	}
 
-	public static int fehlgeschlageneHandlung(Inavigierbar karte, Rundeninformationen rundeninformationen) {
-		if (rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
+	public static int fehlgeschlageneHandlung(String letzteGetaetigteAktion) {
+		if (letzteGetaetigteAktion.equals("NOK TALKING")) {
 			
-			return Arrays.asList(befehl_für_ausgabe).indexOf(rundeninformationen.getLastDoneAction());
+			return Arrays.asList(befehl_für_ausgabe).indexOf(letzteGetaetigteAktion);
 		}
 		return -1;
 	}
 
 	public static String bestimmeBewegung(Inavigierbar karte, Rundeninformationen rundeninformationen) {
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
-		prioritäts_liste.add(fehlgeschlageneHandlung(karte, rundeninformationen));
-		prioritäts_liste.add(finishHandlung(karte));
+		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen.getLastDoneAction()));
+		prioritäts_liste.add(finishHandlung(karte.getStatischeZiele(), karte.getFeld(karte.getAktuellePosition()),karte.getAktuellePosition(),karte.getFormCount(),karte.getLevel() ,karte));
 		prioritäts_liste.add(formularHandlung(karte, rundeninformationen));
 		prioritäts_liste.add(papierHandlung(karte));
 		prioritäts_liste.add(explorationsHandlung(karte));
