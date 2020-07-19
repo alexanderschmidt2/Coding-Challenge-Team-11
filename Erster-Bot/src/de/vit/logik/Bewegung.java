@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.vit.karte.Inavigierbar;
 import de.vit.karte.Karte;
 import de.vit.karte.felder.*;
 
@@ -25,9 +26,9 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 								// tatsächlich brauchen!
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
 			"kick east", "kick south", "kick west", "put", "take", "finish" };
-	private static String letzteGetaetigteAktion;
+	private static String getaetigteAktion;
 
-	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
+	public static int papierHandlung(Inavigierbar aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
 		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
 				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
@@ -48,17 +49,18 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 				}
 
 			}
-			
-		} return -1;
+
+		}
+		return -1;
 
 	}
 
-	public static int finishHandlung(Karte aktuelleKarte) {
+	public static int finishHandlung(Inavigierbar aktuelleKarte) {
 		if (aktuelleKarte.getLevel() == 1) {
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter && aktuelleKarte
 					.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 				return 10;
-			} else if(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null){
+			} else if (aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null) {
 				return (schrittZumZiel(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte), aktuelleKarte)
 						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
@@ -78,7 +80,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return -1;
 	}
 
-	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
+	public static int schrittZumZiel(int[] aktuelleKoordinaten, Inavigierbar aktuelleKarte) {
 		for (int i = 0; i <= 3; i++) {
 			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[i].getEntfernung() == 0) {
 				return i;
@@ -100,17 +102,17 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
 			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten), aktuelleKarte);
 		}
-		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
+		return 100;
 	}
 
-	public static int formularHandlung(Karte aktuelleKarte, Rundeninformationen rundeninfo) {
+	public static int formularHandlung(Inavigierbar aktuelleKarte, Rundeninformationen rundeninfo) {
 
 		if (rundeninfo.getLastDoneAction().equals("put")) {
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
 				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 				papier.setGekickt(true);
 			}
-		}		
+		}
 		if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
 			if (aktuelleKarte.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(),
@@ -146,7 +148,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return -1;
 	}
 
-	public static int explorationsHandlung(Karte aktuelleKarte) {
+	public static int explorationsHandlung(Inavigierbar aktuelleKarte) {
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
@@ -157,36 +159,28 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return -1;
 	}
 
-	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-
+	public static String bestimmeBewegung(Inavigierbar aktuelleKarte, Rundeninformationen rundeninformationen) {
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
 		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
 		prioritäts_liste.add(formularHandlung(aktuelleKarte, rundeninformationen));
 		prioritäts_liste.add(papierHandlung(aktuelleKarte));
 		prioritäts_liste.add(explorationsHandlung(aktuelleKarte));
-
 		for (int moegliche_ausgabe : prioritäts_liste) {
-			System.err.println(moegliche_ausgabe);
-
 			if (moegliche_ausgabe != -1) {
 
-				letzteGetaetigteAktion = befehl_für_ausgabe[moegliche_ausgabe];
-				rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
-				break;
+				return befehl_für_ausgabe[moegliche_ausgabe];
 			}
 		}
-		System.err.println(rundeninformationen.getCurrentCellStatus());
-		for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-			if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-				System.err.println(aktuelleKarte.getFeld(e).getClass() + "" + e);
-			}
-		}
-		for (String e : aktuelleKarte.getStatischeZiele().keySet()) {
-			if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-				System.err.println(e);
-			}
-		}
-		return letzteGetaetigteAktion;
+		aktuelleKarte.vernebleKarte();
+		System.err.println("DIE GESAMTE KARTE WURDE VERNEBELT");
+		return befehl_für_ausgabe[explorationsHandlung(aktuelleKarte)];
+
+	}
+
+	public static String bewegung(Inavigierbar aktuelleKarte, Rundeninformationen rundeninformationen) {
+		getaetigteAktion = bestimmeBewegung(aktuelleKarte, rundeninformationen);
+		rundeninformationen.setLastDoneAction(getaetigteAktion);
+		return getaetigteAktion;
 	}
 }

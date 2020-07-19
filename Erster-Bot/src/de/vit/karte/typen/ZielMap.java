@@ -3,6 +3,7 @@ package de.vit.karte.typen;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import de.vit.karte.Inavigierbar;
 import de.vit.karte.Karte;
 import de.vit.karte.felder.Dokument;
 import de.vit.karte.felder.Sachbearbeiter;
@@ -27,7 +28,7 @@ public class ZielMap extends HashMap<String, int[]> {
 		}
 	}
 
-	public Sachbearbeiter gibSachbearbeiter(Karte aktuelleKarte) {
+	public Sachbearbeiter gibSachbearbeiter(Inavigierbar aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
 				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter)
@@ -37,7 +38,7 @@ public class ZielMap extends HashMap<String, int[]> {
 		return null; // noch nicht gefunden
 	}
 
-	public int[] gibKoordinatenDokument(int formId, Karte aktuelleKarte) {
+	public int[] gibKoordinatenDokument(int formId, Inavigierbar aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
 				if (aktuelleKarte.getFeld(e) instanceof Dokument) {
@@ -51,7 +52,7 @@ public class ZielMap extends HashMap<String, int[]> {
 		return null; // noch nicht gefunden es gibt keine Form ID bei Null
 	}
 
-	public boolean isKoordinatenVorhanden(int[] koordinaten, Karte aktuelleKarte) {
+	public boolean isKoordinatenVorhanden(int[] koordinaten, Inavigierbar aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
 				if (Arrays.equals(e, koordinaten)) {
@@ -63,7 +64,7 @@ public class ZielMap extends HashMap<String, int[]> {
 		return false; // noch nicht gefunden es gibt keine Form ID bei Null
 	}
 
-	public int[] gibKoordinatenSB(Karte aktuelleKarte) {
+	public int[] gibKoordinatenSB(Inavigierbar aktuelleKarte) {
 		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
 			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
 				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter) {
