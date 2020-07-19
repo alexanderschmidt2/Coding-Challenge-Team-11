@@ -58,7 +58,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter && aktuelleKarte
 					.getStatischeZiele().isKoordinatenVorhanden(aktuelleKarte.getAktuellePosition(), aktuelleKarte)) {
 				return 10;
-			} else {
+			} else if(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte) != null){
 				return (schrittZumZiel(aktuelleKarte.getStatischeZiele().gibKoordinatenSB(aktuelleKarte), aktuelleKarte)
 						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
