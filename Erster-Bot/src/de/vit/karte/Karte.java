@@ -22,7 +22,9 @@ public class Karte implements Inavigierbar {
 	private int formCount = 0;
 	private int[] dynamischesZiel;
 	private ZielMap statischeZiele;
-	private int Spielphase = 0;
+	
+
+
 	private int sheetCount;
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
@@ -130,13 +132,7 @@ public class Karte implements Inavigierbar {
 		return statischeZiele;
 	}
 
-	public int getSpielphase() {
-		return Spielphase;
-	}
 
-	public void setSpielphase(int spielphase) {
-		Spielphase = spielphase;
-	}
 
 	public int getSheetCount() {
 		return sheetCount;

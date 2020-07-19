@@ -20,6 +20,7 @@ public interface Inavigierbar {
 	public int[] getOsten(int[] aktuelleKoordinaten);
 	public int[] getSueden(int[] aktuelleKoordinaten);
 	public int[] getWesten(int[] aktuelleKoordinaten);
+
 	
 
 }

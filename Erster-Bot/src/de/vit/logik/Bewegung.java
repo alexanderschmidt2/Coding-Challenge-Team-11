@@ -25,7 +25,7 @@ import de.vit.karte.felder.*;
 public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Parameter verwenden, die wir auch
 								// tatsächlich brauchen!
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
-			"kick east", "kick south", "kick west", "put", "take", "finish" };
+			"kick east", "kick south", "kick west", "put", "take", "finish","position" };
 	private static String getaetigteAktion;
 
 	public static int papierHandlung(Inavigierbar aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
@@ -152,8 +152,9 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
 	}
 
-	public static int fehlgeschlageneHandlung(Rundeninformationen rundeninformationen) {
+	public static int fehlgeschlageneHandlung(Inavigierbar aktuelleKarte, Rundeninformationen rundeninformationen) {
 		if (rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
+			
 			return Arrays.asList(befehl_für_ausgabe).indexOf(rundeninformationen.getLastDoneAction());
 		}
 		return -1;
@@ -161,7 +162,7 @@ public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Pa
 
 	public static String bestimmeBewegung(Inavigierbar aktuelleKarte, Rundeninformationen rundeninformationen) {
 		List<Integer> prioritäts_liste = new ArrayList<Integer>();
-		prioritäts_liste.add(fehlgeschlageneHandlung(rundeninformationen));
+		prioritäts_liste.add(fehlgeschlageneHandlung(aktuelleKarte, rundeninformationen));
 		prioritäts_liste.add(finishHandlung(aktuelleKarte));
 		prioritäts_liste.add(formularHandlung(aktuelleKarte, rundeninformationen));
 		prioritäts_liste.add(papierHandlung(aktuelleKarte));
