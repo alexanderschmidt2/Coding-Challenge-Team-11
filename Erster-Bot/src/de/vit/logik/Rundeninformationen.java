@@ -1,9 +1,11 @@
 package de.vit.logik;
+
 /**
+ * Diese Klasse speichert die Informationen der Runde in einem Objekt und aktualisiert diese jede Runde.
+ * Warum werden hier keine Objekte hinterlegt? Grund für den Garbage Kollektor, was ist performanter ein Objektvergleich oder ein Stringvergleich?
  * 
- * @author Alex
- * @Klasse speichert die Informationen der Runde in einem Objekt und aktualisiert diese jede Runde
- * warum machen wir hier keine Objekte? Grund für den Garbage Kollektor, was ist perfomanter Objektvergleich/Stringvergleich? 
+ * @author Alexander Schmidt und Franz Bogmann
+ *
  */
 public class Rundeninformationen {
 	
@@ -72,17 +74,16 @@ public class Rundeninformationen {
 	}
 	
 	/**
-	 * soll in jeder Runde alle Attribute der Klasse außer lastDoneAction aktualisieren
-	 * @param lastActionResult
-	 * @param currentCellStatus
-	 * @param northCellStatus
-	 * @param eastCellStatus
-	 * @param southCellStatus
-	 * @param westCellStatus
+	 * Diese Methode soll in jeder Runde e alle Attribute der Klasse außer lastDoneAction aktualisieren
+	 * @param lastActionResult Das Ergebnis der Aktion in der letzten Runde
+	 * @param currentCellStatus Das Feld, worauf der Bot steht
+	 * @param northCellStatus Das Feld im Norden des Bots
+	 * @param eastCellStatus Das Feld im Osten des Bots
+	 * @param southCellStatus Das Feld im Sueden des Bots
+	 * @param westCellStatus Das Feld im Westen des Bots
 	 */
 	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus)
-	{
+			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
@@ -91,10 +92,6 @@ public class Rundeninformationen {
 		this.southCellStatus = southCellStatus;
 		this.westCellStatus = westCellStatus;
 	}
-	
-	
-	
-	
 	
 	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
 	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen

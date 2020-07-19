@@ -36,12 +36,12 @@ public class Team11Bot {
 		}
 		input.nextLine(); // Beenden der zweiten Zeile
 		
-		// Level 1-4-Karte mit Initialdaten instanziieren (ohne sheetCount)
+		// Level 1 bis 5: Karte mit Initialdaten instanziieren (Level 1 bis 4: ohne sheetCount)
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
 		// Level 5 Zusatz: sheetCount
 		karte.setSheetCount(sheetCount); 
 
-		//Rundeninformationen anlegen (leer)
+		// Rundeninformationen anlegen (leer)
 		Rundeninformationen runde = new Rundeninformationen();
 
 		// TURN (Wiederholung je Runde notwendig)
@@ -64,7 +64,7 @@ public class Team11Bot {
 			// Entfernungen der Felder auf der Karte aktualisieren
 			karte.aktualisiereEntfernung();
 			
-			//Karte als String Konstrukt zeigen (nur zu Debug-Zwecken)
+			// Karte als String Konstrukt zeigen (nur zu Debug-Zwecken)
 			//System.err.println(karte.getKarte());
 
 			// Rundenaktion ausgeben: Die Aktion des Bots je Runde
