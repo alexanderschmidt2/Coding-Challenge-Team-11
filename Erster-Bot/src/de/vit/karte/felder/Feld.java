@@ -11,7 +11,6 @@ public abstract class Feld {
          */
         protected String name;
         private int entfernung = 500000000;
-        private int besuche = 0;
         
         public Feld() {}
         
@@ -31,12 +30,5 @@ public abstract class Feld {
                 this.entfernung = entfernung;
         }
 
-        public int getBesuche() {
-                return besuche;
-        }
-
-        public void setBesuche(int besuche) {
-                this.besuche = besuche;
-        }
 }
 
