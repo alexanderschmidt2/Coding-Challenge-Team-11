@@ -1,6 +1,7 @@
 package de.vit.karte;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -335,32 +336,81 @@ public class Karte implements Inavigierbar {
 	 *                          Aktion
 	 * @param lastDoneAction    ist der Ausgabestring der letzten versuchten Aktion
 	 */
-	public void aktualisierePosition(String lastActionsResult, String lastDoneAction) {
+    /**
+     * Methode, die die aktuelle Position aufgrund der LastActionResult und
+     * lastDoneAction (um auszuschließen, dass zurvor nur erfolgreich gekickt wurde)
+     * bestimmt
+     * 
+     * @param lastActionsResult ist der Ausgabestring des Resultats der letzten
+     *                          Aktion
+     * @param lastDoneAction    ist der Ausgabestring der letzten versuchten Aktion
+     */
+    public void aktualisierePosition(String lastActionsResult, String lastDoneAction) {
 
-		switch (lastActionsResult) {
-		case "OK NORTH":
-			if (lastDoneAction.equals("go north")) {
-				this.setAktuellePosition(this.getNorden(aktuellePosition)[0], this.getNorden(aktuellePosition)[1]);
-			}
-			break;
-		case "OK EAST":
-			if (lastDoneAction.equals("go east")) {
-				this.setAktuellePosition(this.getOsten(aktuellePosition)[0], this.getOsten(aktuellePosition)[1]);
-			}
-			break;
-		case "OK SOUTH":
-			if (lastDoneAction.equals("go south")) {
-				this.setAktuellePosition(this.getSueden(aktuellePosition)[0], this.getSueden(aktuellePosition)[1]);
-			}
-			break;
-		case "OK WEST":
-			if (lastDoneAction.equals("go west")) {
-				this.setAktuellePosition(this.getWesten(aktuellePosition)[0], this.getWesten(aktuellePosition)[1]);
-			}
-			break;
-		}
-	}
+            switch (lastActionsResult) {
+            case "OK NORTH":
+                    if (lastDoneAction.equals("go north")) {
+                            this.setAktuellePosition(this.getNorden(aktuellePosition)[0], this.getNorden(aktuellePosition)[1]);
+                    }
+                    break;
+            case "OK EAST":
+                    if (lastDoneAction.equals("go east")) {
+                            this.setAktuellePosition(this.getOsten(aktuellePosition)[0], this.getOsten(aktuellePosition)[1]);
+                    }
+                    break;
+            case "OK SOUTH":
+                    if (lastDoneAction.equals("go south")) {
+                            this.setAktuellePosition(this.getSueden(aktuellePosition)[0], this.getSueden(aktuellePosition)[1]);
+                    }
+                    break;
+            case "OK WEST":
+                    if (lastDoneAction.equals("go west")) {
+                            this.setAktuellePosition(this.getWesten(aktuellePosition)[0], this.getWesten(aktuellePosition)[1]);
+                    }
+                    break;                
+            case "OK FORM":
+                    this.getStatischeZiele().addAufgesammelteFormulare();
+                    Dokument dokument = (Dokument) this.getFeld(this.getAktuellePosition());
+                    this.getStatischeZiele().remove(dokument.getName());
+                    break;                        
+            case "OK SHEET":                        
+                    this.erhoeheSheetCount();
+                    break;                
+                    
+            case "OK ":
+                    
+                    if (lastDoneAction.equals("put")) 
+                    {
+                            this.reduziereSheetCount();
+                            
+                    }
+                    break;
+                    
+            default:
+                    //in dem Fall, dass die letze Aktion war nach der eigenen Position zu fragen war und eine Positive Rueckmeldung erhalten
 
+                    if (lastDoneAction.equals("position") && lastActionsResult.contains("OK") ) 
+                    {
+                            //Eingang ist ein String mit "OK" dann ein Leerzeichen und dann 2 Zahlen, jeweils getrennt durch ein Leerzeichen
+                            //von diesem String werden die beiden Zahlen, welche auf das "OK" folgen, extrahiert und gespeichert
+                            String koordinaten = lastActionsResult.substring(4, lastActionsResult.length());
+                            //alles VOR dem Leerzeichen ist die x-Koordinate und wird als int gespeichert
+                            int x = Integer.parseInt(koordinaten.substring(0, koordinaten.indexOf(" ")));
+                            //alles NACH dem Leerzeichen ist die y-Koordinate und wird als int gespeichert
+                            int y = Integer.parseInt(koordinaten.substring(koordinaten.indexOf(" ")+1, koordinaten.length() ));
+                            
+                            //dann wird geprueft ob die erhaltene Position mit der selbst gespeicherten uebereinstimmt
+                            if (!Arrays.equals(aktuellePosition, new int[] {x, y}))
+                            {
+                                    //ist dies nicht der Fall, wird die aktuelle Position mit den erhaltenen Werten neu gespeichert
+                                    this.setAktuellePosition(x, y);
+                            }
+                    }
+                    
+                    break;
+                    
+            }
+    }
 	/**
 	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
 	 * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben

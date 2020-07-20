@@ -116,37 +116,28 @@ public abstract class Bewegung {
 	 */
 	public static int formularAktion(Inavigierbar karte, Rundeninformationen rundeninfo) {
 
-		if (rundeninfo.getLastDoneAction().equals("put")) {
-			if (karte.getFeld(karte.getAktuellePosition()) instanceof Papier) {
-				Papier papier = (Papier) karte.getFeld(karte.getAktuellePosition());
-				papier.setGekickt(true);
-			}
-		}
 		if (karte.getFeld(karte.getAktuellePosition()) instanceof Dokument) {
 			Dokument dokument = (Dokument) karte.getFeld(karte.getAktuellePosition());
 			if (karte.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(),
 					karte)) {
 				if (dokument.getNr() == karte.getStatischeZiele().getAufgesammelteFormulare()) {
-					karte.getStatischeZiele().addAufgesammelteFormulare();
-					karte.getStatischeZiele().remove(dokument.getName());
 					return 9;
 				}
 			} else {
 				if (karte.getSheetCount() > 0) {
-					karte.reduziereSheetCount();
 					return 8;
 				}
 			}
 		} else if (karte.getFeld(karte.getAktuellePosition()) instanceof Boden && karte
 				.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(), karte)) {
-			System.err.println("Ich verneble");
-			karte.vernebleKarte(); // TODO: Pruefen ob wir ggf. doch die ganze Karte aktualisieren koennen/muessen!
+			
+			karte.vernebleUmgebung(); // TODO: Pruefen ob wir ggf. doch die ganze Karte aktualisieren koennen/muessen!
 
 			return -1;
 		} else {
 			int ges_dokuments_nr = karte.getStatischeZiele().getAufgesammelteFormulare();
 			if (karte.getStatischeZiele().getKoordinatenFormular(ges_dokuments_nr, karte) != null) {
-				System.err.println("Ich navigiere zum gesuchten Dokument");
+				
 				return (schrittZumZiel(
 						karte.getStatischeZiele().getKoordinatenFormular(ges_dokuments_nr, karte),
 						karte) + 2) % 4;
@@ -173,7 +164,6 @@ public abstract class Bewegung {
 					}
 				}
 				if (h > -1) {
-					papier.setGekickt(true);
 					return (h + 4);
 				} else {
 					if (!papier.isGekickt()) {
