@@ -1,43 +1,39 @@
 package de.vit.karte.felder;
 
 /**
- * pro Sachbearbeiter wird eine weitere Instanz angelegt mit entsprechender spielerId und Anzahl der Formulare
- * @author Laura Fenzl
- * @author Constantin Graedtke
+ * pro Dokument wird eine weitere Instanz angelegt mit entsprechender PlayerId und Anzahl der Formulare
+ * @author Laura
+ * @author Constantin
  */
 public class Sachbearbeiter extends Feld {
-        private final int spielerId;
-        private int formularZaehler;
-        
-        /**
-         * nimmt den cellStatus-String entgegen und slict die spielerId und Anzahl der Formulare heraus
-         * und speichert diese als int in den jeweiligen Attributen
-         * 
-         * @param cellStatus String aus der Spieleumgebung
-         */
-        public Sachbearbeiter(String cellStatus)
-        {
-                super();
-                String spielerIdString = cellStatus.substring(7, 8);
-                int spielerIdInt = Integer.valueOf(spielerIdString);
-                String formularZaehlerString = cellStatus.substring(9, 10);
-                int formularZaehlerInt = Integer.valueOf(formularZaehlerString);
+	private final int playerId;
+	private int formCount;
+	
+	//Getter und Setter
+	public int getPlayerId() {
+		return playerId;
+	}
 
-                this.name = "FINISH " + spielerIdString + " " + formularZaehlerString;
-                this.spielerId = spielerIdInt;
-                this.formularZaehler = formularZaehlerInt;
-        }
-        
-        public int getSpielerId() {
-                return spielerId;
-        }
+	public int getFormCount() {
+		return formCount;
+	}
+	
+	public void setFormCount(int formCount) {
+		this.formCount = formCount;
+	}
 
-        public int getFormularZaehler() {
-                return formularZaehler;
-        }
-        
-        public void setFormularZaehler(int formularZaehler) {
-                this.formularZaehler = formularZaehler;
-        }
+	public Sachbearbeiter(String info)
+	{
+		super();
+		//info slicen, um an spielerId zu kommen und in int casten
+		String spielerId_string = info.substring(7, 8);
+		int spielerId_int = Integer.valueOf(spielerId_string);
+		//info slicen, um an formCount zu kommen und in int casten
+		String formCount_string = info.substring(9, 10);
+		int formCount_int = Integer.valueOf(formCount_string);
+
+		this.name = "FINISH " + spielerId_string + " " + formCount_string;
+		this.playerId = spielerId_int;
+		this.formCount = formCount_int;
+	}
 }
-

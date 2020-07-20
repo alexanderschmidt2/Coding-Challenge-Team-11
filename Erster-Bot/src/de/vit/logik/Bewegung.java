@@ -106,7 +106,7 @@ public abstract class Bewegung {
 				return (schrittZumZiel(ziele.getKoordinatenSb(karte), karte) + 2) % 4;
 			}
 		} else {
-			if (karte.getFormularZaehler() == (ziele.getAufgesammelteFormulare() - 1)
+			if (karte.getFormCount() == (ziele.getAufgesammelteFormulare() - 1)
 					&& ziele.getKoordinatenSb(karte) != null) {
 				if (aktuellesFeld instanceof Sachbearbeiter
 						&& ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
@@ -134,14 +134,14 @@ public abstract class Bewegung {
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
 		int[] aktuelleKoordinaten = karte.getAktuellePosition();
 		ZielMap ziele = karte.getStatischeZiele();
-		if (aktuellesFeld instanceof Formular) {
-			Formular dokument = (Formular) aktuellesFeld;
+		if (aktuellesFeld instanceof Dokument) {
+			Dokument dokument = (Dokument) aktuellesFeld;
 			if (ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 				if (dokument.getNr() == ziele.getAufgesammelteFormulare()) {
 					return 9;
 				}
 			} else {
-				if (karte.getBlattZaehler() > 0) {
+				if (karte.getSheetCount() > 0) {
 					return 8;
 				}
 			}
@@ -171,19 +171,19 @@ public abstract class Bewegung {
 	public static int papierAktion(Inavigierbar karte) {
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
 		if (karte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
-			if (aktuellesFeld instanceof Blatt) {
-				Blatt blatt = (Blatt) aktuellesFeld;
+			if (aktuellesFeld instanceof Papier) {
+				Papier papier = (Papier) aktuellesFeld;
 				int freieRichtung = -1;
 				int[] aktuelleKoordinaten = karte.getAktuellePosition();
 				for (int i = 0; i < 3; i++) {
-					if (karte.getNachbarn(aktuelleKoordinaten)[i] instanceof Boden && !blatt.isGekickt()) {
+					if (karte.getNachbarn(aktuelleKoordinaten)[i] instanceof Boden && !papier.isGekickt()) {
 						freieRichtung = i;
 					}
 				}
 				if (freieRichtung > -1) {
 					return (freieRichtung + 4);
 				} else {
-					if (!blatt.isGekickt()) {
+					if (!papier.isGekickt()) {
 						return 9;
 					}
 				}

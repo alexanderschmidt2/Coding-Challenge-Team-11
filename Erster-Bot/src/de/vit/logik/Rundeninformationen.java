@@ -17,24 +17,6 @@ public class Rundeninformationen {
 	String westCellStatus;
 	String lastDoneAction = "";
 	
-	
-	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
-	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
-	//Wozu brauchen wir diesen Konstruktor?
-	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus) {
-		super();
-		this.lastActionsResult = lastActionsResult;
-		this.currentCellStatus = currentCellStatus;
-		this.northCellStatus = northCellStatus;
-		this.eastCellStatus = eastCellStatus;
-		this.southCellStatus = southCellStatus;
-		this.westCellStatus = westCellStatus;
-	}
-	
-	public Rundeninformationen()
-	{}
-	
 	public String getLastActionsResult() {
 		return lastActionsResult;
 	}
@@ -110,4 +92,23 @@ public class Rundeninformationen {
 		this.southCellStatus = southCellStatus;
 		this.westCellStatus = westCellStatus;
 	}
+	
+	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
+	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
+	//Wozu brauchen wir diesen Konstruktor?
+	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
+			String eastCellStatus, String southCellStatus, String westCellStatus) {
+		super();
+		this.lastActionsResult = lastActionsResult;
+		this.currentCellStatus = currentCellStatus;
+		this.northCellStatus = northCellStatus;
+		this.eastCellStatus = eastCellStatus;
+		this.southCellStatus = southCellStatus;
+		this.westCellStatus = westCellStatus;
+	}
+	
+	public Rundeninformationen()
+	{}
+	
+
 }

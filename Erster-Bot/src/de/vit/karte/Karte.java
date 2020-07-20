@@ -13,354 +13,352 @@ import de.vit.karte.typen.ZielMap;
  * Klasse, die das Spielfeld und die aktuelle Position in Form von Koordinaten
  * beinhaltet
  * 
- * @author Laura Fenzl
- * @author Constantin Graedtke
+ * @author Laura
+ * @author Constantin
  */
 public class Karte implements Inavigierbar {
-        private int[] spielfeldAbmessung;
-        private final int level;
-        private final int spielerId;
-        private int formularZaehler = 0;
-        private int[] dynamischesZiel;
-        private ZielMap statischeZiele;
-        private int blattZaehler;
-        /**
-         * das eigentliche Spielfeld mit allen Feldern die erste Array-Dimension bezeichnet
-         * die x-Achse die zweite Array-Dimension bezeichnet die y-Achse
-         */
-        private Feld[][] karte;
-        /**
-         * die momentane Position; wird in jeder Runde aktualisiert
-         */
-        private int[] aktuellePosition = new int[2];
-
-        /**
-		 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der
-		 * uebergebenen Groesse des Spielfelds und fuellt diese mit Nebel
-		 * 
-		 * @param sizeX    Groesse des Spielfelds in der horizontalen
-		 * @param sizeY    Groesse des Spielfelds in der vertikalen
-		 * @param level    Level des Spiels
-		 * @param playerId id des Spielers in diesem Spiel
-		 * @param startX   Startposition des Bots auf der x-Achse
-		 * @param startY   Startposition des Bots auf der y-Achse
-		 */
-		public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
-		        this.spielfeldAbmessung = new int[] { sizeX, sizeY };
-		        this.level = level;
-		        this.spielerId = playerId;
-		        this.aktuellePosition[0] = startX;
-		        this.aktuellePosition[1] = startY;
-		        this.karte = new Feld[sizeX][sizeY];
-		        for (int x = 0; x < sizeX; x++) {
-		                for (int y = 0; y < sizeY; y++) {
-		                        karte[x][y] = new Nebel();
-		                }
-		        }
-		        this.statischeZiele = new ZielMap(this.level);
-		}
-
-		public int[] getSpielfeldAbmessung() {
-                return spielfeldAbmessung;
-        }
-
-        public int getLevel() {
-		        return level;
-		}
-
-		public int getSpielerId() {
-		        return spielerId;
-		}
-
-		public int getFormularZaehler() {
-		        return formularZaehler;
-		}
-
-		/**
-		 * wird nur verwendet, wenn wir ein Formular entdecken und die FormularNr
-		 * groeßer ist als der bisher gespeicherte formularZaehler. Sobald Sachbearbeiter
-		 * gefunden wurde, wird maximaler Wert gesetzt und Methode wird nicht mehr
-		 * benoetigt
-		 * 
-		 * @param formularZaehler
-		 */
-		public void setFormularZaehler(int formularZaehler) {
-		        if (this.formularZaehler < formularZaehler) {
-		                this.formularZaehler = formularZaehler;
-		        }
-		}
-
-		public int[] getDynamischesZiel() {
-		        return this.dynamischesZiel;
-		}
-
-		public void setDynamischesZiel(int[] koordinaten) {
-		        this.dynamischesZiel = koordinaten;
-		}
-
-		public ZielMap getStatischeZiele() {
-                return statischeZiele;
-        }
+	private int[] size;
+	private final int level;
+	private final int playerId;
+	private int formCount = 0;
+	private int[] dynamischesZiel;
+	private ZielMap statischeZiele;
+	
 
 
+	private int sheetCount;
+	/**
+	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
+	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
+	 */
+	private Feld[][] karte;
+	/**
+	 * die momentane Position; wird in jeder Runde aktualisiert
+	 */
+	private int[] aktuellePosition = new int[2];
 
-        public int getBlattZaehler() {
-                return blattZaehler;
-        }
-
-        public void setBlattZaehler(int blattZaehler) {
-		        this.blattZaehler = blattZaehler;
-		}
-
-		public void erhoeheBlattZaehler() {
-		        this.blattZaehler++;
-		}
-
-		public void reduziereBlattZaehler() {
-                this.blattZaehler--;
-        }
-
-        /**
-         * grafische Ausgabe der Karte inklusive Entfernungen als String (nur zu Debug-Zwecken)
-         * @return
-         */
-        public String getKarte() {
-                String karte = "";
-                int i = 0;
-                karte = karte.concat("aktuelle x-Koordinate: " + this.getAktuellePosition()[0] + ", aktuelle y-Koordinate: "
-                                + this.getAktuellePosition()[1] + "\n");
-                for (int y = 0; y < this.spielfeldAbmessung[1]; y++) {
-                        // hier wird die x-Achsenbeschriftung generiert
-                        while (i < this.spielfeldAbmessung[0]) {
-                                if (i == 0)
-                                        karte = karte.concat(" |  " + i + " ");
-                                else if (i < 10) {
-                                        karte = karte.concat("  |  " + i + " ");
-                                } else {
-                                        karte = karte.concat(" |  " + i + " ");
-                                }
-                                i++;
-                        }
-                        karte = karte.concat("\n");
-
-                        // hier werden die Zwischenzeilen zur Struktur generiert
-                        for (int x = 0; x <= this.spielfeldAbmessung[0]; x++) {
-                                if (y != this.spielfeldAbmessung[1]) {
-                                        if (x == 0)
-                                                karte = karte.concat("-+");
-                                        else if (x == this.spielfeldAbmessung[0]) {
-                                                karte = karte.concat("------");
-                                        } else {
-                                                karte = karte.concat("------+");
-                                        }
-                                }
-                        }
-                        karte = karte.concat("\n");
-                        karte = karte.concat("" + y + "|");
-
-                        // hier werden die Werte eingetragen...
-                        for (int x = 0; x < this.spielfeldAbmessung[0]; x++) {
-
-                                int e = this.getFeld(new int[] { x, y }).getEntfernung();
-                                if ((int) (Math.log10(e) + 1) == 3)
-                                        karte = karte.concat(e + "");
-                                else if ((int) (Math.log10(e) + 1) == 2)
-                                        karte = karte.concat(e + " ");
-                                else
-                                        karte = karte.concat(e + "  ");
-
-                                if (this.karte[x][y].getName().equals("FLOOR"))
-                                        karte = karte.concat("   ");
-                                else if (this.karte[x][y].getName().equals("WALL"))
-                                        karte = karte.concat(" X ");
-                                else if (this.karte[x][y].getName().contains("FINISH"))
-                                        karte = karte.concat(" S ");
-                                else if (this.karte[x][y].getName().contains("FORM"))
-                                        karte = karte.concat(" F ");
-                                else
-                                        karte = karte.concat(" ~ ");
-                                if (x != this.spielfeldAbmessung[0] - 1)
-                                        karte = karte.concat("|");
-                        }
-                }
-                return karte;
-        }
-
-        public int[] getAktuellePosition() {
-		        return aktuellePosition;
-		}
-
-		/**
-		 * da sich bei einer Bewegung nur eine Koordinate aendert ist es sinnvoll der
-		 * Methode anstatt eines Integer-Arrays direkt zwei int zu uebergeben. Daher wird
-		 * hier vom Standard abgewichen, wonach Methoden, die mit Koordinaten arbeiten
-		 * immer ein Array mit 2 int uebergeben wird
-		 * 
-		 * @param x x-Koordinate der aktuellen Position
-		 * @param y y-Koordinate der aktuellen Position
-		 */
-		public void setAktuellePosition(int x, int y) {
-		        this.aktuellePosition[0] = x;
-		        this.aktuellePosition[1] = y;
-		}
-
-		/**
-		 * Methode, die ein Array von vier Feldern zurueckgibt, welche den Feldern
-		 * entsprechen, die an die aktuelle Position angrenzen
-		 * 
-		 * @param position hierüber soll gesteuert werden, von welchem Feld die Nachbarn
-		 *                 gefunden werden sollen
-		 * @return die Reihenfolge der Objekte: Nord, Ost, Sued, West
-		 */
-		public Feld[] getNachbarn(int[] position) {
-		        Feld[] nachbarFelder = new Feld[4];
-		        nachbarFelder[0] = getFeld(this.getNorden(position));
-		        nachbarFelder[1] = getFeld(this.getOsten(position));
-		        nachbarFelder[2] = getFeld(this.getSueden(position));
-		        nachbarFelder[3] = getFeld(this.getWesten(position));
-		        return nachbarFelder;
-		}
-
-		/**
-		 * Methode, die abhaengig vom uebergebenen Standpunkt die Koordinaten des im
-		 * Norden angrenzenden Objekts zurueckgibt
-		 * 
-		 * @return Koordinaten des Objekts noerdlich vom aktuellen Standpunkt
-		 */
-		public int[] getNorden(int[] position) {
-		        int[] nordKoordinaten = new int[2];
-		        nordKoordinaten[0] = position[0];
-		        nordKoordinaten[1] = ((position[1] - 1) + this.getSpielfeldAbmessung()[1]) % this.getSpielfeldAbmessung()[1];
-		        return nordKoordinaten;
-		}
-
-		/**
-		 * Methode, die abhaengig vom uebergebenen Standpunkt die Koordinaten des im
-		 * Osten angrenzenden Objekts zurueckgibt
-		 * 
-		 * @return Koordinaten des Objekts oestlich vom aktuellen Standpunkt
-		 */
-		public int[] getOsten(int[] position) {
-		        int[] ostKoordinaten = new int[2];
-		        ostKoordinaten[0] = ((position[0] + 1) + this.getSpielfeldAbmessung()[0]) % this.getSpielfeldAbmessung()[0];
-		        ostKoordinaten[1] = position[1];
-		        return ostKoordinaten;
-		}
-
-		/**
-		 * Methode, die abhaengig vom uebergebenen Standpunkt die Koordinaten des im
-		 * Sueden angrenzenden Objekts zurueckgibt
-		 * 
-		 * @return Koordinaten des Objekts suedlich vom aktuellen Standpunkt
-		 */
-		public int[] getSueden(int[] position) {
-		        int[] suedKoordinaten = new int[2];
-		        suedKoordinaten[0] = position[0];
-		        suedKoordinaten[1] = ((position[1] + 1) + this.getSpielfeldAbmessung()[1]) % this.getSpielfeldAbmessung()[1];
-		        return suedKoordinaten;
-		}
-
-		/**
-		 * Methode, die abhaengig vom uebergebenen Standpunkt die Koordinaten des im
-		 * Westen angrenzenden Objekts zurueckgibt
-		 * 
-		 * @return Koordinaten des Objekts westlich vom aktuellen Standpunkt
-		 */
-		public int[] getWesten(int[] position) {
-		        int[] westKoordinate = new int[2];
-		        westKoordinate[0] = ((position[0] - 1) + this.getSpielfeldAbmessung()[0]) % this.getSpielfeldAbmessung()[0];
-		        westKoordinate[1] = position[1];
-		        return westKoordinate;
-		}
-
-		/**
-		 * diese Methode sucht ein Feld mittels bekannter Koordinaten
-		 * 
-		 * @param x Koordinate
-		 * @param y Koordinate
-		 * @return das Objekt des gesuchte Feld
-		 */
-		public Feld getFeld(int[] position) {
-		        return this.karte[position[0]][position[1]];
-		}
-
-		/**
-		 * diese Methode sucht die Koordinaten eines Felds mittels bekanntem Namen und
-		 * evtl. Ids (aus dem Feldstatus)
-		 * 
-		 * @param cellStatus soll den kompletten oder geslicten (ohne Entfernung anderer Bots) String,
-		 * den die getCellStatus-Methoden ausgeben, entegegennehmen
-		 * 
-		 * @return Gibt -1|-1 zurück, wenn Feld nicht gefunden wurde
-		 */
-		public int[] getFeld(String cellStatus) {
-		        int[] koordinaten = new int[] { -1, -1 };
-		        for (int j = 0; j < this.spielfeldAbmessung[1]; j++) {
-		                for (int i = 0; i < this.spielfeldAbmessung[0]; i++) {
-		                        if (cellStatus.contains(this.karte[i][j].getName())) {
-		                                koordinaten[0] = i;
-		                                koordinaten[1] = j;
-		                                break;
-		                        }
-		                }
-		        }
-		        return koordinaten;
-		}
-
-		/**
-         * instanziiert eine Spezialisierung von Feld
-         * 
-         * @param koordinaten definiert die Stelle in der Karte
-         * @param cellStatus gibt an, welche Spezialisierung instanziiert werden soll
-         */
-        public void setFeld(int[] koordinaten, String cellStatus) {
-                if (cellStatus.contains("FLOOR")) {
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Boden();
-                } else if (cellStatus.contains("WALL")) {
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Wand();
-                } else if (cellStatus.contains("FINISH")) {
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Sachbearbeiter(cellStatus);
-                } else if (cellStatus.contains("FORM")) {
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Formular(cellStatus);
-                } else if (cellStatus.contains("NEBEL")) {
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Nebel();
-                } else {// es muss ein Papier sein
-                        this.karte[koordinaten[0]][koordinaten[1]] = new Blatt();
-                }
-        }
-        
-        /**
-		 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der
-		 * Karte vermerkt
-		 * 
-		 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
-		 */
-		public void aktualisiereKarte(Rundeninformationen ri) {
-		        this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
-		        this.aktualisiereNorden(ri.getNorthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
-		        this.aktualisiereOsten(ri.getEastCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
-		        this.aktualisiereSueden(ri.getSouthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
-		        this.aktualisiereWesten(ri.getWestCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
-		        this.aktualisiereStandpunkt(ri.getCurrentCellStatus(), ri.getLastDoneAction());
-		}
+	// Getter und Setter
+	public int[] getSize() {
+		return size;
+	}
 
 	/**
+	 * diese Methode sucht ein Feld mittels bekannter Koordinaten
+	 * 
+	 * @param x Koordinate
+	 * @param y Koordinate
+	 * @return das Objekt des gesuchte Feld
+	 */
+	public Feld getFeld(int[] position) {
+		return this.karte[position[0]][position[1]];
+	}
+
+	/**
+	 * diese Methode sucht die Koordinaten ein Feld mittels bekanntem Namen und
+	 * evtl. Ids (aus dem Feldstatus)
+	 * 
+	 * @param feldtyp soll den kompletten String, den die getCellStatus-Methoden
+	 *                ausgeben, entegegennehmen Ausnahme: wenn Dokument gekickt
+	 *                wurde, dann übergeben wir eine geslicten String, ohne andere
+	 *                Bots (ohne !)
+	 * @return Achtung! Gibt -1|-1 zurück, wenn Feld nicht gefunden wurde!!
+	 */
+	public int[] getFeld(String feldtyp) {
+		int[] koordinaten = new int[] { -1, -1 };
+		for (int j = 0; j < this.size[1]; j++) {
+			for (int i = 0; i < this.size[0]; i++) {
+				if (feldtyp.contains(this.karte[i][j].getName())) {
+					koordinaten[0] = i;
+					koordinaten[1] = j;
+					break;
+				}
+			}
+		}
+		return koordinaten;
+	}
+
+	public int[] getAktuellePosition() {
+		return aktuellePosition;
+	}
+
+	/**
+	 * da sich bei einer Bewegung nur eine koordinate aendert ist es sinnvoll der
+	 * Methode anstatt eines Arrays von int direkt 2 int zu uebergeben. daher wird
+	 * hier vom Standard abgewichen, wonach Methoden, die mit Koordinaten arbeiten
+	 * immer ein Array mit 2 int uebergeben wird
+	 * 
+	 * @param x x-Koordinate der aktuellen Position
+	 * @param y y-Koordinate der aktuellen Position
+	 */
+	public void setAktuellePosition(int x, int y) {
+		this.aktuellePosition[0] = x;
+		this.aktuellePosition[1] = y;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public int getPlayerId() {
+		return playerId;
+	}
+
+	public int getFormCount() {
+		return formCount;
+	}
+
+	/**
+	 * wird nur verwendet, wenn wir ein Formular entdecken und die FormularNr
+	 * groeßer ist als der bisher gespeicherte formCount sobald Sachbearbeiter
+	 * gefunden wurde, wird maximaler Wert gesetzt und Methode wird nicht mehr
+	 * benoetigt
+	 * 
+	 * @param formCount
+	 */
+	public void setFormCount(int formCount) {
+		if (this.formCount < formCount) {
+			this.formCount = formCount;
+		}
+	}
+
+	public int[] getDynamischesZiel() {
+		return this.dynamischesZiel;
+	}
+
+	public void setDynamischesZiel(int[] koordinaten) {
+		this.dynamischesZiel = koordinaten;
+	}
+
+	public ZielMap getStatischeZiele() {
+		return statischeZiele;
+	}
+
+
+
+	public int getSheetCount() {
+		return sheetCount;
+	}
+
+	public void reduziereSheetCount() {
+		this.sheetCount--;
+	}
+
+	public void erhoeheSheetCount() {
+		this.sheetCount++;
+	}
+
+	public void setSheetCount(int sheetCount) {
+		this.sheetCount = sheetCount;
+	}
+
+	// grafische Ausgabe der Karte inklusive Entfernungen als String
+	public String getKarte() {
+		String karte = "";
+		int i = 0;
+		karte = karte.concat("aktuelle x-Koordinate: " + this.getAktuellePosition()[0] + ", aktuelle y-Koordinate: "
+				+ this.getAktuellePosition()[1] + "\n");
+		for (int y = 0; y < this.size[1]; y++) {
+			// hier wird die x-Achsenbeschriftung generiert
+			while (i < this.size[0]) {
+				if (i == 0)
+					karte = karte.concat(" |  " + i + " ");
+				else if (i < 10) {
+					karte = karte.concat("  |  " + i + " ");
+				} else {
+					karte = karte.concat(" |  " + i + " ");
+				}
+				i++;
+			}
+			karte = karte.concat("\n");
+
+			// hier werden die Zwischenzeilen zur Struktur generiert
+			for (int x = 0; x <= this.size[0]; x++) {
+				if (y != this.size[1]) {
+					if (x == 0)
+						karte = karte.concat("-+");
+					else if (x == this.size[0]) {
+						karte = karte.concat("------");
+					} else {
+						karte = karte.concat("------+");
+					}
+				}
+			}
+			karte = karte.concat("\n");
+			karte = karte.concat("" + y + "|");
+
+			// hier werden die Werte eingetragen...
+			for (int x = 0; x < this.size[0]; x++) {
+
+				int e = this.getFeld(new int[] { x, y }).getEntfernung();
+				if ((int) (Math.log10(e) + 1) == 3)
+					karte = karte.concat(e + "");
+				else if ((int) (Math.log10(e) + 1) == 2)
+					karte = karte.concat(e + " ");
+				else
+					karte = karte.concat(e + "  ");
+
+				if (this.karte[x][y].getName().equals("FLOOR"))
+					karte = karte.concat("   ");
+				else if (this.karte[x][y].getName().equals("WALL"))
+					karte = karte.concat(" X ");
+				else if (this.karte[x][y].getName().contains("FINISH"))
+					karte = karte.concat(" S ");
+				else if (this.karte[x][y].getName().contains("FORM"))
+					karte = karte.concat(" F ");
+				else
+					karte = karte.concat(" ~ ");
+				if (x != this.size[0] - 1)
+					karte = karte.concat("|");
+			}
+		}
+		return karte;
+	}
+
+	/**
+	 * Methode, die die Karte mit einem weiteren, noch nicht entdeckten Feld fuellt
+	 */
+	public void setFeld(int[] koordinaten, String info) {
+		if (info.contains("FLOOR")) {
+			this.karte[koordinaten[0]][koordinaten[1]] = new Boden();
+		} else if (info.contains("WALL")) {
+			this.karte[koordinaten[0]][koordinaten[1]] = new Wand();
+		} else if (info.contains("FINISH")) {
+			this.karte[koordinaten[0]][koordinaten[1]] = new Sachbearbeiter(info);
+		} else if (info.contains("FORM")) {
+			this.karte[koordinaten[0]][koordinaten[1]] = new Dokument(info);
+		} else if (info.contains("NEBEL")) {
+			this.karte[koordinaten[0]][koordinaten[1]] = new Nebel();
+		} else {// es muss ein Papier sein
+			this.karte[koordinaten[0]][koordinaten[1]] = new Papier();
+		}
+	}
+
+	/**
+	 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen um die
+	 * Entfernungen der bereits bekannten Felder/Zellen in der Karte anzupassen. So
+	 * entsteht eine Entfernungskarte, welche unserem Bot die Entscheidungsfähigkeit
+	 * gibt den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu
+	 * gehen.
+	 */
+	public void aktualisiereEntfernung() {
+
+		// Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde
+		// voellig neu geschieht!
+		for (int x = 0; x < this.getSize()[0]; x++) {
+			for (int y = 0; y < this.getSize()[1]; y++) {
+				int[] koordinaten = new int[] { x, y };
+				this.getFeld(koordinaten).setEntfernung(500);
+			}
+		}
+
+		// Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht auf
+		// Entfernung = 0 gesetzt.
+		this.getFeld(aktuellePosition).setEntfernung(0);
+
+		boolean aenderung;
+		int letzteBesteEntfernung = this.getFeld(new int[] { 0, 0 }).getEntfernung();
+		do {
+			aenderung = false;
+			for (int x = 0; x < this.getSize()[0]; x++) {
+				for (int y = 0; y < this.getSize()[1]; y++) {
+					// das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein
+					// int[] übergeben kann
+					int[] derzeitigeKoordinate = new int[] { x, y };
+					// Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir
+					// auch exploriert haben, oder welche keine Wand darstellen
+					if (!((this.getFeld(derzeitigeKoordinate) instanceof Nebel)
+							|| (this.getFeld(derzeitigeKoordinate) instanceof Wand))) { // Weder ein //If für
+																							// entfernungen
+						// Nebel, noch
+						// eine Wand
+						// Hier werden alle Entfernungen abgecheckt:
+						int entfernungImNorden = this.getNachbarn(derzeitigeKoordinate)[0].getEntfernung();
+						int entfernungImOsten = this.getNachbarn(derzeitigeKoordinate)[1].getEntfernung();
+						int entfernungImSueden = this.getNachbarn(derzeitigeKoordinate)[2].getEntfernung();
+						int entfernungImWesten = this.getNachbarn(derzeitigeKoordinate)[3].getEntfernung();
+						// Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der
+						// Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
+						List<Integer> listeVonEntfernungen = new ArrayList<>();
+
+						listeVonEntfernungen.add(entfernungImNorden);
+						listeVonEntfernungen.add(entfernungImOsten);
+						listeVonEntfernungen.add(entfernungImSueden);
+						listeVonEntfernungen.add(entfernungImWesten);
+
+						int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
+
+						letzteBesteEntfernung = this.dynamischesZielFinden(derzeitigeKoordinate,
+								letzteBesteEntfernung);
+
+						if (kleinsteEntfernungEinesNachbarn + 1 < this.getFeld(derzeitigeKoordinate)
+								.getEntfernung()) {
+							this.getFeld(derzeitigeKoordinate).setEntfernung(kleinsteEntfernungEinesNachbarn + 1);
+							aenderung = true;
+						}
+
+					}
+
+				}
+			}
+		} while (aenderung == true);
+
+	}
+	/**
+	 * 
+	 * Diese Methode setzt ein dynamisches, dass wie folgt definiert ist: 
+	 * Von uns aus gesehene naechste(naheliegendste) freie Feld mit einem Nebel Nachbarn ODER 
+	 * ein nicht gekicktes Feld, worauf ein Papier liegt, was ebenfalls nahe dran ist. Diese Methode wird bei einer 
+	 * Entfernungsaktualisierung mehrfach aufgerufen und liefert immer die optimalste Entfernung zurueck, um beim naechsten 
+	 * Aufruf Entfernungen vergleichen zu koennen.
+	 * @authors Alex, Franz 
+	 * @param koordinaten, die in der Schleife von entfernungen Aktualisieren gerade zum betrachteten Feld gehoeren
+	 * @param entfernung
+	 * @return temporaere Entfernung, die verglichen werden soll, bleibt gleich wenn es keine bessere gibt
+	 */
+	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {
+		int temporaereEntfernung = entfernung;
+		Feld aktuellesFeld = this.getFeld(koordinaten);
+		if (aktuellesFeld instanceof Papier) {
+			Papier papier = (Papier) aktuellesFeld;
+			if (papier.getEntfernung() < entfernung && !papier.isGekickt()) {
+				this.setDynamischesZiel(koordinaten);
+				temporaereEntfernung = papier.getEntfernung();
+			}
+		}
+		for (int i = 0; i <= 3; i++) {
+			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
+				if (aktuellesFeld.getEntfernung() < entfernung)
+
+				{
+					this.setDynamischesZiel(koordinaten);
+					temporaereEntfernung = aktuellesFeld.getEntfernung();
+				}
+			}
+		}
+		return temporaereEntfernung;
+	};
+
+	/**
+	 * Methode, die die aktuelle Position aufgrund der LastActionResult und
+	 * lastDoneAction (um auszuschließen, dass zurvor nur erfolgreich gekickt wurde)
+	 * bestimmt
+	 * 
+	 * @param lastActionsResult ist der Ausgabestring des Resultats der letzten
+	 *                          Aktion
+	 * @param lastDoneAction    ist der Ausgabestring der letzten versuchten Aktion
+	 */
+    /**
      * Methode, die die aktuelle Position aufgrund der LastActionResult und
      * lastDoneAction (um auszuschließen, dass zurvor nur erfolgreich gekickt wurde)
-     * bestimmt.
-     * Wenn ein Formular oder ein Blatt erfolgreich aufgenommen wurde, wird der formularZaehler
-     * der aufgesammelten Formulare oder der blattZaehler erhoeht.
-     * Der blattZaehler wird verringert, wenn ein Blatt erfolgreich abgelegt wurde.
-     * Falls nach der Position gefragt wird, wird die gespeicherte aktuellePostion aktualisiert,
-     * sofern sie von der erhaltenen abweicht.
+     * bestimmt
      * 
-     * @param lastActionsResult ist der Ausgabestring des Resultats der letzten Aktion
+     * @param lastActionsResult ist der Ausgabestring des Resultats der letzten
+     *                          Aktion
      * @param lastDoneAction    ist der Ausgabestring der letzten versuchten Aktion
      */
     public void aktualisierePosition(String lastActionsResult, String lastDoneAction) {
 
             switch (lastActionsResult) {
-            //erfolgreiche Bewegung
             case "OK NORTH":
                     if (lastDoneAction.equals("go north")) {
                             this.setAktuellePosition(this.getNorden(aktuellePosition)[0], this.getNorden(aktuellePosition)[1]);
@@ -381,432 +379,531 @@ public class Karte implements Inavigierbar {
                             this.setAktuellePosition(this.getWesten(aktuellePosition)[0], this.getWesten(aktuellePosition)[1]);
                     }
                     break;                
-            case "OK FORM": //erfolgreich ein Formular aufgenommen
+            case "OK FORM":
                     this.getStatischeZiele().addAufgesammelteFormulare();
-                    Formular dokument = (Formular) this.getFeld(this.getAktuellePosition());
+                    Dokument dokument = (Dokument) this.getFeld(this.getAktuellePosition());
                     this.getStatischeZiele().remove(dokument.getName());
                     break;                        
-            case "OK SHEET":   //erfolgreich ein Blatt aufgenommen                      
-                    this.erhoeheBlattZaehler();
+            case "OK SHEET":                        
+                    this.erhoeheSheetCount();
                     break;                
-            case "OK ": // Blatt abgelegt
-                    if (lastDoneAction.equals("put")) {
-                            this.reduziereBlattZaehler();
+                    
+            case "OK ":
+                    
+                    if (lastDoneAction.equals("put")) 
+                    {
+                            this.reduziereSheetCount();
+                            
                     }
                     break;
-            // Position abgefragt        
-            default: //da das lastActionResult bei der Positionsabfrage dynamisch ist, verwenden wir hier den default-case und eine if-Abfrage
-                    // die letze Aktion war nach der eigenen Position zu fragen und wir haben eine positive Rueckmeldung erhalten
-                    if (lastDoneAction.equals("position") && lastActionsResult.contains("OK") ) {
+                    
+            default:
+                    //in dem Fall, dass die letze Aktion war nach der eigenen Position zu fragen war und eine Positive Rueckmeldung erhalten
+
+                    if (lastDoneAction.equals("position") && lastActionsResult.contains("OK") ) 
+                    {
+                            //Eingang ist ein String mit "OK" dann ein Leerzeichen und dann 2 Zahlen, jeweils getrennt durch ein Leerzeichen
+                            //von diesem String werden die beiden Zahlen, welche auf das "OK" folgen, extrahiert und gespeichert
                             String koordinaten = lastActionsResult.substring(4, lastActionsResult.length());
-                            int erhalteneXKoordinate = Integer.parseInt(koordinaten.substring(0, koordinaten.indexOf(" ")));
-                            int erhalteneYKoordinate = Integer.parseInt(koordinaten.substring(koordinaten.indexOf(" ")+1, koordinaten.length() ));
+                            //alles VOR dem Leerzeichen ist die x-Koordinate und wird als int gespeichert
+                            int x = Integer.parseInt(koordinaten.substring(0, koordinaten.indexOf(" ")));
+                            //alles NACH dem Leerzeichen ist die y-Koordinate und wird als int gespeichert
+                            int y = Integer.parseInt(koordinaten.substring(koordinaten.indexOf(" ")+1, koordinaten.length() ));
                             
-                            if (!Arrays.equals(aktuellePosition, new int[] {erhalteneXKoordinate, erhalteneYKoordinate})) {
-                                    this.setAktuellePosition(erhalteneXKoordinate, erhalteneYKoordinate);
+                            //dann wird geprueft ob die erhaltene Position mit der selbst gespeicherten uebereinstimmt
+                            if (!Arrays.equals(aktuellePosition, new int[] {x, y}))
+                            {
+                                    //ist dies nicht der Fall, wird die aktuelle Position mit den erhaltenen Werten neu gespeichert
+                                    this.setAktuellePosition(x, y);
                             }
                     }
-                    break;  
+                    
+                    break;
+                    
             }
     }
-    
-        /**
-         * Methode, die den Feldstatus im Norden ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param northCellStatus   das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] nordKoordinaten = this.getNorden(this.aktuellePosition);
-                String nameFeldNord = this.getFeld(nordKoordinaten).getName();
-                if (!northCellStatus.contains(nameFeldNord)) {
-                        
-                        if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(northCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(northCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(nordKoordinaten, northCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(nordKoordinaten);
+	/**
+	 * Methode, die den Feldstatus im Norden überprüft und aktualisert, wenn das
+	 * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben
+	 * falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+	 * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+	 * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+	 * geloescht (Boden wird instanziiert) und an der neuen neu angelegt
+	 * 
+	 * @param northCellStatus   das Feld, das wir tatsaechlich "sehen"
+	 * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+	 * @param lastDoneAction    die letzte von uns getaetigte Aktion
+	 */
+	public void aktualisiereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
+		// man nehme sich die Koordinaten der aktuellen Position...
+		// ...uebergebe diese der Methode getNorden(), um die Koordinaten des
+		// noerdlichen Felds zu erhalten
+		int[] nord_koordinate = this.getNorden(this.aktuellePosition);
+		// getFeld() gibt das Objekt zurueck. Mit getName() erhalten wir den Namen des
+		// Objekts und speichern diesen im String name
+		String name_feld_nord = this.getFeld(nord_koordinate).getName();
+		// wenn das bereits angelegte noerdlichen Feld nicht dem aktuellen entspricht,
+		// gehen wir in die if-Verzweigung
+		if (!northCellStatus.contains(name_feld_nord)) {
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde, wird das alte mit einem Bodenfeld ersetzt,
+			// damit man nicht mehrfach dasselbe Dokument gespeichert hat
+			if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) {
+				// Koordinaten des alten Formulars finden
+				int[] formular_koordinaten = this.getFeld(northCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(formular_koordinaten, "FLOOR");
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(northCellStatus.substring(0, 8));
+			}
+			// hier wird das eigentliche Objekt angelegt
+			this.setFeld(nord_koordinate, northCellStatus);
 
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
-                                        this.statischeZiele.put(northCellStatus.substring(0, 10), nordKoordinaten); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr()); // formularZehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
-                                        this.statischeZiele.put(northCellStatus.substring(0, 8), nordKoordinaten); // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK NORTH")
-                                        && lastDoneAction.equals("kick north")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true); //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
-
-        /**
-         * Methode, die den Feldstatus im Osten ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param eastCellStatus    das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereOsten(String eastCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] ostKoordinate = this.getOsten(aktuellePosition);
-                String nameFeldOst = new String(this.getFeld(ostKoordinate).getName());
-                if (!eastCellStatus.contains(nameFeldOst)) {
-                        if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0, 8))[0] == -1)) {  //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(eastCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(eastCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(ostKoordinate, eastCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(ostKoordinate);
-
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler());  // formularZehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId() && !this.getStatischeZiele().containsValue(ostKoordinate)) {
-                                        this.statischeZiele.put(eastCellStatus.substring(0, 10), ostKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr());  // formularZehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(ostKoordinate)) {
-                                        this.statischeZiele.put(eastCellStatus.substring(0, 8), ostKoordinate); // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK EAST")
-                                        && lastDoneAction.equals("kick east")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
-
-        /**
-         * Methode, die den Feldstatus im Sueden ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param southCellStatus   das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] suedKoordinate = this.getSueden(aktuellePosition);
-                String nameFeldSued = new String(this.getFeld(suedKoordinate).getName());
-                if (!southCellStatus.contains(nameFeldSued)) {
-
-                        if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(southCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(southCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(suedKoordinate, southCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(suedKoordinate);
-                        
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;                                
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(suedKoordinate)) {
-                                        this.statischeZiele.put(southCellStatus.substring(0, 10), suedKoordinate);  // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld; 
-                                this.setFormularZaehler(form.getNr()); // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(suedKoordinate)) {
-                                        this.statischeZiele.put(southCellStatus.substring(0, 8), suedKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK SOUTH")
-                                        && lastDoneAction.equals("kick south")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
-
-        /**
-         * Methode, die den Feldstatus im Westen ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param westCellStatus    das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereWesten(String westCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] westKoordinate = this.getWesten(aktuellePosition);
-                String nameFeldWest = new String(this.getFeld(westKoordinate).getName());
-                if (!westCellStatus.contains(nameFeldWest)) {
-
-                        if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(westCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(westCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(westKoordinate, westCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(westKoordinate);
-
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(westKoordinate)) {
-
-                                        this.statischeZiele.put(westCellStatus.substring(0, 10), westKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        } 
-                        
-                        else if (neuesFeld instanceof Formular) {
-
-                                Formular form = (Formular) neuesFeld;
-
-                                this.setFormularZaehler(form.getNr());  // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(westKoordinate)) {
-                                        this.statischeZiele.put(westCellStatus.substring(0, 8), westKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK WEST")
-                                        && lastDoneAction.equals("kick west")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
-
-        /**
-         * Methode, die den Feldstatus am aktuellen Standpunkt ueberprueft und aktualisert 
-         * Diese Methode ist nur relevant, wenn ein Dokument auf ein Feld gekickt wird, 
-         * auf das wir uns entschieden haben zu gehen oder wir ein Blatt erfolgreich gelegt haben
-         * 
-         * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
-         */
-        public void aktualisiereStandpunkt(String currentCellStatus, String lastDoneAction) {
-                String nameFeldUnterUns = new String(this.getFeld(aktuellePosition).getName());
-                if (!currentCellStatus.contains(nameFeldUnterUns)) {
-
-                        if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(currentCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(currentCellStatus.substring(0, 8));
-                        }
-
-                        this.setFeld(aktuellePosition, currentCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(aktuellePosition);
-
-                        if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr());   // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(aktuellePosition)) {
-                                        this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-
-                        else if (neuesFeld instanceof Blatt && lastDoneAction.equals("put")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true); //selbst gelegtes Blatt bekommt den Status gekickt (damit wir es nicht gleich wieder kicken)
-                        }
-                }
-        }
-
-        /**
-		 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen, um die
-		 * Entfernungen der bereits bekannten Felder/Zellen in der Karte anzupassen. So
-		 * entsteht eine Entfernungskarte, welche unserem Bot die Entscheidungsfähigkeit
-		 * gibt, den schnellsten/kuerzesten Weg innerhalb eines bekannten Abschnittes zu
-		 * gehen.
-		 * 
-		 * @authors Alexander Schmidt und Franz Bogmann
-		 */
-		public void aktualisiereEntfernung() {
-		
-		        // Reset der Entfernungs-Karte, da ja die Berechnung der Entfernungen jede Runde
-		        // voellig neu geschieht!
-		        for (int x = 0; x < this.getSpielfeldAbmessung()[0]; x++) {
-		                for (int y = 0; y < this.getSpielfeldAbmessung()[1]; y++) {
-		                        int[] koordinaten = new int[] { x, y };
-		                        this.getFeld(koordinaten).setEntfernung(500);
-		                }
-		        }
-		
-		        // Hier wird die Entfernung des aktuellen Feldes, worauf der Bot steht, auf
-		        // Entfernung = 0 gesetzt.
-		        this.getFeld(aktuellePosition).setEntfernung(0);
-		
-		        boolean aenderung;
-		        int letzteBesteEntfernung = this.getFeld(new int[] { 0, 0 }).getEntfernung();
-		        do {
-		                aenderung = false;
-		                for (int x = 0; x < this.getSpielfeldAbmessung()[0]; x++) {
-		                        for (int y = 0; y < this.getSpielfeldAbmessung()[1]; y++) {
-		                                // das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein
-		                                // int[] übergeben kann
-		                                int[] derzeitigeKoordinate = new int[] { x, y };
-		                                // Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir
-		                                // auch exploriert haben, oder welche keine Wand darstellen
-		                                if (!((this.getFeld(derzeitigeKoordinate) instanceof Nebel)                        // Weder ein Nebel, noch
-		                                                || (this.getFeld(derzeitigeKoordinate) instanceof Wand))) { // eine Wand
-		                                        
-		                                        // Hier werden alle Entfernungen abgeprueft:
-		                                        int entfernungImNorden = this.getNachbarn(derzeitigeKoordinate)[0].getEntfernung();
-		                                        int entfernungImOsten = this.getNachbarn(derzeitigeKoordinate)[1].getEntfernung();
-		                                        int entfernungImSueden = this.getNachbarn(derzeitigeKoordinate)[2].getEntfernung();
-		                                        int entfernungImWesten = this.getNachbarn(derzeitigeKoordinate)[3].getEntfernung();
-		                                        // Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der
-		                                        // Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
-		                                        List<Integer> listeVonEntfernungen = new ArrayList<>();
-		
-		                                        listeVonEntfernungen.add(entfernungImNorden);
-		                                        listeVonEntfernungen.add(entfernungImOsten);
-		                                        listeVonEntfernungen.add(entfernungImSueden);
-		                                        listeVonEntfernungen.add(entfernungImWesten);
-		
-		                                        int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
-		
-		                                        letzteBesteEntfernung = this.dynamischesZielFinden(derzeitigeKoordinate,
-		                                                        letzteBesteEntfernung);
-		
-		                                        if (kleinsteEntfernungEinesNachbarn + 1 < this.getFeld(derzeitigeKoordinate)
-		                                                        .getEntfernung()) {
-		                                                this.getFeld(derzeitigeKoordinate).setEntfernung(kleinsteEntfernungEinesNachbarn + 1);
-		                                                aenderung = true;
-		                                        }
-		
-		                                }
-		
-		                        }
-		                }
-		        } while (aenderung == true);
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(nord_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(nord_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
+				if (sb.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(nord_koordinate)) {
+					// der Abbildung statischeZiele hinzufuegen
+					this.statischeZiele.put(northCellStatus.substring(0, 10), nord_koordinate);
+				}
+			} else if (this.getFeld(nord_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Dokument dok = (Dokument) this.getFeld(nord_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
+				if (dok.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(nord_koordinate)) {
+					this.statischeZiele.put(northCellStatus.substring(0, 8), nord_koordinate);
+				}
+			}
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(nord_koordinate) instanceof Papier && lastActionsResult.equals("OK NORTH")
+					&& lastDoneAction.equals("kick north")) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(nord_koordinate);
+				papier.setGekickt(true);
+			}
 		}
+	}
 
-		/**
-		 * Diese Methode setzt ein dynamisches Ziel, das wie folgt definiert ist: 
-		 * das von uns aus gesehene naechste(naheliegendste) freie Feld mit einem Nebel Nachbarn ODER 
-		 * ein nicht gekicktes Feld, worauf ein Papier liegt, was ebenfalls nahe dran ist. Diese Methode wird bei einer 
-		 * Entfernungsaktualisierung mehrfach aufgerufen und liefert immer die optimalste Entfernung zurueck, um beim naechsten 
-		 * Aufruf Entfernungen vergleichen zu koennen.
-		 * 
-		 * @authors Alexander Schmidt und Franz Bogmann
-		 * @param koordinaten, die in der Schleife von entfernungenAktualisieren gerade zum betrachteten Feld gehoeren
-		 * @param entfernung
-		 * @return temporaereEntfernung, die verglichen werden soll; bleibt gleich, wenn es keine bessere gibt
-		 */
-		public int dynamischesZielFinden(int[] koordinaten, int entfernung) {
-		        int temporaereEntfernung = entfernung;
-		        Feld aktuellesFeld = this.getFeld(koordinaten);
-		        if (aktuellesFeld instanceof Blatt) {
-		                Blatt papier = (Blatt) aktuellesFeld;
-		                if (papier.getEntfernung() < entfernung && !papier.isGekickt()) {
-		                        this.setDynamischesZiel(koordinaten);
-		                        temporaereEntfernung = papier.getEntfernung();
-		                }
-		        }
-		        for (int i = 0; i <= 3; i++) {
-		                if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
-		                        if (aktuellesFeld.getEntfernung() < entfernung)
-		
-		                        {
-		                                this.setDynamischesZiel(koordinaten);
-		                                temporaereEntfernung = aktuellesFeld.getEntfernung();
-		                        }
-		                }
-		        }
-		        return temporaereEntfernung;
+	/**
+	 * wie Norden, nur für Osten
+	 * 
+	 * @param eastCellStatus    das Feld, das wir tatsaechlich "sehen"
+	 * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+	 * @param lastDoneAction    die letzte von uns getaetigte Aktion
+	 */
+	public void aktualisiereOsten(String eastCellStatus, String lastActionsResult, String lastDoneAction) {
+		// man nehme sich die Koordinaten der aktuellen Position...
+		// ...uebergebe diese der Methode getOsten(), um die Koordinaten des
+		// oestlichen Felds zu erhalten
+		int[] ost_koordinate = this.getOsten(aktuellePosition);
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
+		// Objekts und speichern diesen im String name
+		String name_feld_ost = new String(this.getFeld(ost_koordinate).getName());
+		// wenn das bereits angelegte oestlichen Feld nicht dem aktuellen entspricht,
+		// gehen wir in die if-Verzweigung
+		if (!eastCellStatus.contains(name_feld_ost)) {
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0, 8))[0] == -1)) {
+				// Koordinaten des alten Formulars finden
+				int[] formular_koordinaten = this.getFeld(eastCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(formular_koordinaten, "FLOOR");
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(eastCellStatus.substring(0, 8));
+			}
+			// hier wird das eigentliche Objekt angelegt
+			this.setFeld(ost_koordinate, eastCellStatus);
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(ost_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(ost_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
+				if (sb.getPlayerId() == this.getPlayerId() && !this.getStatischeZiele().containsValue(ost_koordinate)) {
+					// der Abbildung statischeZiele hinzufuegen
+					this.statischeZiele.put(eastCellStatus.substring(0, 10), ost_koordinate);
+				}
+			} else if (this.getFeld(ost_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Dokument dok = (Dokument) this.getFeld(ost_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
+				if (dok.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(ost_koordinate)) {
+					this.statischeZiele.put(eastCellStatus.substring(0, 8), ost_koordinate);
+				}
+			}
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(ost_koordinate) instanceof Papier && lastActionsResult.equals("OK EAST")
+					&& lastDoneAction.equals("kick east")) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(ost_koordinate);
+				papier.setGekickt(true);
+			}
 		}
+	}
 
-		/**
-         * setzt alle nicht Wand-Felder, die mit 2 oder 4 Schritten erreichbar sind,
-         * wieder auf Nebel, damit ein eventuell nicht gefundenes Formular erneut
-         * gesucht werden kann
-         */
-        public void vernebleUmgebung() {
-                for (int x = 0; x < spielfeldAbmessung[0]; x++) {
-                        for (int y = 0; y < spielfeldAbmessung[1]; y++) {
-                                int[] koordinaten = new int[] { x, y };
-                                // es werden nur Felder vernebelt, die...
-                                // 2 Felder entfernt
-                                if ((this.getFeld(koordinaten).getEntfernung() == 2) &&
-                                // und kein Dokument oder Sachbearbeiter sind (also ein Ziel sind)
-                                                !((this.getFeld(koordinaten) instanceof Formular)
-                                                                || (this.getFeld(koordinaten) instanceof Sachbearbeiter))
-                                                &&
-                                                // und kein Nadeloehr sind, also entweder im Norden und im Sueden ein Wandfeld haben
+	/**
+	 * wie Norden, nur für Sueden
+	 * 
+	 * @param southCellStatus   das Feld, das wir tatsaechlich "sehen"
+	 * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+	 * @param lastDoneAction    die letzte von uns getaetigte Aktion
+	 */
+	public void aktualisiereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
+		// man nehme sich die Koordinaten der aktuellen Position...
+		// ...uebergebe diese der Methode getSueden(), um die Koordinaten des
+		// suedlichen Felds zu erhalten
+		int[] sued_koordinate = this.getSueden(aktuellePosition);
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
+		// Objekts und speichern diesen im String name
+		String name_feld_sued = new String(this.getFeld(sued_koordinate).getName());
+		// wenn das bereits angelegte suedlichen Feld nicht dem aktuellen entspricht,
+		// gehen wir in die if-Verzweigung
+		if (!southCellStatus.contains(name_feld_sued)) {
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0, 8))[0] == -1)) {
+				// Koordinaten des alten Formulars finden
+				int[] formular_koordinaten = this.getFeld(southCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(formular_koordinaten, "FLOOR");
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(southCellStatus.substring(0, 8));
+			}
+			// hier wird das eigentliche Objekt angelegt
+			this.setFeld(sued_koordinate, southCellStatus);
 
-                                                !((this.getNachbarn(koordinaten)[0].getEntfernung() == 500000000
-                                                                && this.getNachbarn(koordinaten)[2].getEntfernung() == 500000000) ||
-                                                // oder im Osten und Westen ein Wandfeld haben
-                                                                (this.getNachbarn(koordinaten)[1].getEntfernung() == 500000000
-                                                                                && this.getNachbarn(koordinaten)[3].getEntfernung() == 500000000))) {
-                                        this.setFeld(koordinaten, "NEBEL");
-                                }
-                        }
-                }
-                this.aktualisiereEntfernung();
-        }
-        /*
-         * WorstCase, wir finden das Formular nicht und müssen von vorne Suchen, oder unsere Exploration ist zu Ende
-         */
-        public void vernebleKarte() {
-                this.getStatischeZiele().clear();
-                for (int x = 0; x < spielfeldAbmessung[0]; x++) {
-                        for (int y = 0; y < spielfeldAbmessung[1]; y++) {
-                                int[] koordinaten = new int[] { x, y };
-                                // es werden alle Felder egal ob SB oder nicht vernebelt, das heißt, dass
-                                if (!(this.getFeld(koordinaten) instanceof Wand)) {
-                                        this.setFeld(koordinaten, "NEBEL");
-                                }
-                        }
-                }
-                this.aktualisiereEntfernung();
-        }
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(sued_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(sued_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
+				if (sb.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(sued_koordinate)) {
+					// der Abbildung statischeZiele hinzufuegen
+					this.statischeZiele.put(southCellStatus.substring(0, 10), sued_koordinate);
+				}
+			} else if (this.getFeld(sued_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Dokument dok = (Dokument) this.getFeld(sued_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
+				if (dok.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(sued_koordinate)) {
+					this.statischeZiele.put(southCellStatus.substring(0, 8), sued_koordinate);
+				}
+			}
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(sued_koordinate) instanceof Papier && lastActionsResult.equals("OK SOUTH")
+					&& lastDoneAction.equals("kick south")) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(sued_koordinate);
+				papier.setGekickt(true);
+			}
+		}
+	}
+
+	/**
+	 * wie Norden, nur für Westen
+	 * 
+	 * @param westCellStatus    das Feld, das wir tatsaechlich "sehen"
+	 * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+	 * @param lastDoneAction    die letzte von uns getaetigte Aktion
+	 */
+	public void aktualisiereWesten(String westCellStatus, String lastActionsResult, String lastDoneAction) {
+		// man nehme sich die Koordinaten der aktuellen Position...
+		// ...uebergebe diese der Methode getWesten(), um die Koordinaten des
+		// westlichen Felds zu erhalten
+		int[] west_koordinate = this.getWesten(aktuellePosition);
+		// getFeld() gibt das Objekt zurueck. mit getName() erhalten wir den Namen des
+		// Objekts und speichern diesen im String name
+		String name_feld_west = new String(this.getFeld(west_koordinate).getName());
+		// wenn das bereits angelegte westliche Feld nicht dem aktuellen entspricht,
+		// gehen wir in die if-Verzweigung
+		if (!westCellStatus.contains(name_feld_west)) {
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0, 8))[0] == -1)) {
+				// Koordinaten des alten Formulars finden
+				int[] formular_koordinaten = this.getFeld(westCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(formular_koordinaten, "FLOOR");
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(westCellStatus.substring(0, 8));
+			}
+			// hier wird das eigentliche Objekt angelegt
+			this.setFeld(west_koordinate, westCellStatus);
+
+			// wenn es sich um einen Sachbearbeiter oder ein Dokument handelt,
+			// fuegen wir der Abbildung statischeZiele ein Element hinzu
+			if (this.getFeld(west_koordinate) instanceof Sachbearbeiter) {
+				// da wir durch getFeld ein Feld erhalten, muss dieses zunaechst in einen
+				// Sachbearbeiter gecastet werden, damit wir getPlayerId anwenden koennen
+				Sachbearbeiter sb = (Sachbearbeiter) this.getFeld(west_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(sb.getFormCount());
+				if (sb.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(west_koordinate)) {
+					// der Abbildung statischeZiele hinzufuegen
+					this.statischeZiele.put(westCellStatus.substring(0, 10), west_koordinate);
+				}
+			} else if (this.getFeld(west_koordinate) instanceof Dokument) {
+				// s. Prüfung instanceof Sachbearbeiter...
+				Dokument dok = (Dokument) this.getFeld(west_koordinate);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
+				if (dok.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(west_koordinate)) {
+					this.statischeZiele.put(westCellStatus.substring(0, 8), west_koordinate);
+				}
+			}
+			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
+			// damit wir es nicht noch einmal kicken
+			else if (this.getFeld(west_koordinate) instanceof Papier && lastActionsResult.equals("OK WEST")
+					&& lastDoneAction.equals("kick west")) {
+				// s. Prüfung instanceof Sachbearbeiter
+				Papier papier = (Papier) this.getFeld(west_koordinate);
+				papier.setGekickt(true);
+			}
+		}
+	}
+
+	/**
+	 * wie Norden, nur für aktuellePosition. Diese Methode ist nur relevant, wenn
+	 * ein Dokument auf ein Feld gekickt wird, auf das wir uns entschieden haben zu
+	 * gehen
+	 * 
+	 * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
+	 */
+	public void aktualisiereStandpunkt(String currentCellStatus, String lastDoneAction) {
+		// getFeld() gibt das Objekt des aktuellen Standpunkts zurueck. mit getName()
+		// erhalten wir den Namen des
+		// Objekts und speichern diesen im String name
+		String name_feld_unter_uns = new String(this.getFeld(aktuellePosition).getName());
+		// wenn das bereits angelegte Feld "unter uns" nicht dem aktuellen entspricht,
+		// gehen wir in die if-Verzweigung
+		// if (this.getFeld(aktuellePosition) instanceof currentCellStatus.getClass())
+		// {
+		// instanz instanceof klasse
+		// }
+		if (!currentCellStatus.contains(name_feld_unter_uns)) {
+			// falls ein Formular gefunden wird, welches bereits auf der Karte vermerkt
+			// wurde, aber weggekickt wurde,
+			// wird das alte mit einem Bodenfeld ersetzt, damit man nicht mehrfach dasselbe
+			// Dokument gespeichert hat
+			if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0, 8))[0] == -1)) {
+				// altes Formular finden
+				int[] formular_koordinaten = this.getFeld(currentCellStatus.substring(0, 8));
+				// altes Formular "loeschen", also durch Floor ersetzen (da Dokument nicht auf
+				// SB liegen kann)
+				this.setFeld(formular_koordinaten, "FLOOR");
+				// das alte Formular wird auch aus der Abbildung statischeZiele gelöscht
+				this.statischeZiele.remove(currentCellStatus.substring(0, 8));
+			}
+			// hier wird das eigentliche Objekt angelegt
+			this.setFeld(aktuellePosition, currentCellStatus);
+
+			if (this.getFeld(aktuellePosition) instanceof Dokument) {
+				// wenn es sich um ein Dokument handelt, fuegen wir der Abbildung statischeZiele
+				// ein Element hinzu
+				Dokument dok = (Dokument) this.getFeld(aktuellePosition);
+				// dabei wird der formCount erhoeht (wenn moeglich)
+				this.setFormCount(dok.getNr());
+				if (dok.getPlayerId() == this.getPlayerId()
+						&& !this.getStatischeZiele().containsValue(aktuellePosition)) {
+					// der Abbildung statischeZiele hinzufuegen
+					this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);
+				}
+			}
+			// hier bekommt ein Papier, welches von uns hingelegt wurde, den status gekickt,
+			// damit wir es nicht wegkicken
+			else if (this.getFeld(aktuellePosition) instanceof Papier && lastDoneAction.equals("put")) {
+				Papier papier = (Papier) this.getFeld(aktuellePosition);
+				papier.setGekickt(true);
+			}
+		}
+	}
+
+	/**
+	 * Methode, die ueber weitere Methodenaufrufe die umliegenden Felder in der
+	 * Karte vermerkt
+	 * 
+	 * @param ri hierueber können die einzelnen Feldstatus abgerufen werden
+	 */
+	public void aktualisiereKarte(Rundeninformationen ri) {
+		this.aktualisierePosition(ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisiereNorden(ri.getNorthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisiereOsten(ri.getEastCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisiereSueden(ri.getSouthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisiereWesten(ri.getWestCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
+		this.aktualisiereStandpunkt(ri.getCurrentCellStatus(), ri.getLastDoneAction());
+	}
+
+	/**
+	 * Methode, die abhaengig vom übergebenen Standpunkt die Koordinaten des im
+	 * Norden angrenzenden Objekts zurueckgibt
+	 * 
+	 * @return Koordinaten des Objekts noerdlich vom aktuellen Standpunkt
+	 */
+	public int[] getNorden(int[] position) {
+		int[] nord_koordinaten = new int[2];
+		nord_koordinaten[0] = position[0];
+		nord_koordinaten[1] = ((position[1] - 1) + this.getSize()[1]) % this.getSize()[1];
+		return nord_koordinaten;
+	}
+
+	/**
+	 * s. Norden, nur mit Osten...
+	 * 
+	 * @return Koordinaten des Objekts oestlich vom aktuellen Standpunkt
+	 */
+	public int[] getOsten(int[] position) {
+		int[] ost_koordinaten = new int[2];
+		ost_koordinaten[0] = ((position[0] + 1) + this.getSize()[0]) % this.getSize()[0];
+		ost_koordinaten[1] = position[1];
+		return ost_koordinaten;
+	}
+
+	/**
+	 * s. Norden, nur mit Sueden...
+	 * 
+	 * @return Koordinaten des Objekts suedlich vom aktuellen Standpunkt
+	 */
+	public int[] getSueden(int[] position) {
+		int[] sued_koordinaten = new int[2];
+		sued_koordinaten[0] = position[0];
+		sued_koordinaten[1] = ((position[1] + 1) + this.getSize()[1]) % this.getSize()[1];
+		return sued_koordinaten;
+	}
+
+	/**
+	 * s. Norden, nur mit Westen...
+	 * 
+	 * @return Koordinaten des Objekts westlich vom aktuellen Standpunkt
+	 */
+	public int[] getWesten(int[] position) {
+		int[] west_koordinate = new int[2];
+		west_koordinate[0] = ((position[0] - 1) + this.getSize()[0]) % this.getSize()[0];
+		west_koordinate[1] = position[1];
+		return west_koordinate;
+	}
+
+	/**
+	 * Methode, die ein Array von vier Feldern zurueckgibt, welche den Feldern
+	 * entsprechen, die an die aktuelle Position angrenzen
+	 * 
+	 * @param position hierüber soll gesteuert werden, von welchem Feld die Nachbarn
+	 *                 gefunden werden sollen
+	 * @return die Reihenfolge der Objekte: Nord, Ost, Sued, West
+	 */
+	public Feld[] getNachbarn(int[] position) {
+		Feld[] nachbar_felder = new Feld[4];
+		nachbar_felder[0] = getFeld(this.getNorden(position));
+		nachbar_felder[1] = getFeld(this.getOsten(position));
+		nachbar_felder[2] = getFeld(this.getSueden(position));
+		nachbar_felder[3] = getFeld(this.getWesten(position));
+		return nachbar_felder;
+	}
+
+	/**
+	 * setzt alle nicht Wand-Felder, die mit 2 oder 4 Schritten erreichbar sind,
+	 * wieder auf Nebel, damit ein eventuell nicht gefundenes Formular erneut
+	 * gesucht werden kann
+	 */
+	public void vernebleUmgebung() {
+		for (int x = 0; x < size[0]; x++) {
+			for (int y = 0; y < size[1]; y++) {
+				int[] koordinaten = new int[] { x, y };
+				// es werden nur Felder vernebelt, die...
+				// 2 Felder entfernt
+				if ((this.getFeld(koordinaten).getEntfernung() == 2) &&
+				// und kein Dokument oder Sachbearbeiter sind (also ein Ziel sind)
+						!((this.getFeld(koordinaten) instanceof Dokument)
+								|| (this.getFeld(koordinaten) instanceof Sachbearbeiter))
+						&&
+						// und kein Nadeloehr sind, also entweder im Norden und im Sueden ein Wandfeld
+						// haben
+						!((this.getNachbarn(koordinaten)[0].getEntfernung() == 500000000
+								&& this.getNachbarn(koordinaten)[2].getEntfernung() == 500000000) ||
+						// oder im Osten und Westen ein Wandfeld haben
+								(this.getNachbarn(koordinaten)[1].getEntfernung() == 500000000
+										&& this.getNachbarn(koordinaten)[3].getEntfernung() == 500000000))) {
+					this.setFeld(koordinaten, "NEBEL");
+				}
+			}
+		}
+		this.aktualisiereEntfernung();
+	}
+	/*
+	 * WorstCase, wir finden das Formular nicht und müssen von vorne Suchen, oder unsere Exploration ist zu Ende
+	 */
+	public void vernebleKarte() {
+		this.getStatischeZiele().clear();
+		for (int x = 0; x < size[0]; x++) {
+			for (int y = 0; y < size[1]; y++) {
+				int[] koordinaten = new int[] { x, y };
+				// es werden alle Felder egal ob SB oder nicht vernebelt, das heißt, dass
+				if (!(this.getFeld(koordinaten) instanceof Wand)) {
+					this.setFeld(koordinaten, "NEBEL");
+				}
+			}
+		}
+		this.aktualisiereEntfernung();
+	}
+
+	/**
+	 * Dieser Konstruktor erstellt das Spielfeld (Karte) entsprechend der
+	 * uebergebenen Groesse des Spielfelds und fuellt diese mit Nebel
+	 * 
+	 * @param sizeX    Groesse des Spielfelds in der horizontalen
+	 * @param sizeY    Groesse des Spielfelds in der vertikalen
+	 * @param level    Level des Spiels
+	 * @param playerId id des Spielers in diesem Spiel
+	 * @param startX   Startposition des Bots auf der x-Achse
+	 * @param startY   Startposition des Bots auf der y-Achse
+	 */
+	public Karte(int sizeX, int sizeY, int level, int playerId, int startX, int startY) {
+		this.size = new int[] { sizeX, sizeY };
+		this.level = level;
+		this.playerId = playerId;
+		this.aktuellePosition[0] = startX;
+		this.aktuellePosition[1] = startY;
+		this.karte = new Feld[sizeX][sizeY];
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				karte[x][y] = new Nebel();
+			}
+		}
+		this.statischeZiele = new ZielMap(this.level);
+	}
+
 }

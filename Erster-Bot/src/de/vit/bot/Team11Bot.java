@@ -32,14 +32,14 @@ public class Team11Bot {
 		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
 		if (level == 5) { //wenn level 5: dann SheetCount abfragen
-			sheetCount = input.nextInt();//Anzahl der Blaetter zu Beginn des Spiels
+			sheetCount = input.nextInt();//Anzahl der Papiere zu Beginn des Spiels
 		}
 		input.nextLine(); // Beenden der zweiten Zeile
 		
 		// Level 1 bis 5: Karte mit Initialdaten instanziieren (Level 1 bis 4: ohne sheetCount)
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
 		// Level 5 Zusatz: sheetCount
-		karte.setBlattZaehler(sheetCount); 
+		karte.setSheetCount(sheetCount); 
 
 		// Rundeninformationen anlegen (leer)
 		Rundeninformationen runde = new Rundeninformationen();
