@@ -145,17 +145,15 @@ public abstract class Bewegung {
 					return 8;
 				}
 			}
-		} else if (aktuellesFeld instanceof Boden
-				&& ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
+		} else if (aktuellesFeld instanceof Boden && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 
-			karte.vernebleUmgebung(); 
+			karte.vernebleUmgebung();
 
 			return -1;
 		} else {
 			int gesuchtesFormular = ziele.getAufgesammelteFormulare();
 			if (ziele.getKoordinatenFormular(gesuchtesFormular, karte) != null) {
-				return (schrittZumZiel(ziele.getKoordinatenFormular(gesuchtesFormular, karte), karte)
-						+ 2) % 4;
+				return (schrittZumZiel(ziele.getKoordinatenFormular(gesuchtesFormular, karte), karte) + 2) % 4;
 			}
 		}
 		return -1;
@@ -201,17 +199,17 @@ public abstract class Bewegung {
 	 * wiederholen, wenn der Bot sich mit einem anderen Bot verquatscht hat und so
 	 * seine Aktion nicht ausfuehren konnte.
 	 * 
-	 * @param karte               Die Karteninstanz, auf welcher die Aktion der
-	 *                            letzten Runde haette passieren sollen
-	 * @param rundeninfo Die Rundeninformationen, hier die der letzten
-	 *                            Runde (LastActionsResult)
+	 * @param karte      Die Karteninstanz, auf welcher die Aktion der letzten Runde
+	 *                   haette passieren sollen
+	 * @param rundeninfo Die Rundeninformationen, hier die der letzten Runde
+	 *                   (LastActionsResult)
 	 * @return Eine Aktion aus der aktionen Stringliste, welche in der neuen Runde
 	 *         wiederholt werden soll.
 	 */
 	public static int fehlgeschlageneAktion(Inavigierbar karte, Rundeninformationen rundeninfo) {
 		if (rundeninfo.getLastActionsResult().equals("NOK TALKING")) {
 
-			return Arrays.asList(aktionen).indexOf(rundeninfo.getLastDoneAction()); 
+			return Arrays.asList(aktionen).indexOf(rundeninfo.getLastDoneAction());
 		}
 		return -1;
 	}
