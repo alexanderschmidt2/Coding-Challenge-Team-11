@@ -410,254 +410,256 @@ public class Karte implements Inavigierbar {
             }
     }
     
-        /**
-         * Methode, die den Feldstatus im Norden ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param northCellStatus   das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] nordKoordinaten = this.getNorden(this.aktuellePosition);
-                String nameFeldNord = this.getFeld(nordKoordinaten).getName();
-                if (!northCellStatus.contains(nameFeldNord)) {
-                        
-                        if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(northCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(northCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(nordKoordinaten, northCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(nordKoordinaten);
+     /**
+     * Methode, die den Feldstatus im Norden ueberprueft und aktualisert, wenn das
+     * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
+     * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+     * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+     * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+     * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
+     * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
+     * 
+     * @param northCellStatus   das Feld, das wir tatsaechlich "sehen"
+     * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+     * @param lastDoneAction    die letzte von uns getaetigte Aktion
+     */
+    public void aktualisiereNorden(String northCellStatus, String lastActionsResult, String lastDoneAction) {
+            int[] nordKoordinaten = new int[] {this.getNorden(this.aktuellePosition)[0],this.getNorden(this.aktuellePosition)[1]} ;
+            String nameFeldNord = this.getFeld(nordKoordinaten).getName();
+            if (!northCellStatus.contains(nameFeldNord)) {
+                    
+                    if (northCellStatus.contains("FORM") && !(this.getFeld(northCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
+                            int[] formularKoordinaten = this.getFeld(northCellStatus.substring(0, 8));
+                            this.setFeld(formularKoordinaten, "FLOOR");
+                            this.statischeZiele.remove(northCellStatus.substring(0, 8));
+                    }
+                    
+                    this.setFeld(nordKoordinaten, northCellStatus); // hier wird das eigentliche Objekt angelegt
+                    Feld neuesFeld = this.getFeld(nordKoordinaten);
 
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
-                                        this.statischeZiele.put(northCellStatus.substring(0, 10), nordKoordinaten); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr()); // formularZehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
-                                        this.statischeZiele.put(northCellStatus.substring(0, 8), nordKoordinaten); // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
+                    if (neuesFeld instanceof Sachbearbeiter) {
+                            Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
+                            this.setFormularZaehler(sb.getFormularZaehler()); // formularZehler erhoehen
+                            if (sb.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
+                                    this.statischeZiele.put(northCellStatus.substring(0, 10), nordKoordinaten); // unseren SB der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
+                    
+                    else if (neuesFeld instanceof Formular) {
+                            Formular form = (Formular) neuesFeld;
+                            this.setFormularZaehler(form.getNr()); // formularZehler erhoehen (wenn moeglich)
+                            if (form.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(nordKoordinaten)) {
+                                    this.statischeZiele.put(northCellStatus.substring(0, 8), nordKoordinaten); // unser Formular der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
 
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK NORTH")
-                                        && lastDoneAction.equals("kick north")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true); //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
+                    else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK NORTH")
+                                    && lastDoneAction.equals("kick north")) {
+                            Blatt blatt = (Blatt) neuesFeld;
+                            blatt.setGekickt(true); //selbst gekicktes Blatt bekommt den Status gekickt
+                    }
+            }
+    }
 
-        /**
-         * Methode, die den Feldstatus im Osten ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param eastCellStatus    das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereOsten(String eastCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] ostKoordinate = this.getOsten(aktuellePosition);
-                String nameFeldOst = new String(this.getFeld(ostKoordinate).getName());
-                if (!eastCellStatus.contains(nameFeldOst)) {
-                        if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0, 8))[0] == -1)) {  //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(eastCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(eastCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(ostKoordinate, eastCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(ostKoordinate);
+    /**
+     * Methode, die den Feldstatus im Osten ueberprueft und aktualisert, wenn das
+     * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
+     * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+     * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+     * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+     * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
+     * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
+     * 
+     * @param eastCellStatus    das Feld, das wir tatsaechlich "sehen"
+     * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+     * @param lastDoneAction    die letzte von uns getaetigte Aktion
+     */
+    public void aktualisiereOsten(String eastCellStatus, String lastActionsResult, String lastDoneAction) {
+            int[] ostKoordinate = new int[] {this.getOsten(this.aktuellePosition)[0],this.getOsten(this.aktuellePosition)[1]} ;
+            String nameFeldOst = new String(this.getFeld(ostKoordinate).getName());
+            if (!eastCellStatus.contains(nameFeldOst)) {
+                    if (eastCellStatus.contains("FORM") && !(this.getFeld(eastCellStatus.substring(0, 8))[0] == -1)) {  //wenn Formular an anderer Stelle wiedergefunden wurde
+                            int[] formularKoordinaten = this.getFeld(eastCellStatus.substring(0, 8));
+                            this.setFeld(formularKoordinaten, "FLOOR");
+                            this.statischeZiele.remove(eastCellStatus.substring(0, 8));
+                    }
+                    
+                    this.setFeld(ostKoordinate, eastCellStatus); // hier wird das eigentliche Objekt angelegt
+                    Feld neuesFeld = this.getFeld(ostKoordinate);
 
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler());  // formularZehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId() && !this.getStatischeZiele().containsValue(ostKoordinate)) {
-                                        this.statischeZiele.put(eastCellStatus.substring(0, 10), ostKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr());  // formularZehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(ostKoordinate)) {
-                                        this.statischeZiele.put(eastCellStatus.substring(0, 8), ostKoordinate); // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
+                    if (neuesFeld instanceof Sachbearbeiter) {
+                            Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
+                            this.setFormularZaehler(sb.getFormularZaehler());  // formularZehler erhoehen
+                            if (sb.getSpielerId() == this.getSpielerId() && !this.getStatischeZiele().containsValue(ostKoordinate)) {
+                                    this.statischeZiele.put(eastCellStatus.substring(0, 10), ostKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
+                    
+                    else if (neuesFeld instanceof Formular) {
+                            Formular form = (Formular) neuesFeld;
+                            this.setFormularZaehler(form.getNr());  // formularZehler erhoehen (wenn moeglich)
+                            if (form.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(ostKoordinate)) {
+                                    this.statischeZiele.put(eastCellStatus.substring(0, 8), ostKoordinate); // unser Formular der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
 
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK EAST")
-                                        && lastDoneAction.equals("kick east")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
+                    else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK EAST")
+                                    && lastDoneAction.equals("kick east")) {
+                            Blatt blatt = (Blatt) neuesFeld;
+                            blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
+                    }
+            }
+    }
 
-        /**
-         * Methode, die den Feldstatus im Sueden ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param southCellStatus   das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] suedKoordinate = this.getSueden(aktuellePosition);
-                String nameFeldSued = new String(this.getFeld(suedKoordinate).getName());
-                if (!southCellStatus.contains(nameFeldSued)) {
+    /**
+     * Methode, die den Feldstatus im Sueden ueberprueft und aktualisert, wenn das
+     * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
+     * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+     * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+     * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+     * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
+     * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
+     * 
+     * @param southCellStatus   das Feld, das wir tatsaechlich "sehen"
+     * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+     * @param lastDoneAction    die letzte von uns getaetigte Aktion
+     */
+    public void aktualisiereSueden(String southCellStatus, String lastActionsResult, String lastDoneAction) {
+            int[] suedKoordinate = new int[] {this.getSueden(this.aktuellePosition)[0],this.getSueden(this.aktuellePosition)[1]} ;
+            String nameFeldSued = new String(this.getFeld(suedKoordinate).getName());
+            if (!southCellStatus.contains(nameFeldSued)) {
 
-                        if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(southCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(southCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(suedKoordinate, southCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(suedKoordinate);
-                        
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;                                
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(suedKoordinate)) {
-                                        this.statischeZiele.put(southCellStatus.substring(0, 10), suedKoordinate);  // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld; 
-                                this.setFormularZaehler(form.getNr()); // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(suedKoordinate)) {
-                                        this.statischeZiele.put(southCellStatus.substring(0, 8), suedKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
-                        
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK SOUTH")
-                                        && lastDoneAction.equals("kick south")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
+                    if (southCellStatus.contains("FORM") && !(this.getFeld(southCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
+                            int[] formularKoordinaten = this.getFeld(southCellStatus.substring(0, 8));
+                            this.setFeld(formularKoordinaten, "FLOOR");
+                            this.statischeZiele.remove(southCellStatus.substring(0, 8));
+                    }
+                    
+                    this.setFeld(suedKoordinate, southCellStatus); // hier wird das eigentliche Objekt angelegt
+                    Feld neuesFeld = this.getFeld(suedKoordinate);
+                    
+                    if (neuesFeld instanceof Sachbearbeiter) {
+                            Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;                                
+                            this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
+                            if (sb.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(suedKoordinate)) {
+                                    this.statischeZiele.put(southCellStatus.substring(0, 10), suedKoordinate);  // unseren SB der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
+                    
+                    else if (neuesFeld instanceof Formular) {
+                            Formular form = (Formular) neuesFeld; 
+                            this.setFormularZaehler(form.getNr()); // formularZaehler erhoehen (wenn moeglich)
+                            if (form.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(suedKoordinate)) {
+                                    this.statischeZiele.put(southCellStatus.substring(0, 8), suedKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
+                    
+                    else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK SOUTH")
+                                    && lastDoneAction.equals("kick south")) {
+                            Blatt blatt = (Blatt) neuesFeld;
+                            blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
+                    }
+            }
+    }
 
-        /**
-         * Methode, die den Feldstatus im Westen ueberprueft und aktualisert, wenn das
-         * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
-         * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
-         * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
-         * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
-         * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
-         * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
-         * 
-         * @param westCellStatus    das Feld, das wir tatsaechlich "sehen"
-         * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
-         * @param lastDoneAction    die letzte von uns getaetigte Aktion
-         */
-        public void aktualisiereWesten(String westCellStatus, String lastActionsResult, String lastDoneAction) {
-                int[] westKoordinate = this.getWesten(aktuellePosition);
-                String nameFeldWest = new String(this.getFeld(westKoordinate).getName());
-                if (!westCellStatus.contains(nameFeldWest)) {
+    /**
+     * Methode, die den Feldstatus im Westen ueberprueft und aktualisert, wenn das
+     * angezeigte Feld nicht mit dem uebereinstimmt, welches wir gespeichert haben.
+     * Falls ein Dokument oder Sachbearbeiter gefunden wurde, aktualisiert es das
+     * Set statischeZiele. Falls ein Dokument an einer anderen Stelle wiedergefunden
+     * wurde (weil es gekickt wurde), dann wird das Dokument an der alten Stelle
+     * geloescht (Boden wird instanziiert) und an der aktuellen Stelle neu angelegt.
+     * Blaetter, die von uns erfolgreich gekickt wurden, bekommen den Status gekickt.
+     * 
+     * @param westCellStatus    das Feld, das wir tatsaechlich "sehen"
+     * @param lastActionsResult das Resultat unserer letzten getaetigten Aktion
+     * @param lastDoneAction    die letzte von uns getaetigte Aktion
+     */
+    public void aktualisiereWesten(String westCellStatus, String lastActionsResult, String lastDoneAction) {
+            int[] westKoordinate = new int[] {this.getWesten(this.aktuellePosition)[0],this.getWesten(this.aktuellePosition)[1]} ;
+            String nameFeldWest = new String(this.getFeld(westKoordinate).getName());
+            if (!westCellStatus.contains(nameFeldWest)) {
 
-                        if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(westCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(westCellStatus.substring(0, 8));
-                        }
-                        
-                        this.setFeld(westKoordinate, westCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(westKoordinate);
+                    if (westCellStatus.contains("FORM") && !(this.getFeld(westCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
+                            int[] formularKoordinaten = this.getFeld(westCellStatus.substring(0, 8));
+                            this.setFeld(formularKoordinaten, "FLOOR");
+                            this.statischeZiele.remove(westCellStatus.substring(0, 8));
+                    }
+                    
+                    this.setFeld(westKoordinate, westCellStatus); // hier wird das eigentliche Objekt angelegt
+                    Feld neuesFeld = this.getFeld(westKoordinate);
 
-                        if (neuesFeld instanceof Sachbearbeiter) {
-                                Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
-                                this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
-                                if (sb.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(westKoordinate)) {
+                    if (neuesFeld instanceof Sachbearbeiter) {
+                            Sachbearbeiter sb = (Sachbearbeiter) neuesFeld;
+                            this.setFormularZaehler(sb.getFormularZaehler()); // formularZaehler erhoehen
+                            if (sb.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(westKoordinate)) {
 
-                                        this.statischeZiele.put(westCellStatus.substring(0, 10), westKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
-                                }
-                        } 
-                        
-                        else if (neuesFeld instanceof Formular) {
+                                    this.statischeZiele.put(westCellStatus.substring(0, 10), westKoordinate); // unseren SB der Abbildung statischeZiele hinzufuegen
+                            }
+                    } 
+                    
+                    else if (neuesFeld instanceof Formular) {
 
-                                Formular form = (Formular) neuesFeld;
+                            Formular form = (Formular) neuesFeld;
 
-                                this.setFormularZaehler(form.getNr());  // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(westKoordinate)) {
-                                        this.statischeZiele.put(westCellStatus.substring(0, 8), westKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
+                            this.setFormularZaehler(form.getNr());  // formularZaehler erhoehen (wenn moeglich)
+                            if (form.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(westKoordinate)) {
+                                    this.statischeZiele.put(westCellStatus.substring(0, 8), westKoordinate);  // unser Formular der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
 
-                        else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK WEST")
-                                        && lastDoneAction.equals("kick west")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
-                        }
-                }
-        }
+                    else if (neuesFeld instanceof Blatt && lastActionsResult.equals("OK WEST")
+                                    && lastDoneAction.equals("kick west")) {
+                            Blatt blatt = (Blatt) neuesFeld;
+                            blatt.setGekickt(true);  //selbst gekicktes Blatt bekommt den Status gekickt
+                    }
+            }
+    }
 
-        /**
-         * Methode, die den Feldstatus am aktuellen Standpunkt ueberprueft und aktualisert 
-         * Diese Methode ist nur relevant, wenn ein Dokument auf ein Feld gekickt wird, 
-         * auf das wir uns entschieden haben zu gehen oder wir ein Blatt erfolgreich gelegt haben
-         * 
-         * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
-         */
-        public void aktualisiereStandpunkt(String currentCellStatus, String lastDoneAction) {
-                String nameFeldUnterUns = new String(this.getFeld(aktuellePosition).getName());
-                if (!currentCellStatus.contains(nameFeldUnterUns)) {
+    /**
+     * Methode, die den Feldstatus am aktuellen Standpunkt ueberprueft und aktualisert 
+     * Diese Methode ist nur relevant, wenn ein Dokument auf ein Feld gekickt wird, 
+     * auf das wir uns entschieden haben zu gehen oder wir ein Blatt erfolgreich gelegt haben
+     * 
+     * @param currentCellStatus das Feld, das wir tatsaechlich "sehen"
+     */
+    public void aktualisiereStandpunkt(String currentCellStatus, String lastDoneAction) {
+            
+                    int[] standPunktKoordinaten = new int[] { aktuellePosition[0], aktuellePosition[1] };
+            String nameFeldUnterUns = new String(this.getFeld(aktuellePosition).getName());
+            if (!currentCellStatus.contains(nameFeldUnterUns)) {
 
-                        if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
-                                int[] formularKoordinaten = this.getFeld(currentCellStatus.substring(0, 8));
-                                this.setFeld(formularKoordinaten, "FLOOR");
-                                this.statischeZiele.remove(currentCellStatus.substring(0, 8));
-                        }
+                    if (currentCellStatus.contains("FORM") && !(this.getFeld(currentCellStatus.substring(0, 8))[0] == -1)) { //wenn Formular an anderer Stelle wiedergefunden wurde
+                            int[] formularKoordinaten = this.getFeld(currentCellStatus.substring(0, 8));
+                            this.setFeld(formularKoordinaten, "FLOOR");
+                            this.statischeZiele.remove(currentCellStatus.substring(0, 8));
+                    }
 
-                        this.setFeld(aktuellePosition, currentCellStatus); // hier wird das eigentliche Objekt angelegt
-                        Feld neuesFeld = this.getFeld(aktuellePosition);
+                    this.setFeld(aktuellePosition, currentCellStatus); // hier wird das eigentliche Objekt angelegt
+                    Feld neuesFeld = this.getFeld(aktuellePosition);
 
-                        if (neuesFeld instanceof Formular) {
-                                Formular form = (Formular) neuesFeld;
-                                this.setFormularZaehler(form.getNr());   // formularZaehler erhoehen (wenn moeglich)
-                                if (form.getSpielerId() == this.getSpielerId()
-                                                && !this.getStatischeZiele().containsValue(aktuellePosition)) {
-                                        this.statischeZiele.put(currentCellStatus.substring(0, 8), aktuellePosition);  // unser Formular der Abbildung statischeZiele hinzufuegen
-                                }
-                        }
+                    if (neuesFeld instanceof Formular) {
+                            Formular form = (Formular) neuesFeld;
+                            this.setFormularZaehler(form.getNr());   // formularZaehler erhoehen (wenn moeglich)
+                            if (form.getSpielerId() == this.getSpielerId()
+                                            && !this.getStatischeZiele().containsValue(aktuellePosition)) {
+                                    this.statischeZiele.put(currentCellStatus.substring(0, 8), standPunktKoordinaten); // unser Formular der Abbildung statischeZiele hinzufuegen
+                            }
+                    }
 
-                        else if (neuesFeld instanceof Blatt && lastDoneAction.equals("put")) {
-                                Blatt blatt = (Blatt) neuesFeld;
-                                blatt.setGekickt(true); //selbst gelegtes Blatt bekommt den Status gekickt (damit wir es nicht gleich wieder kicken)
-                        }
-                }
-        }
+                    else if (neuesFeld instanceof Blatt && lastDoneAction.equals("put")) {
+                            Blatt blatt = (Blatt) neuesFeld;
+                            blatt.setGekickt(true); //selbst gelegtes Blatt bekommt den Status gekickt (damit wir es nicht gleich wieder kicken)
+                    }
+            }
+    }
 
         /**
 		 * Die Methode entfernungenAktualisieren wird jede Runde aufgerufen, um die
