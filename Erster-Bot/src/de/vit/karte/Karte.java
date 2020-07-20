@@ -256,43 +256,43 @@ public class Karte implements Inavigierbar {
 		this.getFeld(aktuellePosition).setEntfernung(0);
 
 		boolean aenderung;
-		int letzte_beste_entfernung = this.getFeld(new int[] { 0, 0 }).getEntfernung();
+		int letzteBesteEntfernung = this.getFeld(new int[] { 0, 0 }).getEntfernung();
 		do {
 			aenderung = false;
 			for (int x = 0; x < this.getSize()[0]; x++) {
 				for (int y = 0; y < this.getSize()[1]; y++) {
 					// das int[] koordinaten legen wir hilfsweise an, damit man getNachbarn ein
 					// int[] übergeben kann
-					int[] derzeitige_koordinaten = new int[] { x, y };
+					int[] derzeitigeKoordinate = new int[] { x, y };
 					// Wir koennen nur an den Feldern die Entfernungen aktualisieren, welche wir
 					// auch exploriert haben, oder welche keine Wand darstellen
-					if (!((this.getFeld(derzeitige_koordinaten) instanceof Nebel)
-							|| (this.getFeld(derzeitige_koordinaten) instanceof Wand))) { // Weder ein //If für
+					if (!((this.getFeld(derzeitigeKoordinate) instanceof Nebel)
+							|| (this.getFeld(derzeitigeKoordinate) instanceof Wand))) { // Weder ein //If für
 																							// entfernungen
 						// Nebel, noch
 						// eine Wand
 						// Hier werden alle Entfernungen abgecheckt:
-						int entfernungen_im_norden = this.getNachbarn(derzeitige_koordinaten)[0].getEntfernung();
-						int entfernungen_im_osten = this.getNachbarn(derzeitige_koordinaten)[1].getEntfernung();
-						int entfernungen_im_sueden = this.getNachbarn(derzeitige_koordinaten)[2].getEntfernung();
-						int entfernungen_im_westen = this.getNachbarn(derzeitige_koordinaten)[3].getEntfernung();
+						int entfernungImNorden = this.getNachbarn(derzeitigeKoordinate)[0].getEntfernung();
+						int entfernungImOsten = this.getNachbarn(derzeitigeKoordinate)[1].getEntfernung();
+						int entfernungImSueden = this.getNachbarn(derzeitigeKoordinate)[2].getEntfernung();
+						int entfernungImWesten = this.getNachbarn(derzeitigeKoordinate)[3].getEntfernung();
 						// Die ArrayList von Integer Werten dient nur dem Zweck der min() Methode der
 						// Collection, um die kleinste Entfernung dieser 4 Werte zu bekommen
-						List<Integer> liste_von_entfernungen = new ArrayList<>();
+						List<Integer> listeVonEntfernungen = new ArrayList<>();
 
-						liste_von_entfernungen.add(entfernungen_im_norden);
-						liste_von_entfernungen.add(entfernungen_im_osten);
-						liste_von_entfernungen.add(entfernungen_im_sueden);
-						liste_von_entfernungen.add(entfernungen_im_westen);
+						listeVonEntfernungen.add(entfernungImNorden);
+						listeVonEntfernungen.add(entfernungImOsten);
+						listeVonEntfernungen.add(entfernungImSueden);
+						listeVonEntfernungen.add(entfernungImWesten);
 
-						int kleinste_entfernung_eines_nachbarn = Collections.min(liste_von_entfernungen);
+						int kleinsteEntfernungEinesNachbarn = Collections.min(listeVonEntfernungen);
 
-						letzte_beste_entfernung = this.dynamischesZielFinden(derzeitige_koordinaten,
-								letzte_beste_entfernung);
+						letzteBesteEntfernung = this.dynamischesZielFinden(derzeitigeKoordinate,
+								letzteBesteEntfernung);
 
-						if (kleinste_entfernung_eines_nachbarn + 1 < this.getFeld(derzeitige_koordinaten)
+						if (kleinsteEntfernungEinesNachbarn + 1 < this.getFeld(derzeitigeKoordinate)
 								.getEntfernung()) {
-							this.getFeld(derzeitige_koordinaten).setEntfernung(kleinste_entfernung_eines_nachbarn + 1);
+							this.getFeld(derzeitigeKoordinate).setEntfernung(kleinsteEntfernungEinesNachbarn + 1);
 							aenderung = true;
 						}
 
@@ -303,28 +303,39 @@ public class Karte implements Inavigierbar {
 		} while (aenderung == true);
 
 	}
-
-	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {// TODO: falls wir alles erkundet haben müssen
-																			// wir auch damit umgehen können!
-		int temp_entfernung = entfernung;
-		if (this.getFeld(koordinaten) instanceof Papier) {
-			Papier papier = (Papier) this.getFeld(koordinaten);
+	/**
+	 * 
+	 * Diese Methode setzt ein dynamisches, dass wie folgt definiert ist: 
+	 * Von uns aus gesehene naechste(naheliegendste) freie Feld mit einem Nebel Nachbarn ODER 
+	 * ein nicht gekicktes Feld, worauf ein Papier liegt, was ebenfalls nahe dran ist. Diese Methode wird bei einer 
+	 * Entfernungsaktualisierung mehrfach aufgerufen und liefert immer die optimalste Entfernung zurueck, um beim naechsten 
+	 * Aufruf Entfernungen vergleichen zu koennen.
+	 * @authors Alex, Franz 
+	 * @param koordinaten, die in der Schleife von entfernungen Aktualisieren gerade zum betrachteten Feld gehoeren
+	 * @param entfernung
+	 * @return temporaere Entfernung, die verglichen werden soll, bleibt gleich wenn es keine bessere gibt
+	 */
+	public int dynamischesZielFinden(int[] koordinaten, int entfernung) {
+		int temporaereEntfernung = entfernung;
+		Feld aktuellesFeld = this.getFeld(koordinaten);
+		if (aktuellesFeld instanceof Papier) {
+			Papier papier = (Papier) aktuellesFeld;
 			if (papier.getEntfernung() < entfernung && !papier.isGekickt()) {
 				this.setDynamischesZiel(koordinaten);
-				temp_entfernung = papier.getEntfernung();
+				temporaereEntfernung = papier.getEntfernung();
 			}
 		}
 		for (int i = 0; i <= 3; i++) {
 			if (this.getNachbarn(koordinaten)[i] instanceof Nebel) {
-				if (this.getFeld(koordinaten).getEntfernung() < entfernung)
+				if (aktuellesFeld.getEntfernung() < entfernung)
 
 				{
 					this.setDynamischesZiel(koordinaten);
-					temp_entfernung = this.getFeld(koordinaten).getEntfernung();
+					temporaereEntfernung = aktuellesFeld.getEntfernung();
 				}
 			}
 		}
-		return temp_entfernung;
+		return temporaereEntfernung;
 	};
 
 	/**
