@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.vit.karte.Inavigierbar;
-import de.vit.karte.felder.*;
+import de.vit.karte.felder.*; //Wir benötigen jedes Feld, deswegen wird hier mit * importiert
 
 /**
  * Die Klasse Bewegung, soll die Bewegung mittels system.out.println() in der main Methode der Klasse Team11Bot ausfuehren, indem die
