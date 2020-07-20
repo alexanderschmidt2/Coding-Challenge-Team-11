@@ -16,17 +16,18 @@ import de.vit.karte.typen.ZielMap;
  * @author Laura
  * @author Constantin
  */
-public class Karte implements navigierbar {
+public class Karte implements Inavigierbar {
 	private int[] size;
 	private final int level;
 	private final int playerId;
 	private int formCount = 0;
 	private int[] dynamischesZiel;
 	private ZielMap statischeZiele;
-	
 
 
 	private int sheetCount;
+	
+	
 	/**
 	 * das eigentliche Spielfeld mit allen Feldern die erste Array-Ebene bezeichnet
 	 * die x-Achse die zweite Array-Ebene bezeichnet die y-Achse
@@ -358,11 +359,29 @@ public class Karte implements navigierbar {
 			if (lastDoneAction.equals("go west")) {
 				this.setAktuellePosition(this.getWesten(aktuellePosition)[0], this.getWesten(aktuellePosition)[1]);
 			}
+			break;		
+		case "OK FORM":
+			this.getStatischeZiele().addAufgesammelteFormulare();
+			Dokument dokument = (Dokument) this.getFeld(this.getAktuellePosition());
+			this.getStatischeZiele().remove(dokument.getName());
+			break;			
+		case "OK SHEET":			
+			this.erhoeheSheetCount();
+			break;		
+			
+		case "OK ":
+			
+			if (lastDoneAction.equals("put")) 
+			{
+				this.reduziereSheetCount();
+				//System.err.println("ich habe erfolgreich ein Sheet gelegt!!!");
+			}
 			break;
+			
 		default:
 			//in dem Fall, dass die letze Aktion war nach der eigenen Position zu fragen war und eine Positive Rueckmeldung erhalten
-			
-			if (lastDoneAction.equals("position")&& lastActionsResult.contains("OK") ) 
+
+			if (lastDoneAction.equals("position") && lastActionsResult.contains("OK") ) 
 			{
 				//Eingang ist ein String mit "OK" dann ein Leerzeichen und dann 2 Zahlen, jeweils getrennt durch ein Leerzeichen
 				//von diesem String werden die beiden Zahlen, welche auf das "OK" folgen, extrahiert und gespeichert
@@ -448,8 +467,8 @@ public class Karte implements navigierbar {
 			}
 			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
 			// damit wir es nicht noch einmal kicken
-			else if (this.getFeld(nord_koordinate) instanceof Papier && lastActionsResult.equals("OK NORTH")
-					&& lastDoneAction.equals("kick north")) {
+			else if (this.getFeld(nord_koordinate) instanceof Papier && lastDoneAction.equals("kick north") 
+					&& lastActionsResult.equals("OK NORTH")) {
 				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(nord_koordinate);
 				papier.setGekickt(true);
@@ -515,8 +534,8 @@ public class Karte implements navigierbar {
 			}
 			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
 			// damit wir es nicht noch einmal kicken
-			else if (this.getFeld(ost_koordinate) instanceof Papier && lastActionsResult.equals("OK EAST")
-					&& lastDoneAction.equals("kick east")) {
+			else if (this.getFeld(ost_koordinate) instanceof Papier && lastDoneAction.equals("kick east")
+					&& lastActionsResult.equals("OK EAST")) {
 				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(ost_koordinate);
 				papier.setGekickt(true);
@@ -583,8 +602,8 @@ public class Karte implements navigierbar {
 			}
 			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
 			// damit wir es nicht noch einmal kicken
-			else if (this.getFeld(sued_koordinate) instanceof Papier && lastActionsResult.equals("OK SOUTH")
-					&& lastDoneAction.equals("kick south")) {
+			else if (this.getFeld(sued_koordinate) instanceof Papier && lastDoneAction.equals("kick south")
+					&& lastActionsResult.equals("OK SOUTH")) {
 				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(sued_koordinate);
 				papier.setGekickt(true);
@@ -651,8 +670,8 @@ public class Karte implements navigierbar {
 			}
 			// hier bekommt ein Papier, welches von uns gekickt wurde, den status gekickt,
 			// damit wir es nicht noch einmal kicken
-			else if (this.getFeld(west_koordinate) instanceof Papier && lastActionsResult.equals("OK WEST")
-					&& lastDoneAction.equals("kick west")) {
+			else if (this.getFeld(west_koordinate) instanceof Papier && lastDoneAction.equals("kick west")
+					&& lastActionsResult.equals("OK WEST")) {
 				// s. Prüfung instanceof Sachbearbeiter
 				Papier papier = (Papier) this.getFeld(west_koordinate);
 				papier.setGekickt(true);
@@ -729,6 +748,7 @@ public class Karte implements navigierbar {
 		this.aktualisiereSueden(ri.getSouthCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisiereWesten(ri.getWestCellStatus(), ri.getLastActionsResult(), ri.getLastDoneAction());
 		this.aktualisiereStandpunkt(ri.getCurrentCellStatus(), ri.getLastDoneAction());
+
 	}
 
 	/**

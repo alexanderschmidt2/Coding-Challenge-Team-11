@@ -1,9 +1,9 @@
 package de.vit.logik;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-
-import de.vit.karte.Karte;
+import java.util.Arrays;
+import java.util.List;
+import de.vit.karte.Inavigierbar;
 import de.vit.karte.felder.*;
 
 /**
@@ -23,169 +23,169 @@ import de.vit.karte.felder.*;
 public abstract class Bewegung {// TODO: SEHR GROß, schauen, dass wir nur die Parameter verwenden, die wir auch
 								// tatsächlich brauchen!
 	private static final String[] befehl_für_ausgabe = { "go north", "go east", "go south", "go west", "kick north",
-			"kick east", "kick south", "kick west", "take", "put", "finish" };
-	private static String letzteGetaetigteAktion;
-	public static Sachbearbeiter sachbearbeiterAusgeben(Karte aktuelleKarte) {// unseren SB
-		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-				if (aktuelleKarte.getFeld(e) instanceof Sachbearbeiter)
-					return (Sachbearbeiter) aktuelleKarte.getFeld(e);
-			}
-		}
-		return null; // noch nicht gefunden
-	}
+			"kick east", "kick south", "kick west", "put", "take", "finish","position" };
+	private static String getaetigteAktion;
 
-	public static int dokumentZaehler(Karte aktuelleKarte) {// returned die Nummer des Dokuments, welches wir als
-															// nächstes Aufnehmen sollen
-		int dokumentCounter = 0;
-		if (aktuelleKarte.getLevel() == 1) {
-			return dokumentCounter; // Er bricht sofort ab, wenns Level 1 ist, dann ist nämlich kein DOkument mehr
-									// da
-		} else {
-			dokumentCounter = 1;
-		}
-		if (!aktuelleKarte.getStatischeZiele().isEmpty()) {
-			for (int[] e : aktuelleKarte.getStatischeZiele().values()) {
-				if (aktuelleKarte.getFeld(e) instanceof Dokument) {
-					Dokument dokument = (Dokument) aktuelleKarte.getFeld(e);
-					if (dokument.getNr() == 1 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 2 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 3 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 4 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					} else if (dokument.getNr() == 5 && dokument.isAufgenommen()) {
-						dokumentCounter++;
-					}
-
-				}
-			}
-		}
-		return dokumentCounter;
-	}
-
-	public static boolean aufnahmeMoeglich(Karte aktuelleKarte, Dokument dokument) {//Kann ich das derzeitige Dokument aufnehmen?
-	
-		if (aktuelleKarte.getStatischeZiele().containsKey(dokument.getName())) {
-			if (dokumentZaehler(aktuelleKarte) == dokument.getNr()) {
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
-	public static int papierHandlung(Karte aktuelleKarte) {// TODO: das beschissene Papier auch kartentechnisch
-		if (aktuelleKarte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
-			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Papier) {
-				Papier papier = (Papier) aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition());
+	public static int papierHandlung(Inavigierbar karte) {// TODO: das beschissene Papier auch kartentechnisch
+		if (karte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
+			if (karte.getFeld(karte.getAktuellePosition()) instanceof Papier) {
+				Papier papier = (Papier) karte.getFeld(karte.getAktuellePosition());
+				int h = -1;
 				for (int i = 0; i < 3; i++) {
-					if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Boden
+					if (karte.getNachbarn(karte.getAktuellePosition())[i] instanceof Boden
 							&& !papier.isGekickt()) {
-						papier.setGekickt(true);
-						return (i + 4);
+						h = i;
 					}
 				}
-			}
-			for (int i = 0; i <= 3; i++) {
-				if (aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i] instanceof Papier) {
-					Papier papier = (Papier) aktuelleKarte.getNachbarn(aktuelleKarte.getAktuellePosition())[i];
+				if (h > -1) {
+					//papier.setGekickt(true);
+					return (h + 4);
+				} else {
 					if (!papier.isGekickt()) {
-						return i;
+						return 9;
 					}
 				}
+
 			}
+
 		}
 		return -1;
+
 	}
 
-	public static int finishHandlung(Karte aktuelleKarte) {
-		if (aktuelleKarte.getLevel() == 1) {
-			if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-					&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+	public static int finishHandlung(Inavigierbar karte) {
+		if (karte.getLevel() == 1) {
+			if (karte.getFeld(karte.getAktuellePosition()) instanceof Sachbearbeiter && karte
+					.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(), karte)) {
 				return 10;
-			} else {
-				return (schrittZumZiel(
-						aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
-						aktuelleKarte) + 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
+			} else if (karte.getStatischeZiele().getKoordinatenSb(karte) != null) {
+				return (schrittZumZiel(karte.getStatischeZiele().getKoordinatenSb(karte), karte)
+						+ 2) % 4; // Die gemappten Koordinaten des Sachbearbeiters
 			}
 		} else {
-			if (aktuelleKarte.getFormCount() == dokumentZaehler(aktuelleKarte)
-					&& sachbearbeiterAusgeben(aktuelleKarte) != null) {// Der Usecase für Level 1, da wir ansonsten ggf
-				if (aktuelleKarte.getFeld(aktuelleKarte.getAktuellePosition()) instanceof Sachbearbeiter
-						&& aktuelleKarte.getStatischeZiele().containsValue(aktuelleKarte.getAktuellePosition())) {
+			if (karte.getFormCount() == (karte.getStatischeZiele().getAufgesammelteFormulare() - 1)
+					&& karte.getStatischeZiele().getKoordinatenSb(karte) != null) {
+				if (karte.getFeld(karte.getAktuellePosition()) instanceof Sachbearbeiter
+						&& karte.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(),
+								karte)) {
 					return 10;
 				} else {
-					return (schrittZumZiel(
-							aktuelleKarte.getStatischeZiele().get(sachbearbeiterAusgeben(aktuelleKarte).getName()),
-							aktuelleKarte) + 2) % 4;
+					return (schrittZumZiel(karte.getStatischeZiele().getKoordinatenSb(karte),
+							karte) + 2) % 4;
 				}
 			}
 		}
 		return -1;
 	}
 
-	public static int schrittZumZiel(int[] aktuelleKoordinaten, Karte aktuelleKarte) {
+	public static int schrittZumZiel(int[] aktuelleKoordinaten, Inavigierbar karte) {
 		for (int i = 0; i <= 3; i++) {
-			if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[i].getEntfernung() == 0) {
+			if (karte.getNachbarn(aktuelleKoordinaten)[i].getEntfernung() == 0) {
 				return i;
 			}
 		}
-		if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[0]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getNorden(aktuelleKoordinaten), aktuelleKarte);
+		if (karte.getNachbarn(aktuelleKoordinaten)[0]
+				.getEntfernung() == karte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(karte.getNorden(aktuelleKoordinaten), karte);
 
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[1]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getOsten(aktuelleKoordinaten), aktuelleKarte);
+		} else if (karte.getNachbarn(aktuelleKoordinaten)[1]
+				.getEntfernung() == karte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(karte.getOsten(aktuelleKoordinaten), karte);
 
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[2]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getSueden(aktuelleKoordinaten), aktuelleKarte);
+		} else if (karte.getNachbarn(aktuelleKoordinaten)[2]
+				.getEntfernung() == karte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(karte.getSueden(aktuelleKoordinaten), karte);
 
-		} else if (aktuelleKarte.getNachbarn(aktuelleKoordinaten)[3]
-				.getEntfernung() == aktuelleKarte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
-			return schrittZumZiel(aktuelleKarte.getWesten(aktuelleKoordinaten), aktuelleKarte);
+		} else if (karte.getNachbarn(aktuelleKoordinaten)[3]
+				.getEntfernung() == karte.getFeld(aktuelleKoordinaten).getEntfernung() - 1) {
+			return schrittZumZiel(karte.getWesten(aktuelleKoordinaten), karte);
 		}
-		return 10; // TODO: Wenn 5 kommt funktioniert die Rekursion nicht
+		return 100;
 	}
 
-	public static int formularHandlung(Karte aktuelleKarte) {//
-		return 4;
-	}
-
-	public static int exploration(Karte aktuelleKarte) {
-		return (schrittZumZiel(aktuelleKarte.getDynamischesZiel(), aktuelleKarte) + 2) % 4;
-	}
-
-	public static String bewegung(Karte aktuelleKarte, Rundeninformationen rundeninformationen) {
-
+	public static int formularHandlung(Inavigierbar karte, Rundeninformationen rundeninfo) {
 		
-		if (aktuelleKarte.getSpielphase() == 0) {
-			if (aktuelleKarte.getStatischeZiele().isEmpty()) {
-				letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-			} else {
-				if (finishHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[finishHandlung(aktuelleKarte)];
-				} else if (formularHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[formularHandlung(aktuelleKarte)];
-				} else if (papierHandlung(aktuelleKarte) != -1) {
-					letzteGetaetigteAktion = befehl_für_ausgabe[papierHandlung(aktuelleKarte)];
-				}else
-					letzteGetaetigteAktion = befehl_für_ausgabe[exploration(aktuelleKarte)];
-				
+		/*
+		if (rundeninfo.getLastDoneAction().equals("put")) {
+			
+			
+			if (karte.getFeld(karte.getAktuellePosition()) instanceof Papier) {
+				Papier papier = (Papier) karte.getFeld(karte.getAktuellePosition());
+				papier.setGekickt(true);
 			}
-		} else if (aktuelleKarte.getSpielphase() == 1) {// Wir suchen den Sachbearbeiter!
-
-		} else if (aktuelleKarte.getSpielphase() == 2) {
-		} else if (aktuelleKarte.getSpielphase() == 3) {
-		} else if (aktuelleKarte.getSpielphase() == 4) {
-		} else {
 		}
-		;
-		rundeninformationen.setLastDoneAction(letzteGetaetigteAktion);
-		return letzteGetaetigteAktion;
+		*/
+		if (karte.getFeld(karte.getAktuellePosition()) instanceof Dokument) {
+			Dokument dokument = (Dokument) karte.getFeld(karte.getAktuellePosition());
+			if (karte.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(),
+					karte)) {
+				if (dokument.getNr() == karte.getStatischeZiele().getAufgesammelteFormulare()) {
+					//karte.getStatischeZiele().addAufgesammelteFormulare();
+					//karte.getStatischeZiele().remove(dokument.getName());
+					System.err.println("ich sammle das "+karte.getFormCount()+" Dokument auf");
+					return 9;
+				}
+			} else {
+				if (karte.getSheetCount() > 0) {
+					//karte.reduziereSheetCount();
+					System.err.println("ich putte bei SheetCount: " + karte.getSheetCount());
+					return 8;
+				}
+			}
+		} else if (karte.getFeld(karte.getAktuellePosition()) instanceof Boden && karte
+				.getStatischeZiele().isKoordinatenVorhanden(karte.getAktuellePosition(), karte)) {
+			//System.err.println("Ich verneble");
+			karte.vernebleKarte(); // TODO: prüfen ob wir ggf. doch die ganze Karte aktualisieren können, müssen
+
+			return -1;
+		} else {
+			// wenn die Dokumentnr == dokument was wir nicht in der Liste haben nummer, dann
+			// explorieren
+			int ges_dokuments_nr = karte.getStatischeZiele().getAufgesammelteFormulare();
+			if (karte.getStatischeZiele().getKoordinatenFormular(ges_dokuments_nr, karte) != null) {
+				System.err.println("Ich navigiere zum gesuchten Dokument");
+				return (schrittZumZiel(
+						karte.getStatischeZiele().getKoordinatenFormular(ges_dokuments_nr, karte),
+						karte) + 2) % 4;
+			}
+		}
+		return -1;
+	}
+
+	public static int explorationsHandlung(Inavigierbar karte) {
+		return (schrittZumZiel(karte.getDynamischesZiel(), karte) + 2) % 4;
+	}
+
+	public static int fehlgeschlageneHandlung(Inavigierbar karte, Rundeninformationen rundeninformationen) {
+		if (rundeninformationen.getLastActionsResult().equals("NOK TALKING")) {
+			
+			return Arrays.asList(befehl_für_ausgabe).indexOf(rundeninformationen.getLastDoneAction());
+		}
+		return -1;
+	}
+
+	public static String bestimmeBewegung(Inavigierbar karte, Rundeninformationen rundeninformationen) {
+		List<Integer> prioritäts_liste = new ArrayList<Integer>();
+		prioritäts_liste.add(fehlgeschlageneHandlung(karte, rundeninformationen));
+		prioritäts_liste.add(finishHandlung(karte));
+		prioritäts_liste.add(formularHandlung(karte, rundeninformationen));
+		prioritäts_liste.add(papierHandlung(karte));
+		prioritäts_liste.add(explorationsHandlung(karte));
+		for (int moegliche_ausgabe : prioritäts_liste) {
+			if (moegliche_ausgabe != -1) {
+
+				return befehl_für_ausgabe[moegliche_ausgabe];
+			}
+		}
+		karte.vernebleKarte();
+		System.err.println("DIE GESAMTE KARTE WURDE VERNEBELT");
+		return befehl_für_ausgabe[explorationsHandlung(karte)];
+
+	}
+
+	public static String bewegung(Inavigierbar karte, Rundeninformationen rundeninformationen) {
+		getaetigteAktion = bestimmeBewegung(karte, rundeninformationen);
+		rundeninformationen.setLastDoneAction(getaetigteAktion);
+		return getaetigteAktion;
 	}
 }
