@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import de.vit.karte.Inavigierbar;
 
-import de.vit.karte.felder.Dokument;
+import de.vit.karte.felder.Formular;
 import de.vit.karte.felder.Sachbearbeiter;
 
 @SuppressWarnings("serial")
@@ -32,8 +32,8 @@ public class ZielMap extends HashMap<String, int[]> {
 	public int[] getKoordinatenFormular(int formId, Inavigierbar karte) {
 		if (!this.isEmpty()) {
 			for (int[] e : this.values()) {
-				if (karte.getFeld(e) instanceof Dokument) {
-					Dokument dokument = (Dokument) karte.getFeld(e);
+				if (karte.getFeld(e) instanceof Formular) {
+					Formular dokument = (Formular) karte.getFeld(e);
 					if (dokument.getNr() == formId) {
 						return e;
 					}
