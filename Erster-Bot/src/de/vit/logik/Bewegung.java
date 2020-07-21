@@ -5,7 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.vit.karte.Inavigierbar;
-import de.vit.karte.felder.*; //Wir benötigen jedes Feld, deswegen wird hier mit * importiert
+import de.vit.karte.felder.Feld;
+import de.vit.karte.felder.Boden;
+import de.vit.karte.felder.Sachbearbeiter;
+import de.vit.karte.felder.Formular;
+import de.vit.karte.felder.Blatt;
+
 import de.vit.karte.typen.ZielMap;
 
 /**
@@ -181,7 +186,7 @@ public abstract class Bewegung {
 	 *         south" (bei 6) oder "kick west" (bei 7); 9 fuer das Aufnehmen eines
 	 *         Papiers
 	 */
-	public static int papierAktion(Inavigierbar karte) {
+	public static int blattAktion(Inavigierbar karte) {
 		
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
 		
@@ -252,19 +257,21 @@ public abstract class Bewegung {
 
 		List<Integer> prioritaetsListe = new ArrayList<Integer>();
 
-		prioritaetsListe.add(fehlgeschlageneAktion(karte, rundeninfo));
-		prioritaetsListe.add(finishAktion(karte));
-		prioritaetsListe.add(formularAktion(karte, rundeninfo));
-		prioritaetsListe.add(papierAktion(karte));
-		prioritaetsListe.add(explorationsAktion(karte));
+		prioritaetsListe.add(fehlgeschlageneAktion(karte, rundeninfo)); // hoechste Prioritaet: Wiederholung der (fehlgeschlagenen) Aktion, bietet Robustheit!
+		prioritaetsListe.add(finishAktion(karte)); 						// hohe Prioritaet: Das Spiel zu beenden, falls alle Bedinungen dafuer erfuellt sind!
+		prioritaetsListe.add(formularAktion(karte, rundeninfo));		// mittlere Prioritaet: Die noetigen Formulare zu sammeln
+		prioritaetsListe.add(blattAktion(karte));						// niedrigere Prioritaet: Die Blaetter zu kicken
+		prioritaetsListe.add(explorationsAktion(karte));				// unterste Prioritaet/default Case: Die Karte systematisch erkunden!
 
 		for (int erfolgreicheAusgabe : prioritaetsListe) {
+			// Welche der oben genannten Methoden (Prioritaeten) als erste einen positiven Wert liefert, wird zur Aktion des Bots!
 			if (erfolgreicheAusgabe != -1) {
 				return aktionen[erfolgreicheAusgabe];
 			}
 		}
+		// Backup Fall: Falls keine Aktion moeglich ist (positiven Wert liefert) soll alles von neu beginnen.
 		karte.vernebleKarte();
-		System.err.println("Keine Aktion moeglich, die Karte wird resettet");
+		System.err.println("ERROR: Keine Aktion moeglich, die Karte wird resettet. Das Spiel beginnt von vorne!");
 		return aktionen[explorationsAktion(karte)];
 	}
 
@@ -281,7 +288,7 @@ public abstract class Bewegung {
 	 */
 	public static String bewegung(Inavigierbar karte, Rundeninformationen rundeninfo) {
 		getaetigteAktion = bestimmeBewegung(karte, rundeninfo);
-		rundeninfo.setLastDoneAction(getaetigteAktion);
+		rundeninfo.setLastDoneAction(getaetigteAktion); //wichtige Speicherung der ausgegeben Aktion fuer Verarbeitung in der Klasse Karte
 		return getaetigteAktion;
 	}
 }
