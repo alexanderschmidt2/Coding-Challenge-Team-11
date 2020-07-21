@@ -9,34 +9,31 @@ import de.vit.karte.felder.*; //Wir benötigen jedes Feld, deswegen wird hier mit
 import de.vit.karte.typen.ZielMap;
 
 /**
- * Die Klasse Bewegung, soll die Bewegung mittels system.out.println() in der
- * main Methode der Klasse Team11Bot ausfuehren, indem die Methode
- * Bewegung.bewegung() dort aufgerufen wird, welche einen String (Aktion)
- * zurueckgibt.
+ * Die Klasse Bewegung, fuehrt die Bewegung mittels system.out.println() in der
+ * main Methode der Klasse Team11Bot aus, indem die Methode Bewegung.bewegung() 
+ * dort aufgerufen wird, welche einen String (Aktion) zurueckgibt.
  * 
- * Die Klasse ist abstrakt, da sie nicht instanziierbar ist und nur die
- * Bewegungsmethode dieser Klasse für die main-Methode des Team11Bots notwendig
- * ist.
+ * Die Klasse ist abstrakt, da sie nicht instanziierbar ist und nur die Bewegungsmethode 
+ * dieser Klasse für die main-Methode des Team11Bots notwendig ist.
  * 
  * @author Franz Bogmann und Alexander Schmidt
  *
  */
 public abstract class Bewegung {
 
-	// Alle moeglichen Aktionen des Bots, werden in einer Liste von Strings
-	// gespeichert und anhand ihrer Indizes aufgerufen:
-	private static final String[] aktionen = { "go north", // 0: Bot geht nach Norden
-			"go east", // 1: Bot geht nach Osten
-			"go south", // 2: Bot geht nach Sueden
-			"go west", // 3: Bot geht nach Westen
-			"kick north", // 4: Bot kickt nach Norden
-			"kick east", // 5: Bot kickt nach Osten
-			"kick south", // 6: Bot kickt nach Sueden
-			"kick west", // 7: Bot kickt nach Westen
-			"put", // 8: Bot legt ein Papier hin
-			"take", // 9: Bot nimmt ein Papier oder Formular auf
-			"finish", // 10: Bot ist fertig und beendet sein Spiel
-			"position" }; // 11: Bot fragt nach seiner Position (Koordinaten)
+	// Alle moeglichen Aktionen des Bots, werden in einer Liste von Strings gespeichert und anhand ihrer Indizes aufgerufen:
+	private static final String[] aktionen = { 	"go north", 	// 0: Bot geht nach Norden
+												"go east", 		// 1: Bot geht nach Osten
+												"go south", 	// 2: Bot geht nach Sueden
+												"go west", 		// 3: Bot geht nach Westen
+												"kick north", 	// 4: Bot kickt nach Norden
+												"kick east", 	// 5: Bot kickt nach Osten
+												"kick south",	// 6: Bot kickt nach Sueden
+												"kick west", 	// 7: Bot kickt nach Westen
+												"put", 			// 8: Bot legt ein Papier hin
+												"take", 		// 9: Bot nimmt ein Papier oder Formular auf
+												"finish", 		// 10: Bot ist fertig und beendet sein Spiel
+												"position" }; 	// 11: Bot fragt nach seiner Position (Koordinaten)
 
 	private static String getaetigteAktion; // Die Ausgabe der Bewegung, die getaetigte Aktion des Bots
 
@@ -53,10 +50,13 @@ public abstract class Bewegung {
 	 *         den Schritt unternimmt.
 	 */
 	public static int schrittZumZiel(int[] zielKoordinaten, Inavigierbar karte) {
+		
 		int zielFeldEntfernung = karte.getFeld(zielKoordinaten).getEntfernung();
 		Feld[] nachbarFeld = karte.getNachbarn(zielKoordinaten);
+		
 		for (int i = 0; i <= 3; i++) {
-			if (nachbarFeld[i].getEntfernung() == 0) {
+			// die Abbruchbedingung der Rekursion
+			if (nachbarFeld[i].getEntfernung() == 0) { 
 				return i;
 			}
 		}
@@ -84,7 +84,7 @@ public abstract class Bewegung {
 	 *         (bei 2) oder Westen (bei 3)
 	 */
 	public static int explorationsAktion(Inavigierbar karte) {
-		return (schrittZumZiel(karte.getDynamischesZiel(), karte) + 2) % 4;
+		return (schrittZumZiel(karte.getDynamischesZiel(), karte) + 2) % 4; //dynamische Ziele sind die nahesten Boden Felder mit min. einem Nebel Nachbarn
 	}
 
 	/**
@@ -96,9 +96,11 @@ public abstract class Bewegung {
 	 * @return 10 fuer "finish" oder 0 bis 3 fuer den Schritt zum "FINISH" hin.
 	 */
 	public static int finishAktion(Inavigierbar karte) {
+		
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
 		int[] aktuelleKoordinaten = karte.getAktuellePosition();
 		ZielMap ziele = karte.getStatischeZiele();
+		
 		if (karte.getLevel() == 1) {
 			if (aktuellesFeld instanceof Sachbearbeiter && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 				return 10;
@@ -170,7 +172,7 @@ public abstract class Bewegung {
 	 */
 	public static int papierAktion(Inavigierbar karte) {
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
-		if (karte.getLevel() == 5) { // kicken können und nie das selbe Papier 2x kicken
+		if (karte.getLevel() == 5) {
 			if (aktuellesFeld instanceof Blatt) {
 				Blatt blatt = (Blatt) aktuellesFeld;
 				int freieRichtung = -1;

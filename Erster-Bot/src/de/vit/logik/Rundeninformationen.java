@@ -19,13 +19,20 @@ public class Rundeninformationen {
 	String westCellStatus;
 	String lastDoneAction = "";
 
-	// eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
-	// dessen Attribute später durch Setter in der Schleife initialisiert werden
-	// sollen
-	// Wozu brauchen wir diesen Konstruktor?
-	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
+	/**
+	 * Diese Methode soll in jeder Runde alle Attribute der Klasse ausser
+	 * lastDoneAction aktualisieren
+	 * 
+	 * @param lastActionResult  Das Ergebnis der Aktion in der letzten Runde
+	 * @param currentCellStatus Das Feld, worauf der Bot steht
+	 * @param northCellStatus   Das Feld im Norden des Bots
+	 * @param eastCellStatus    Das Feld im Osten des Bots
+	 * @param southCellStatus   Das Feld im Sueden des Bots
+	 * @param westCellStatus    Das Feld im Westen des Bots
+	 */
+	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
-		super();
+
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;
@@ -91,27 +98,5 @@ public class Rundeninformationen {
 
 	public void setLastDoneAction(String lastDoneAction) {
 		this.lastDoneAction = lastDoneAction;
-	}
-
-	/**
-	 * Diese Methode soll in jeder Runde e alle Attribute der Klasse außer
-	 * lastDoneAction aktualisieren
-	 * 
-	 * @param lastActionResult  Das Ergebnis der Aktion in der letzten Runde
-	 * @param currentCellStatus Das Feld, worauf der Bot steht
-	 * @param northCellStatus   Das Feld im Norden des Bots
-	 * @param eastCellStatus    Das Feld im Osten des Bots
-	 * @param southCellStatus   Das Feld im Sueden des Bots
-	 * @param westCellStatus    Das Feld im Westen des Bots
-	 */
-	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
-			String eastCellStatus, String southCellStatus, String westCellStatus) {
-
-		this.lastActionsResult = lastActionsResult;
-		this.currentCellStatus = currentCellStatus;
-		this.northCellStatus = northCellStatus;
-		this.eastCellStatus = eastCellStatus;
-		this.southCellStatus = southCellStatus;
-		this.westCellStatus = westCellStatus;
 	}
 }
