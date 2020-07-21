@@ -101,17 +101,18 @@ public abstract class Bewegung {
 		int[] aktuelleKoordinaten = karte.getAktuellePosition();
 		ZielMap ziele = karte.getStatischeZiele();
 		
+		// Bei Level 1 ohne Formulare
 		if (karte.getLevel() == 1) {
 			if (aktuellesFeld instanceof Sachbearbeiter && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 				return 10;
 			} else if (ziele.getKoordinatenSb(karte) != null) {
 				return (schrittZumZiel(ziele.getKoordinatenSb(karte), karte) + 2) % 4;
 			}
+		// Bei Level > 1 mit Formularen
 		} else {
-			if (karte.getFormularZaehler() == (ziele.getAufgesammelteFormulare() - 1)
-					&& ziele.getKoordinatenSb(karte) != null) {
-				if (aktuellesFeld instanceof Sachbearbeiter
-						&& ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
+			// Pruefung ob alle Formulare aufgesammelt wurden, bevor man "finish" gibt
+			if (karte.getFormularZaehler() == (ziele.getAufgesammelteFormulare() - 1) && ziele.getKoordinatenSb(karte) != null) {
+				if (aktuellesFeld instanceof Sachbearbeiter && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 					return 10;
 				} else {
 					return (schrittZumZiel(ziele.getKoordinatenSb(karte), karte) + 2) % 4;
@@ -133,25 +134,35 @@ public abstract class Bewegung {
 	 *         gelegt wird
 	 */
 	public static int formularAktion(Inavigierbar karte, Rundeninformationen rundeninfo) {
+		
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
 		int[] aktuelleKoordinaten = karte.getAktuellePosition();
 		ZielMap ziele = karte.getStatischeZiele();
+		
 		if (aktuellesFeld instanceof Formular) {
-			Formular dokument = (Formular) aktuellesFeld;
+			Formular formular = (Formular) aktuellesFeld;
 			if (ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
-				if (dokument.getNr() == ziele.getAufgesammelteFormulare()) {
+				// Pruefung ob das gefundene Formular an der richtigen Reihenfolge ist und aufgenommen werden kann
+				if (formular.getNr() == ziele.getAufgesammelteFormulare()) {
 					return 9;
 				}
+			// else bedeutet hier, dass es nicht unser Formular ist, da es nicht in der ZielMap gespeichert wurde
+			// hier legt der Bot dort ein Blatt hin
 			} else {
 				if (karte.getBlattZaehler() > 0) {
 					return 8;
 				}
 			}
+		// Sonderfall: gespeichertes Formular wurde gekickt und ist nicht mehr an der gespeicherten Stelle,
+		// dann werden die Felder mit der Entfernung 2 von den gespeicherten Koordinaten des gesuchten Formulars gesehen,
+		// vernebelt, damit der Bot den Bereich abgehen kann/soll
 		} else if (aktuellesFeld instanceof Boden && ziele.isKoordinatenVorhanden(aktuelleKoordinaten, karte)) {
 
 			karte.vernebleUmgebung();
 
 			return -1;
+		// else, wenn wir nicht auf dem Formular stehen, jedoch ein gespeichertes Formular suchen, 
+		// dann gehe gezielt dort hin mittels der schrittZumZiel Methode
 		} else {
 			int gesuchtesFormular = ziele.getAufgesammelteFormulare();
 			if (ziele.getKoordinatenFormular(gesuchtesFormular, karte) != null) {
@@ -163,7 +174,7 @@ public abstract class Bewegung {
 
 	/**
 	 * Die papierAktion laesst den Bot eine Aktion auf einem Papierfeld ausfuehren,
-	 * wie ein Papier zu kicken oder es aufzunehmen
+	 * wie ein Papier zu kicken (Grundsatz) oder es aufzunehmen (Sonderfall).
 	 * 
 	 * @param karte Die Karteninstanz, auf welcher sich die Papierfelder befinden
 	 * @return 4 bis 7 fuer ein "kick north" (bei 4), "kick east" (bei 5), "kick
@@ -171,19 +182,27 @@ public abstract class Bewegung {
 	 *         Papiers
 	 */
 	public static int papierAktion(Inavigierbar karte) {
+		
 		Feld aktuellesFeld = karte.getFeld(karte.getAktuellePosition());
+		
+		// Nur bei Level 5 sollen Blaetter im Spiel betrachtet werden!
 		if (karte.getLevel() == 5) {
 			if (aktuellesFeld instanceof Blatt) {
 				Blatt blatt = (Blatt) aktuellesFeld;
 				int freieRichtung = -1;
 				int[] aktuelleKoordinaten = karte.getAktuellePosition();
+				// die Richtungspruefung, wohin das Blatt gekickt werden soll
 				for (int i = 0; i < 3; i++) {
 					if (karte.getNachbarn(aktuelleKoordinaten)[i] instanceof Boden && !blatt.isGekickt()) {
 						freieRichtung = i;
 					}
 				}
+				// es wird in die erste freie Richtung gekickt
 				if (freieRichtung > -1) {
 					return (freieRichtung + 4);
+				// falls keine Richtung frei ist, 
+				// (Sackgasse und am einzigen freien Feld steht ein Sachbearbeiter),
+				// wird das Blatt aufgenommen
 				} else {
 					if (!blatt.isGekickt()) {
 						return 9;
@@ -209,9 +228,9 @@ public abstract class Bewegung {
 	 *         wiederholt werden soll.
 	 */
 	public static int fehlgeschlageneAktion(Inavigierbar karte, Rundeninformationen rundeninfo) {
+		
 		if (rundeninfo.getLastActionsResult().equals("NOK TALKING")) {
-
-			return Arrays.asList(aktionen).indexOf(rundeninfo.getLastDoneAction());
+			return Arrays.asList(aktionen).indexOf(rundeninfo.getLastDoneAction()); //exakt derselbe Aufruf der Aktion aus der letzten Runde
 		}
 		return -1;
 	}
