@@ -8,9 +8,18 @@ import de.vit.karte.Inavigierbar;
 import de.vit.karte.felder.Formular;
 import de.vit.karte.felder.Sachbearbeiter;
 
-@SuppressWarnings("serial")
+/**
+ * Die Klasse ZielMap, welche eine erweiterte HashMap darstellt, dient zur
+ * Speicherung der gefundenen Ziele auf der Karte, wie Sachbearbeiter oder
+ * Formulare, in Form von einem String Namen und den zugehoerigen Koordinaten
+ * des Feldes.
+ * 
+ * @author Alexander Schmidt und Franz Bogmann
+ *
+ */
+@SuppressWarnings("serial") // diese Unterdrueckung verstehen wir nicht vollstaendig, jedoch ohne ist Klasse gelb markiert.
 public class ZielMap extends HashMap<String, int[]> {
-	
+
 	private int aufgesammelteFormulare = 1;
 
 	public int getAufgesammelteFormulare() {
@@ -28,7 +37,6 @@ public class ZielMap extends HashMap<String, int[]> {
 		}
 	}
 
-
 	public int[] getKoordinatenFormular(int formId, Inavigierbar karte) {
 		if (!this.isEmpty()) {
 			for (int[] e : this.values()) {
@@ -40,7 +48,7 @@ public class ZielMap extends HashMap<String, int[]> {
 				}
 			}
 		}
-		return null; // noch nicht gefunden es gibt keine Form ID bei Null
+		return null; // Wenn keine Formulare und damit deren Koordinaten vorhanden sind
 	}
 
 	public boolean isKoordinatenVorhanden(int[] koordinaten, Inavigierbar karte) {
@@ -52,7 +60,7 @@ public class ZielMap extends HashMap<String, int[]> {
 			}
 		}
 
-		return false; // noch nicht gefunden es gibt keine Form ID bei Null
+		return false; // Wenn kein Zielfeld und damit dessen Koordinaten vorhanden sind
 	}
 
 	public int[] getKoordinatenSb(Inavigierbar karte) {
@@ -63,7 +71,7 @@ public class ZielMap extends HashMap<String, int[]> {
 				}
 			}
 		}
-		return null; // noch nicht gefunden es gibt keine Form ID bei Null
+		return null; // Wenn keine Sachbearbeiter und damit dessen Koordinaten vorhanden sind
 	}
 
 }

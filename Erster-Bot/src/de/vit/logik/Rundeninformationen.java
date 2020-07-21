@@ -1,14 +1,16 @@
 package de.vit.logik;
 
 /**
- * Diese Klasse speichert die Informationen der Runde in einem Objekt und aktualisiert diese jede Runde.
- * Warum werden hier keine Objekte hinterlegt? Grund für den Garbage Kollektor, was ist performanter ein Objektvergleich oder ein Stringvergleich?
+ * Diese Klasse speichert die Informationen der Runde in einem Objekt und
+ * aktualisiert diese jede Runde. Warum werden hier keine Objekte hinterlegt?
+ * Grund für den Garbage Kollektor, was ist performanter ein Objektvergleich
+ * oder ein Stringvergleich?
  * 
  * @author Alexander Schmidt und Franz Bogmann
  *
  */
 public class Rundeninformationen {
-	
+
 	String lastActionsResult;
 	String currentCellStatus;
 	String northCellStatus;
@@ -16,11 +18,11 @@ public class Rundeninformationen {
 	String southCellStatus;
 	String westCellStatus;
 	String lastDoneAction = "";
-	
-	
-	//eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
-	//dessen Attribute später durch Setter in der Schleife initialisiert werden sollen
-	//Wozu brauchen wir diesen Konstruktor?
+
+	// eigentlich überflüssig, da zunächst ein leeres Objekt angelegt werden soll,
+	// dessen Attribute später durch Setter in der Schleife initialisiert werden
+	// sollen
+	// Wozu brauchen wir diesen Konstruktor?
 	public Rundeninformationen(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
 		super();
@@ -31,10 +33,10 @@ public class Rundeninformationen {
 		this.southCellStatus = southCellStatus;
 		this.westCellStatus = westCellStatus;
 	}
-	
-	public Rundeninformationen()
-	{}
-	
+
+	public Rundeninformationen() {
+	}
+
 	public String getLastActionsResult() {
 		return lastActionsResult;
 	}
@@ -58,7 +60,7 @@ public class Rundeninformationen {
 	public String getWestCellStatus() {
 		return westCellStatus;
 	}
-	
+
 	public String getLastDoneAction() {
 		return lastDoneAction;
 	}
@@ -90,19 +92,21 @@ public class Rundeninformationen {
 	public void setLastDoneAction(String lastDoneAction) {
 		this.lastDoneAction = lastDoneAction;
 	}
-	
+
 	/**
-	 * Diese Methode soll in jeder Runde e alle Attribute der Klasse außer lastDoneAction aktualisieren
-	 * @param lastActionResult Das Ergebnis der Aktion in der letzten Runde
+	 * Diese Methode soll in jeder Runde e alle Attribute der Klasse außer
+	 * lastDoneAction aktualisieren
+	 * 
+	 * @param lastActionResult  Das Ergebnis der Aktion in der letzten Runde
 	 * @param currentCellStatus Das Feld, worauf der Bot steht
-	 * @param northCellStatus Das Feld im Norden des Bots
-	 * @param eastCellStatus Das Feld im Osten des Bots
-	 * @param southCellStatus Das Feld im Sueden des Bots
-	 * @param westCellStatus Das Feld im Westen des Bots
+	 * @param northCellStatus   Das Feld im Norden des Bots
+	 * @param eastCellStatus    Das Feld im Osten des Bots
+	 * @param southCellStatus   Das Feld im Sueden des Bots
+	 * @param westCellStatus    Das Feld im Westen des Bots
 	 */
 	public void setInputs(String lastActionsResult, String currentCellStatus, String northCellStatus,
 			String eastCellStatus, String southCellStatus, String westCellStatus) {
-		
+
 		this.lastActionsResult = lastActionsResult;
 		this.currentCellStatus = currentCellStatus;
 		this.northCellStatus = northCellStatus;

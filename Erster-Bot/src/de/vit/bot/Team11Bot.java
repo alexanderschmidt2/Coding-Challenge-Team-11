@@ -14,10 +14,12 @@ public class Team11Bot {
 	 */
 
 	public static void main(String[] args) {
-		
-		int sheetCount = 0; // Lokale Variable sheetCount initialisieren, damit diese genutzt werden kann. In Level 1 bis 4 spielen wir ohne Sheets.
-		
-		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und Rundendaten liefert
+
+		int sheetCount = 0; // Lokale Variable sheetCount initialisieren, damit diese genutzt werden kann.
+							// In Level 1 bis 4 spielen wir ohne Sheets.
+
+		// Scanner zum Auslesen der Standardeingabe, welche Initialisierungs- und
+		// Rundendaten liefert
 		Scanner input = new Scanner(System.in);
 
 		// INIT - Auslesen der Initialdaten
@@ -31,22 +33,23 @@ public class Team11Bot {
 		int playerId = input.nextInt(); // id dieses Players / Bots
 		int startX = input.nextInt(); // X-Koordinate der Startposition dieses Player
 		int startY = input.nextInt(); // Y-Koordinate der Startposition dieses Players
-		if (level == 5) { //wenn level 5: dann SheetCount abfragen
-			sheetCount = input.nextInt();//Anzahl der Blaetter zu Beginn des Spiels
+		if (level == 5) { // wenn level 5: dann SheetCount abfragen
+			sheetCount = input.nextInt();// Anzahl der Blaetter zu Beginn des Spiels
 		}
 		input.nextLine(); // Beenden der zweiten Zeile
-		
-		// Level 1 bis 5: Karte mit Initialdaten instanziieren (Level 1 bis 4: ohne sheetCount)
+
+		// Level 1 bis 5: Karte mit Initialdaten instanziieren (Level 1 bis 4: ohne
+		// sheetCount)
 		Karte karte = new Karte(sizeX, sizeY, level, playerId, startX, startY);
 		// Level 5 Zusatz: sheetCount
-		karte.setBlattZaehler(sheetCount); 
+		karte.setBlattZaehler(sheetCount);
 
 		// Rundeninformationen anlegen (leer)
 		Rundeninformationen runde = new Rundeninformationen();
 
 		// TURN (Wiederholung je Runde notwendig)
 		while (input.hasNext()) {
-			
+
 			// Rundeninformationen auslesen
 			String lastActionsResult = input.nextLine();
 			String currentCellStatus = input.nextLine();
@@ -54,21 +57,21 @@ public class Team11Bot {
 			String eastCellStatus = input.nextLine();
 			String southCellStatus = input.nextLine();
 			String westCellStatus = input.nextLine();
-			
+
 			// Rundeninformationen aktualisieren
 			runde.setInputs(lastActionsResult, currentCellStatus, northCellStatus, eastCellStatus, southCellStatus, westCellStatus);
-			
+
 			// Position und Karte aktualisieren
 			karte.aktualisiereKarte(runde);
 
 			// Entfernungen der Felder auf der Karte aktualisieren
 			karte.aktualisiereEntfernung();
-			
+
 			// Karte als String Konstrukt zeigen (nur zu Debug-Zwecken)
-			//System.err.println(karte.getKarte());
+			// System.err.println(karte.getKarte());
 
 			// Rundenaktion ausgeben: Die Aktion des Bots je Runde
-			System.out.println(Bewegung.bewegung(karte,runde));
+			System.out.println(Bewegung.bewegung(karte, runde));
 
 		}
 
